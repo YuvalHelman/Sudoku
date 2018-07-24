@@ -139,19 +139,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="aux_modle.c" />
-    <ClCompile Include="file.c" />
+    <ClCompile Include="aux_main.c" />
+    <ClCompile Include="file_manipulation.c" />
     <ClCompile Include="game_logic.c" />
     <ClCompile Include="game_logic.h" />
-    <ClCompile Include="list.c" />
+    <ClCompile Include="move_list.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="solver.c" />
     <ClCompile Include="user_interface.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aux_modle.h" />
-    <ClInclude Include="file.h" />
-    <ClInclude Include="list.h" />
+    <ClInclude Include="aux_main.h" />
+    <ClInclude Include="file_manipulation.h" />
+    <ClInclude Include="minunit.h" />
+    <ClInclude Include="move_list.h" />
     <ClInclude Include="solver.h" />
     <ClInclude Include="user_interface.h" />
   </ItemGroup>
