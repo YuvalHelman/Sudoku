@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="file.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game_logic.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -27,33 +24,39 @@
     <ClCompile Include="user_interface.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="list.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="aux_modle.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game_logic.h">
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="aux_main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="file_manipulation.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="move_list.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aux_modle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="file.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="solver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="user_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="aux_main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="file_manipulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="move_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="minunit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
