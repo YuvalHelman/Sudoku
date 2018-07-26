@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include "mainAux.h"
+#include "aux_main.h"
 #include "move_list.h"
 
 #include "minunit.h" /* a simple testing header. */
@@ -8,6 +8,8 @@
 /* Defining Public varibles that are useable in all code areas. */
 GAME_MODE game_mode = init;
 
+
+int tests_run = 0; /* Declared in minunit.h */
 static char * all_tests() {
 	mu_run_test(test_list);
 	return 0;

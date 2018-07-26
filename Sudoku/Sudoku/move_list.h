@@ -1,6 +1,6 @@
 #pragma once
 /*
-This Module defines anything related to the list of moves by the player.
+	This Module defines anything related to the list of moves used by the player.
 */
 
 #define SIZE_OF_NODE (6*sizeof(int))
@@ -32,10 +32,8 @@ typedef struct list_t {
 } List;
 
 
-
 /* Global Variables related to the module: */
 extern List *move_list;
-
 
 
 
@@ -49,16 +47,68 @@ extern List *move_list;
 */
 
 
-/* Need to document in HERE only. not in C files.*/
+/* 
+ * a main function that is called for testing all of the other functions in this module 
+ */
 char *test_list_module();
-void initialize_list_parameters();
+/*
+ *   This function is called first thing in "main" in order to initialize the objects that are needed to start
+ *   working with the move_list module. It should be called only once before playing.
+ *
+ *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *			  on any error returns EXIT_FAILURE(1) and prints the error.
+ */
+int initialize_list_parameters();
+/*
+ *   This function goes back one move from the current move and changes the list position and board.
+ *    If there arent any previous moves, the function does nothing and returns SUCCESS.
+ *
+ *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *			  on any error returns EXIT_FAILURE(1) and prints the error.
+ */
 int redo();
+/*
+ *   This function goes forward one move from the current move and changes the list position and board.
+ *   If there isnt a move forward, the function does nothing and returns SUCCESS.
+ *
+ *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *			  on any error returns EXIT_FAILURE(1) and prints the error.
+ */
 int undo();
+/*
+ *   This function is used for deleting the entire list (back to the initialized phase).
+ *   should be used for the "RESTART", "EXIT" or any other program terminating step.
+ *
+ *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *			  on any error returns EXIT_FAILURE(1) and prints the error.
+ */
 int delete_list_full();
+/*
+ *   This function is used for deleting the part of the list which is positioned
+ * 	 right from the current Node (the current move which is pointed when the function is called).
+ *   should be used for the "SET" command when done after undo's/redo's.
+ *
+ *   This function sets the current Node to be the new tail.
+ *	 to make the "next" move of the set command, use the "add_new_node" function.
+ *
+ *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *			  on any error returns EXIT_FAILURE(1) and prints the error.
+ */
 int delete_list_partly();
-
+/*
+ *   adds a new Node to the tail of the move_list. should be used in the "set" command.
+ *   Each new node should be added with the location and current+updated cell values that
+ *	 the user uses.
+ *
+ *   row_arg: the row in which the change was made
+ *   column_arg: the column in which the change was made
+ *   prev_val_arg: the value of the cell before the change. (0 if empty)
+ *   updated_val_arg: the new value that is being put into that cell.
+ *
+ *   returns: EXIT_SUCCESS(0) on adding a new node.
+			  on any error returns EXIT_FAILURE(1) and prints the error.
+ */
 int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg);
-
 
 
 
