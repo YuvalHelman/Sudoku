@@ -1,19 +1,5 @@
 #pragma once
 
-typedef enum game_mode_t {
-	init, solve, edit
-} GAME_MODE;
-
-typedef enum bool_t {
-	false, true
-} bool;
-
-
-
-
-extern GAME_MODE game_mode;
-extern int **game_board;
-
 
 #ifndef __TYPES_H
 #define __TYPES_H
@@ -33,5 +19,14 @@ typedef struct sudoku_t {
 	int mark_errors;
 	int block_col_length;
 	int block_row_length;
-}sudoku;
+}sudoku_t;
 #endif
+
+
+typedef enum game_mode_t {
+	init, solve, edit
+} GAME_MODE;
+
+
+extern GAME_MODE game_mode;
+extern sudoku_t sudoku;

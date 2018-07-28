@@ -7,11 +7,12 @@
 
 /* Defining Public varibles that are useable in all code areas. */
 GAME_MODE game_mode = init;
+sudoku_t sudoku = NULL; /* All fields initialized to 0 */
 
 
 int tests_run = 0; /* Declared in minunit.h */
 static char * all_tests() {
-	mu_run_test(test_list);
+	mu_run_test(test_list_module);
 	return 0;
 }
 
@@ -35,7 +36,7 @@ int main() {
 	printf("Tests run: %d\n", tests_run);
 
 	return result != 0;
-
+	sudoku.
 
 
 	return 0;
