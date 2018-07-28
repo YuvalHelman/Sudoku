@@ -17,6 +17,11 @@ static char * all_tests() {
 
 
 int main() {
+
+	if (true && false) {
+		print("sddsds");
+	}
+
 	initialize_list_parameters();
 
 

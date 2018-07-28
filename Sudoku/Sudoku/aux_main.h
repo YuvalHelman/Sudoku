@@ -4,6 +4,12 @@ typedef enum game_mode_t {
 	init, solve, edit
 } GAME_MODE;
 
+typedef enum bool_t {
+	false, true
+} bool;
+
+
+
 
 extern GAME_MODE game_mode;
 extern int **game_board;

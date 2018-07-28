@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "game_logic.h";
-
+#include "game_logic.h"
 
 
 /*
@@ -12,22 +11,22 @@
 * @param value - The value we want to enter
 * @return -1(true) if the value can be placed in the cell, 0(false) otherwise
 */
-int valid_value(sudoku *sudoku_game, int row_index, int col_index, int value) {
+bool valid_value(sudoku *sudoku_game, int row_index, int col_index, int value) {
 	return check_row(sudoku_game, row_index, col_index, value) &&
 		check_col(sudoku_game, row_index, col_index, value) &&
 		check_block(sudoku_game, row_index, col_index, value);
 }
 
 /* checks if the value can be place in the row */
-int check_row(sudoku *sudoku_game, int row_index, int col_index, int value) {
+bool check_row(sudoku *sudoku_game, int row_index, int col_index, int value) {
 	int i, board_length;
 	board_length = sudoku_game->block_col_length*sudoku_game->block_row_length;
 	for (i = 0;i < board_length;i++) {
 		if (sudoku_game->board[i][col_index].value == value && i != row_index) {
-			return 0;
+			return false;
 		}
 	}
-	return 1;
+	return true;
 }
 
 /* checks if the value can be place in the col */

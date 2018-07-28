@@ -9,20 +9,20 @@ const static struct {
 	sudokuCommends val;
 	const char *str;
 } conversion[] = {
-	{ 1, "solve" },
-	{ 2, "edit" },
-	{ 3, "mark_errors" },
-	{ 4, "print_board" },
-	{ 5, "set" },
-	{ 6, "validate" },
-	{ 7, "generate" },
-	{ 8, "undo" },
-	{ 9, "redo" },
-	{ 10, "save" },
-	{ 11, "hint" },
-	{ 12, "num_solutions" },
-	{ 13, "autofill" },
-	{ 14, "reset" },
-	{ 15, "exit" }
+	{ 0, "solve" },
+	{ 1, "edit" },
+	{ 2, "mark_errors" },
+	{ 3, "print_board" },
+	{ 4, "set" },
+	{ 5, "validate" },
+	{ 6, "generate" },
+	{ 7, "undo" },
+	{ 8, "redo" },
+	{ 9, "save" },
+	{ 10, "hint" },
+	{ 11, "num_solutions" },
+	{ 12, "autofill" },
+	{ 13, "reset" },
+	{ 14, "exit" }
 };
 
