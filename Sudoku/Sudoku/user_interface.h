@@ -29,11 +29,11 @@ typedef struct sudoku_t {
 typedef enum {solve, edit, mark_errors,
 	print_board, set, validate, generate,
 	undo, redo, save, hint,
-	num_solutions, autofill, reset, exit} sudokuCommends;
+	num_solutions, autofill, reset, exit} sudokuCommands;
 
 
 const static struct {
-	sudokuCommends val;
+	sudokuCommands val;
 	const char *str;
 } conversion[] = {
 	{ 1, "solve" },

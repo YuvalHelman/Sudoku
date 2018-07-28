@@ -6,7 +6,7 @@
 #include "user_interface.h"
 
 
-sudokuCommends 
+sudokuCommands 
 str2enum(const char *str)
 {
 	int j;
@@ -30,7 +30,7 @@ EXIT_GAME(3) - Signal the main function to exit the program
 int user_command(cell** board, char* buffer, int game_over_flag) {
 	/* */
 	int x, y, z;
-	sudokuCommends sudoku_commend;
+	sudokuCommands sudoku_command;
 	char *xchar, *ychar, *zchar, *command;
 	command = strtok(buffer, " \t\r\n");
 	xchar = strtok(NULL, " \t\r\n");
@@ -38,8 +38,8 @@ int user_command(cell** board, char* buffer, int game_over_flag) {
 	if (command == NULL) {
 		return 0;
 	}
-	sudoku_commend = str2enum(command);
-	switch (sudoku_commend)
+	sudoku_command = str2enum(command);
+	switch (sudoku_command)
 	{
 	solve:break;
 	edit:break;

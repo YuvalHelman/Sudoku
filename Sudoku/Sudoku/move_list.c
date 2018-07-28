@@ -264,4 +264,6 @@ int initialize_list_parameters() {
 	move_list->head = head_ptr;
 	move_list->current_Node_move = head_ptr;
 	move_list->tail = head_ptr;
+
+	return EXIT_SUCCESS;
 }
