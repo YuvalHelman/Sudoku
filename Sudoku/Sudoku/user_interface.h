@@ -1,3 +1,5 @@
+#include "aux_main.h"
+
 
 typedef enum {solve, edit, mark_errors,
 	print_board, set, validate, generate,

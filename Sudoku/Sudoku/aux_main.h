@@ -1,6 +1,7 @@
 #pragma once
 
-
+#define false 0
+#define true 1
 #ifndef __TYPES_H
 #define __TYPES_H
 /* a Cell struct
@@ -11,7 +12,7 @@ typedef struct cell_t {
 	int value;
 	int fixed;
 	int solution;
-	int valid_value;
+	int error;
 }cell;
 
 typedef struct sudoku_t {
