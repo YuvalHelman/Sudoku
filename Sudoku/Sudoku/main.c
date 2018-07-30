@@ -33,8 +33,5 @@ int main() {
 	printf("Tests run: %d\n", tests_run);
 
 	return result != 0;
-	sudoku.
-
-
-	return 0;
+	
 }

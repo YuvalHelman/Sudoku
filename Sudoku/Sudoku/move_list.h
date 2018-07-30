@@ -94,7 +94,7 @@ int delete_list_full();
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
-int delete_list_partly();
+int delete_list_from_the_current_node();
 /*
  *   adds a new Node to the tail of the move_list. should be used in the "set" command.
  *   Each new node should be added with the location and current+updated cell values that

@@ -135,7 +135,7 @@ int undo() {
 
 	curr_node = move_list->current_Node_move;
 
-	if (game_mode == init) {/* only available in edit/solve mode */
+	if (game_mode == init) { /* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
 		return EXIT_SUCCESS;
 	}
@@ -195,7 +195,7 @@ int delete_list_full()
 }
 
 
-int delete_list_partly() {
+int delete_list_from_the_current_node() {
 	Node *curr, *next;
 
 	/* Check for atleast one Node in the list (besides the head) */

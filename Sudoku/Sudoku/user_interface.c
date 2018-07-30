@@ -21,6 +21,7 @@ str2enum(const char *str)
 
 /*
 * The Function recives the command from the user and interprets it to a function that handles the command.
+************************* TODO: The function should check if the buffer is even valid, or to accept only valid ones*****
 * @param buffer - the user's command. (its contents may be erased after calling this function)
 * @return true(1) when no errors. 0 otherwise
 false(0) if some error occured.
@@ -69,7 +70,7 @@ int user_command(char* buffer) {
 int set(int row_index, int col_index, int value) {
 
 	/* check if (i,j) is a fixed cell */
-	if (sudoku.board[row_index][col_index].fixed == 1) { /* it is fixed.*/
+	if (sudoku.board[row_index][col_index].fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
 	}
 	/* check if the value is ligall*/
