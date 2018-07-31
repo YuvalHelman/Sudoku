@@ -69,22 +69,25 @@ int user_command(char* buffer) {
 int set(int row_index, int col_index, int value) {
 
 	/* check if (i,j) is a fixed cell */
-	if (sudoku.board[row_index][col_index].fixed == 1) { /* it is fixed.*/
+	if (sudoku.board[row_index][col_index].fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
 	}
 	/* check if the value is ligall*/
 	if (value < 0 || value > sudoku.block_row_length*sudoku.block_col_length) {
-		printf("Error: invalid value\n");
+		printf("Error: value not in range 0-N\n");
 	}
 	else {
 		sudoku.board[row_index][col_index].value = value;
 		update_errors(row_index, col_index); /* update all the relevant cells */
+		print_board();
+		// counter, check last cell
+
 	}
 
 
 }
 
-int print_sudoku() {
+int print_board() {
 
 	/* variables declarations */
 	int i, j, board_length;
