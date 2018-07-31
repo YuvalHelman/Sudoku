@@ -21,6 +21,7 @@ str2enum(const char *str)
 
 /*
 * The Function recives the command from the user and interprets it to a function that handles the command.
+************************* TODO: The function should check if the buffer is even valid, or to accept only valid ones*****
 * @param buffer - the user's command. (its contents may be erased after calling this function)
 * @return true(1) when no errors. 0 otherwise
 false(0) if some error occured.
