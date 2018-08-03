@@ -19,16 +19,7 @@ str2enum(const char *str)
 }
 
 
-/*
-* The Function recives the command from the user and interprets it to a function that handles the command.
-************************* TODO: The function should check if the buffer is even valid, or to accept only valid ones*****
-* @param buffer - the user's command. (its contents may be erased after calling this function)
-* @return true(1) when no errors. 0 otherwise
-false(0) if some error occured.
-RESTART(2) - Signal the main function to Restart the program
-EXIT_GAME(3) - Signal the main function to exit the program
-* buffer is destroyed after this function.
-*/
+
 int user_command(char* buffer) {
 	/* */
 	int x, y, z;
@@ -72,15 +63,18 @@ int set(int row_index, int col_index, int value) {
 	/* check if (i,j) is a fixed cell */
 	if (sudoku.board[row_index][col_index].fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
+		return false;
 	}
 	/* check if the value is ligall*/
 	if (value < 0 || value > sudoku.block_row_length*sudoku.block_col_length) {
 		printf("Error: value not in range 0-N\n");
+		return false;
 	}
 	else {
 		sudoku.board[row_index][col_index].value = value;
 		update_errors(row_index, col_index); /* update all the relevant cells */
 		print_board();
+		return true;
 		// counter, check last cell
 
 	}
@@ -143,4 +137,45 @@ void separator_row() {
 	for (i = 0; i <= sudoku.block_col_length*sudoku.block_row_length + sudoku.block_row_length; i++)
 		printf("-");
 	printf("\n");
+}
+
+
+void autofill() {
+	autofill(0, 0);
+}
+
+void autofill(int row_index, int col_index) {
+	int i, j, board_length, value;
+	board_length = sudoku.block_col_length*sudoku.block_row_length;
+	if (row_index >= board_length) { /* end of the board */
+		return;
+	}
+	else if (col_index >= board_length) { /* end of a line */
+		return autofill(row_index + 1, 0);
+	}
+	else {
+		if (!sudoku.board[row_index][col_index].value) {
+			value = one_possible_value(row_index, col_index);  /* checks that there is only 1 valid value */
+		}
+		autofill(row_index, col_index + 1); /* next cell */
+		sudoku.board[row_index][col_index].value = value; /* change the value after we checked all the cells */
+
+	}
+}
+
+
+int one_possible_value(int row_index, int col_index) {
+	int i, count, board_length, value;
+	count = 0;
+	board_length = sudoku.block_col_length*sudoku.block_row_length;
+	for (i = 1; i <= board_length; i++) {
+		if (valid_value(col_index, row_index, i)) {
+			count++;
+			value = i;
+			if (count > 1) {
+				return false;
+			}
+		}
+	}
+	return value;
 }

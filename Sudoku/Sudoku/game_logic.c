@@ -3,14 +3,7 @@
 #include "game_logic.h"
 
 
-/*
-* The Function checks if the value can be stored in the cell
-* @param sudoku - a struct inckuding all the properties of the game.
-* @param row_index - the row of the cell we are checking
-* @param col_index - the column of the cell we are checking
-* @param value - The value we want to enter
-* @return -1(true) if the value can be placed in the cell, 0(false) otherwise
-*/
+
 int valid_value(int row_index, int col_index, int value) {
 	return check_row(row_index, col_index, value) &&
 		check_col(row_index, col_index, value) &&
@@ -94,9 +87,11 @@ void update_errors_block(int row_index, int col_index) {
 																							 /* Check the block with the boundaries we have set */
 	for (i = 0; i < sudoku.block_row_length; i++) {
 		for (j = 0; j < sudoku.block_col_length; j++) {
-			if (valid_value(j, i, sudoku.board[j][i].value))
-				sudoku.board[j][i].error = false;
-			else sudoku.board[j][i].error = true;
+			if (!(row_index == i || col_index == j)) { /* we already updated the row and the col */
+				if (valid_value(i, j, sudoku.board[j][i].value))
+					sudoku.board[i][j].error = false;
+				else sudoku.board[i][j].error = true;
+			}
 		}
 	}
 }
