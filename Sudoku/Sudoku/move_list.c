@@ -85,8 +85,11 @@ char *test_list_module() { /* prints the message if (2nd arg) is false */
 
 int redo() {
 	Node* curr_node;
+	int i, j, board_size, prev_b_val, updated_b_val;
+	cell **prev_b, **updated_b;
 
 	curr_node = move_list->current_Node_move;
+	board_size = sudoku.block_col_length * sudoku.block_row_length;
 
 	if (game_mode == init) {/* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
@@ -104,75 +107,137 @@ int redo() {
 	/* Change game board cell to the updated_val. somewhere, but not in this module */
 	//  TODO: game_board[curr_node->row][curr_node->column] = curr_node->updated_val;
 
+	prev_b = curr_node->prev_board;
+	updated_b = curr_node->updated_board;
+
 	/* print the appropriate message to the change */
-	if (curr_node->updated_val == 0) {
-		if (curr_node->prev_val == 0) {
-			printf("Undo %d,%d from %c to %c\n",
-				curr_node->row, curr_node->column, '_', '_');
-		}
-		else {
-			printf("Undo %d,%d from %d to %c\n",
-				curr_node->row, curr_node->column, curr_node->prev_val, '_');
+	/* print the appropriate message to the change */
+	if (prev_b || updated_b) {
+		for (i = 0; i < board_size; i++) {
+			for (j = 0; j < board_size; j++) {
+				prev_b_val = prev_b[i][j].value;
+				updated_b_val = updated_b[i][j].value;
+
+				if (prev_b_val != updated_b_val) {
+					redo_print(i, j, prev_b_val, updated_b_val);
+				}
+			}
 		}
 	}
 	else {
-		if (curr_node->prev_val == 0) {
-			printf("Undo %d,%d from %c to %d\n",
-				curr_node->row, curr_node->column, '_', curr_node->updated_val);
-		}
-		else {
-			printf("Undo %d,%d from %d to %d\n",
-				curr_node->row, curr_node->column, curr_node->prev_val, curr_node->updated_val);
-		}
+		redo_print(curr_node->row, curr_node->column, curr_node->prev_val, curr_node->updated_val);
 	}
 
 	return EXIT_SUCCESS;
 }
 
 
-int undo() {
+void redo_print(int row, int column, int prev_val, int updated_val) {
+	if (updated_val == 0) {
+		if (prev_val == 0) {
+			printf("Redo %d,%d from %c to %c\n",
+				row, column, '_', '_');
+		}
+		else {
+			printf("Redo %d,%d from %d to %c\n",
+				row, column, prev_val, '_');
+		}
+	}
+	else {
+		if (prev_val == 0) { /* updated not 0 , prev = 0 */
+			printf("Redo %d,%d from %c to %d\n",
+				row, column, '_', updated_val);
+		}
+		else {
+			printf("Redo %d,%d from %d to %d\n",
+				row, column, prev_val, updated_val);
+		}
+	}
+}
+
+
+Node* undo() {
 	Node* curr_node;
+	int i, j, board_size, prev_b_val, updated_b_val;
+	cell **prev_b, **updated_b;
 
 	curr_node = move_list->current_Node_move;
+	board_size = sudoku.block_col_length * sudoku.block_row_length;
 
 	if (game_mode == init) { /* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
-		return EXIT_SUCCESS;
+		return NULL;
 	}
 	if (curr_node == move_list->head) {
 		printf("Error: no moves to undo\n");
-		return EXIT_SUCCESS;
+		return NULL;
 	}
 
 	/* Change game board cell to the prev_val. somewhere, but not in this module */
 	// TODO: game_board[curr_node->row][curr_node->column] = curr_node->prev_val;
 
+	prev_b = curr_node->prev_board;
+	updated_b = curr_node->updated_board;
+
 	/* print the appropriate message to the change */
-	if (curr_node->updated_val == 0) {
-		if (curr_node->prev_val == 0) {
-			printf("Undo %d,%d from %c to %c\n",
-				curr_node->row, curr_node->column, '_', '_');
-		}
-		else {
-			printf("Undo %d,%d from %c to %d\n",
-				curr_node->row, curr_node->column, '_', curr_node->prev_val);
+	if (prev_b || updated_b) {
+		for (i = 0; i < board_size; i++) {
+			for (j = 0; j < board_size; j++) {
+				prev_b_val = prev_b[i][j].value;
+				updated_b_val = updated_b[i][j].value;
+				
+				if (prev_b_val != updated_b_val) {
+					undo_print(i, j, prev_b_val, updated_b_val);
+				}
+			}
 		}
 	}
 	else {
-		if (curr_node->prev_val == 0) {
-			printf("Undo %d,%d from %d to %c\n",
-				curr_node->row, curr_node->column, curr_node->updated_val, '_');
-		}
-		else {
-			printf("Undo %d,%d from %d to %d\n",
-				curr_node->row, curr_node->column, curr_node->updated_val, curr_node->prev_val);
-		}
+		undo_print(curr_node->row, curr_node->column, curr_node->prev_val, curr_node->updated_val);
 	}
+	
 
 	/* Set the node pointer to its previous node in the list */
 	move_list->current_Node_move = curr_node->prev;
 
-	return EXIT_SUCCESS;
+	return curr_node;
+}
+
+void undo_print(int row, int column, int prev_val, int updated_val) {
+	if (updated_val == 0) {
+		if (prev_val == 0) {
+			printf("Undo %d,%d from %c to %c\n",
+				row, column, '_', '_');
+		}
+		else {
+			printf("Undo %d,%d from %c to %d\n",
+				row, column, '_', prev_val);
+		}
+	}
+	else {
+		if (prev_val == 0) {
+			printf("Undo %d,%d from %d to %c\n",
+				row, column, updated_val, '_');
+		}
+		else {
+			printf("Undo %d,%d from %d to %d\n",
+				row, column, updated_val, prev_val);
+		}
+	}
+}
+
+
+int node_delete(Node *node) {
+	if (!node) {
+		return EXIT_SUCCESS;
+	}
+
+	if (node->prev_board || node->updated_board) {
+		free_board(node->prev_board);
+		free_board(node->updated_board);
+	}
+	
+	free(node);
 }
 
 
@@ -187,7 +252,7 @@ int delete_list_full()
 	curr = move_list->head->next;
 	while (curr != NULL) { /* free all of the nodes in the list */
 		next = curr->next;
-		free(curr);
+		node_delete(curr);
 		curr = next;
 	}
 
@@ -213,7 +278,7 @@ int delete_list_from_the_current_node() {
 	curr = move_list->current_Node_move->next;
 	while (curr != NULL) { 
 		next = curr->next;
-		free(curr);
+		node_delete(curr);
 		curr = next;
 	}
 
@@ -232,7 +297,7 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 	/* Build a new node and attach to list */
 	node_ptr = malloc(SIZE_OF_NODE);
 	if (node_ptr == NULL) {
-		perror("malloc failed in add_new_node() function\n");
+		perror("malloc failed in add_new_node() function");
 		return EXIT_FAILURE;
 	}
 	node_ptr->row = row_arg;
@@ -241,12 +306,41 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 	node_ptr->updated_val = updated_val_arg;
 	node_ptr->next = NULL;
 	node_ptr->prev = move_list->tail;
+	node_ptr->prev_board = NULL;
+	node_ptr->updated_board = NULL;
 
 	move_list->tail->next = node_ptr; /* set the tail's next pointer to be the new node */
 	move_list->tail = node_ptr; /* Set as new Tail of the move list */
 
 	return EXIT_SUCCESS;
 }
+
+
+/* Used for the Autofill command */
+int add_new_node_autofill(cell **prev_board, cell **updated_board) {
+	Node* node_ptr;
+
+	/* Build a new node and attach to list */
+	node_ptr = malloc(SIZE_OF_NODE);
+	if (node_ptr == NULL) {
+		perror("malloc failed in add_new_node() function\n");
+		return EXIT_FAILURE;
+	}
+
+	node_ptr->row = NOT_INIT;
+	node_ptr->column = NOT_INIT;
+	node_ptr->prev_val = NOT_INIT;
+	node_ptr->updated_val = NOT_INIT;
+	node_ptr->next = NULL;
+	node_ptr->prev = move_list->tail;
+	node_ptr->prev_board = prev_board;
+	node_ptr->updated_board = updated_board;
+
+	move_list->tail->next = node_ptr; /* set the tail's next pointer to be the new node */
+	move_list->tail = node_ptr; /* Set as new Tail of the move list */
+
+}
+
 
 int initialize_list_parameters() {
 	Node* head_ptr;

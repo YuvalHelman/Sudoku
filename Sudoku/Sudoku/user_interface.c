@@ -5,6 +5,8 @@
 #include <string.h>
 #include "user_interface.h"
 #include "game_logic.h"
+#include "aux_main.h"
+#include "move_list.h"
 
 
 
@@ -141,7 +143,17 @@ void separator_row() {
 
 
 void autofill() {
+	cell **prev_board, **updated_board;
+
+	/* create a copy of the board before the autofill function */
+	prev_board = copy_current_board();
+
 	autofill(0, 0);
+
+	/* create a copy of the newly board after the autofill function */
+	updated_board = copy_current_board();
+
+	add_new_node_autofill(prev_board, updated_board);
 }
 
 void autofill(int row_index, int col_index) {

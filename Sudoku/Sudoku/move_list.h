@@ -5,6 +5,28 @@
 
 #define SIZE_OF_NODE (6*sizeof(int))
 #define SIZE_OF_LIST (3*sizeof(void*))
+#define NOT_INIT -1
+
+#ifndef __TYPES_H
+#define __TYPES_H
+/* a Cell struct
+Fixed explanations:
+0 - Should be blank \\could be replaced for defult value 0=blank
+1 - a fixed cell */
+typedef struct cell_t {
+	int value;
+	int fixed;
+	int solution;
+	int error;
+}cell;
+
+typedef struct sudoku_t {
+	cell **board;
+	int mark_errors;
+	int block_col_length;
+	int block_row_length;
+}sudoku_t;
+#endif
 
 
 /* A Node struct that will hold relavent info for a user move in the linked list
@@ -20,6 +42,9 @@ typedef struct node_t {
 	unsigned int column;
 	int prev_val;
 	int updated_val;
+	/* A whole board saving for the "autofill" command */
+	cell **prev_board;
+	cell **updated_board;
 } Node;
 
 /* A linked list of user moves within the game.
@@ -68,6 +93,13 @@ int initialize_list_parameters();
  */
 int redo();
 /*
+ *
+ *
+ *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *			  on any error returns EXIT_FAILURE(1) and prints the error.
+ */
+void redo_print(int row, int column, int prev_val, int updated_val);
+/*
  *   This function goes forward one move from the current move and changes the list position and board.
  *   If there isnt a move forward, the function does nothing and returns SUCCESS.
  *
@@ -75,6 +107,24 @@ int redo();
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int undo();
+/*
+ *   
+ *
+ *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *			  on any error returns EXIT_FAILURE(1) and prints the error.
+ */
+void undo_print(int row, int column, int prev_val, int updated_val);
+
+
+
+/*
+*   This function is used for deleting a node while free'ing all its content.
+*   should be used in any function that deletes a part of the list.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*			 on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int node_delete(Node *node);
 /*
  *   This function is used for deleting the entire list (back to the initialized phase).
  *   should be used for the "RESTART", "EXIT" or any other program terminating step.
@@ -109,6 +159,18 @@ int delete_list_from_the_current_node();
 			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg);
+/*
+*   adds a new Node to the tail of the move_list. should be used in the "autofull" command.
+*   Each new node should be added with dynamiclly allocated boards that indicates  
+*	The board before doing the Autofill command, and one after that.
+*
+*   prev_board: the row in which the change was made
+*   updated_board: the column in which the change was made
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int add_new_node_autofill(cell **prev_board, cell **updated_board);
 
 
 
