@@ -91,7 +91,7 @@ int initialize_list_parameters();
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
-int redo();
+Node* redo();
 /*
  *
  *
@@ -106,7 +106,7 @@ void redo_print(int row, int column, int prev_val, int updated_val);
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
-int undo();
+Node* undo();
 /*
  *   
  *
@@ -114,9 +114,6 @@ int undo();
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
 void undo_print(int row, int column, int prev_val, int updated_val);
-
-
-
 /*
 *   This function is used for deleting a node while free'ing all its content.
 *   should be used in any function that deletes a part of the list.

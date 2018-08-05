@@ -44,7 +44,6 @@ const static struct {
 * @return - the maching sudokuCommands(enum);
 */
 sudokuCommands str2enum(const char *str);
-
 /*
 * The Function recives the command from the user and interprets it to a function that handles the command.
 ************************* TODO: The function should check if the buffer is even valid, or to accept only valid ones*****
@@ -54,8 +53,6 @@ false(0) if some error occured.
 * buffer is destroyed after this function.
 */
 int user_command(char* buffer);
-
-
 /*
 * The Function set a value into cell [x][y].
 * @param row_index - index x;
@@ -63,24 +60,22 @@ int user_command(char* buffer);
 * @return - ture(1) if now errors, otherwise false(0).
 */
 int set(int row_index, int col_index, int value);
-
 /*
 * The Function prints the sudoku board.
 * if mark_erorrs is on put '*' near errors.
 * put '.' near fixed value.
 */
 int print_board();
-
 /*
 * The Function prints 4N+n+1 '-'. (Sub fanc of print board). 
 */
 void separator_row();
-
 /*
 * The Function ills all the board cells that have only 1 valid value.
 */
-void autofill();
+int autoFill();
 
+void autofill_board(int row_index, int col_index);
 /*
 * The Function checks if there is only onr valid value for cell [x][y].
 * @param row_index - index x;

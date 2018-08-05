@@ -83,7 +83,7 @@ char *test_list_module() { /* prints the message if (2nd arg) is false */
 }
 
 
-int redo() {
+Node* redo() {
 	Node* curr_node;
 	int i, j, board_size, prev_b_val, updated_b_val;
 	cell **prev_b, **updated_b;
@@ -93,11 +93,11 @@ int redo() {
 
 	if (game_mode == init) {/* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
-		return EXIT_SUCCESS;
+		return NULL;
 	}
 	if (curr_node == move_list->tail) {
 		printf("Error: no moves to redo\n");
-		return EXIT_SUCCESS;
+		return NULL;
 	}
 
 	/* Set the current_node_move pointer to the next node in the list */
@@ -105,7 +105,7 @@ int redo() {
 	curr_node = curr_node->next;
 
 	/* Change game board cell to the updated_val. somewhere, but not in this module */
-	//  TODO: game_board[curr_node->row][curr_node->column] = curr_node->updated_val;
+	/* TODO: game_board[curr_node->row][curr_node->column] = curr_node->updated_val; */
 
 	prev_b = curr_node->prev_board;
 	updated_b = curr_node->updated_board;
@@ -128,7 +128,7 @@ int redo() {
 		redo_print(curr_node->row, curr_node->column, curr_node->prev_val, curr_node->updated_val);
 	}
 
-	return EXIT_SUCCESS;
+	return curr_node;
 }
 
 
@@ -238,6 +238,8 @@ int node_delete(Node *node) {
 	}
 	
 	free(node);
+
+	return EXIT_SUCCESS;
 }
 
 
@@ -339,6 +341,7 @@ int add_new_node_autofill(cell **prev_board, cell **updated_board) {
 	move_list->tail->next = node_ptr; /* set the tail's next pointer to be the new node */
 	move_list->tail = node_ptr; /* Set as new Tail of the move list */
 
+	return EXIT_SUCCESS;
 }
 
 

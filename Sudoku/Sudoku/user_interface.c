@@ -142,34 +142,44 @@ void separator_row() {
 }
 
 
-void autofill() {
+int autoFill() {
 	cell **prev_board, **updated_board;
 
 	/* create a copy of the board before the autofill function */
-	prev_board = copy_current_board();
+	if( !(prev_board = copy_current_board()) ){
+		return EXIT_FAILURE;
+	}
 
-	autofill(0, 0);
+	autofill_board(0, 0);
 
 	/* create a copy of the newly board after the autofill function */
-	updated_board = copy_current_board();
+	if ( !(updated_board = copy_current_board()) ) {
+		free(prev_board);
+		return EXIT_FAILURE;
+	}
 
-	add_new_node_autofill(prev_board, updated_board);
+	if (add_new_node_autofill(prev_board, updated_board) == EXIT_FAILURE) {
+		printf("adding a new node to the list has failed\n");
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
 }
 
-void autofill(int row_index, int col_index) {
+void autofill_board(int row_index, int col_index) {
 	int i, j, board_length, value;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	if (row_index >= board_length) { /* end of the board */
 		return;
 	}
 	else if (col_index >= board_length) { /* end of a line */
-		return autofill(row_index + 1, 0);
+		return autofill_board(row_index + 1, 0);
 	}
 	else {
 		if (!sudoku.board[row_index][col_index].value) {
 			value = one_possible_value(row_index, col_index);  /* checks that there is only 1 valid value */
 		}
-		autofill(row_index, col_index + 1); /* next cell */
+		autofill_board(row_index, col_index + 1); /* next cell */
 		sudoku.board[row_index][col_index].value = value; /* change the value after we checked all the cells */
 
 	}
