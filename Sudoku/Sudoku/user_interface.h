@@ -1,10 +1,17 @@
 #include "aux_main.h"
 
 
+#define DEFAULT_BLOCK_LEN 3
+
 typedef enum {solve, edit, mark_errors,
 	print_board, set, validate, generate,
 	undo, redo, save, hint,
 	num_solutions, autofill, reset, exit} sudokuCommands;
+
+typedef struct row_col_t {
+	int row;
+	int col;
+} row_col;
 
 
 const static struct {
@@ -57,7 +64,7 @@ int user_command(char* buffer);
 * The Function set a value into cell [x][y].
 * @param row_index - index x;
 * @param col_index - index y;
-* @return - ture(1) if now errors, otherwise false(0).
+* @return - true(1) if now errors, otherwise false(0).
 */
 int set(int row_index, int col_index, int value);
 /*
@@ -65,7 +72,7 @@ int set(int row_index, int col_index, int value);
 * if mark_erorrs is on put '*' near errors.
 * put '.' near fixed value.
 */
-int print_board();
+void print_board();
 /*
 * The Function prints 4N+n+1 '-'. (Sub fanc of print board). 
 */
@@ -74,7 +81,9 @@ void separator_row();
 * The Function ills all the board cells that have only 1 valid value.
 */
 int autoFill();
-
+/* 
+ *
+ */
 void autofill_board(int row_index, int col_index);
 /*
 * The Function checks if there is only onr valid value for cell [x][y].
@@ -83,4 +92,20 @@ void autofill_board(int row_index, int col_index);
 * @return - the one possible value if there is one, otherwise return 0.
 */
 int one_possible_value(int row_index, int col_index);
+/*
+ *
+ *
+ */
+int Solve(char* filepath);
+/*
+*
+*
+*/
+int Edit(char* filepath);
+/*
+*
+*
+*/
+int Save(char* filepath);
+
 

@@ -1,41 +1,36 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include "file_manipulation.h"
 #include "aux_main.h"
 
-int save_to_file(char* filepath){
+
+int save_to_file(FILE* fd){
 	int temp_buff[TEMP_BUFF_SIZE];
-	FILE* fd;
-	int rows, columns, res, val, i, j, curr_col, read_counter, num_of_rows;
+	int rows, columns, res, val, i, j, curr_col, read_counter, board_len;
 	
-	/* Open the file*/
-	fd = fopen(filepath, "w");
-	if (!fd) {
-		printf("Error: File cannot be opened\n");
-		return EXIT_FAILURE;
-	}
 	/* Read the row, column from the file */
 	res = fprintf(fd, "%d", sudoku.block_row_length);
 	if (res <= 0) {
-		perror("writing block row size to the file has failed. exiting\n");
+		printf("writing block row size to the file has failed. exiting\n");
 		return EXIT_FAILURE;
 	}
 	res = fprintf(fd, "%d\n", sudoku.block_col_length);
 	if (res <= 0) {
-		perror("writing block column size to the file has failed. exiting\n");
+		printf("writing block column size to the file has failed. exiting\n");
 		return EXIT_FAILURE;
 	}
 
 	read_counter = 1;
-	num_of_rows = sudoku.block_col_length * sudoku.block_row_length;
-	for (i = 0; i < num_of_rows; i++) {
-		for (j = 0; j < num_of_rows; j++) {
-			if (game_mode == edit || sudoku.board[i][j].fixed) { /* Saving in "edit mode" all cells are saved as fixed values */
+	board_len = sudoku.block_col_length * sudoku.block_row_length;
+	for (i = 0; i < board_len; i++) {
+		for (j = 0; j < board_len; j++) {
+			if (game_mode == edit || sudoku.board[i][j].is_fixed) { /* Saving in "edit mode" all cells are saved as fixed values */
 				/* After num_of_rows numbers, print a new line */
-				if (read_counter == num_of_rows) { 
+				if (read_counter == board_len) { 
 					res = fprintf(fd, "%d.\n", sudoku.board[i][j].value);
 					if (res <= 0) {
-						perror("writing block column size to the file has failed. exiting\n");
+						printf("writing block column size to the file has failed. exiting\n");
 						return EXIT_FAILURE;
 					}
 					read_counter = 1;
@@ -43,7 +38,7 @@ int save_to_file(char* filepath){
 				else {
 					res = fprintf(fd, "%d. ", sudoku.board[i][j].value);
 					if (res <= 0) {
-						perror("writing block column size to the file has failed. exiting\n");
+						printf("writing block column size to the file has failed. exiting\n");
 						return EXIT_FAILURE;
 					}
 					read_counter++;
@@ -51,7 +46,7 @@ int save_to_file(char* filepath){
 			}
 			else { /* Not fixed */
 				   /* After num_of_rows numbers, print a new line */
-				if (read_counter == num_of_rows) {
+				if (read_counter == board_len) {
 					res = fprintf(fd, "%d\n", sudoku.board[i][j].value);
 					if (res <= 0) {
 						perror("writing block column size to the file has failed. exiting\n");
@@ -75,18 +70,10 @@ int save_to_file(char* filepath){
 }
 
 
-int read_from_file(char* filepath) {
-	int vals[BUF_SIZE];
-	FILE* fd;
-	int rows, columns, res, val, i, j, board_len, curr_row, curr_col, ret_code;
-	char posibble_fixed;
-
-	/* Open the file*/
-	fd = fopen(filepath, "r");
-	if (!fd) {
-		printf("Error: File cannot be opened\n");
-		return EXIT_FAILURE;
-	}
+int read_from_file(FILE* fd, int* pRow, int* pCol) {
+	char vals[BUF_SIZE];
+	int rows, columns, res, val, board_len, curr_row, curr_col, ret_code, value;
+	char token;
 
 	/* Read the row, column from the file */
 	res = fscanf(fd, "%d", &rows);
@@ -98,25 +85,34 @@ int read_from_file(char* filepath) {
 		return EXIT_FAILURE;
 	}
 
+	if (initialize_new_board(sudoku.board, columns, rows) == EXIT_FAILURE) {
+		return EXIT_FAILURE;
+	}
+
 	board_len = rows * columns;
+	(*pRow) = rows;
+	(*pCol) = columns;
 	ret_code = BUF_SIZE;
 	curr_col = 0;
 	curr_row = 0;
 	/* Fill the game board with the relevant info from the file */
 	while (ret_code >= 0) {
-		ret_code = (int)fread(vals, sizeof(int), BUF_SIZE, fd);
-		if (feof(fd)) {
-			return EXIT_SUCCESS;
-		}
-		else if (ferror(fd)) {
-			perror("Error reading From the file");
-			return EXIT_FAILURE;
-		}
-		for (i = 0; i < ret_code; i++) {
-			sudoku.board[curr_row][curr_col].value = vals[i];
-			/* Iterate i,j by counting the number of numbers read */
-			if (curr_col == board_len-1) {
-				if (curr_row == board_len-1) {
+		ret_code = (int)fread(vals, sizeof(char), BUF_SIZE-1, fd);
+		vals[ret_code - 1] = '\0';
+
+		token = strtok(vals, " \t\r\n");
+		while (token) {
+			value = (int)strtol(token, NULL, 10);
+
+			sudoku.board[curr_row][curr_col].value = value;
+			sudoku.board[curr_row][curr_col].is_fixed = 0;
+
+			if ((strchr(token, '.')) != NULL) { /* Check for a '.' in the token */
+				sudoku.board[curr_row][curr_col].is_fixed = True;
+			}
+			/* Iterate the current column\row values */
+			if (curr_col == board_len - 1) {
+				if (curr_row == board_len - 1) {
 					return EXIT_SUCCESS;
 				}
 				else {
@@ -127,6 +123,15 @@ int read_from_file(char* filepath) {
 			else {
 				curr_col++;
 			}
+
+			token = strtok(NULL, " ");
+		}
+		if (feof(fd)) {
+			return EXIT_SUCCESS;
+		}
+		else if (ferror(fd)) {
+			perror("Error reading From the file");
+			return EXIT_FAILURE;
 		}
 	}
 	return EXIT_SUCCESS;

@@ -1,6 +1,6 @@
 #pragma once
 
-// typedef enum { false = 0, true = 1 } bool;
+typedef enum { False = 0, True = 1 } bool;
 #define false 0
 #define true 1
 
@@ -14,7 +14,7 @@ Fixed explanations:
 1 - a fixed cell */
 typedef struct cell_t {
 	int value;
-	int fixed;
+	bool is_fixed;
 	int solution;
 	int error;
 }cell;
@@ -38,27 +38,26 @@ extern sudoku_t sudoku;
 /*
  *  This function creates a new board which is a copy of the current board which is
  *	being played on when the function is called.
+ *	The function assumes that there is a sudoku.board which is initialized and that the other
+ *	sudoku's values are valid.
  *
  *   returns: a pointer to the newly allocated memmory for the new board.
  *			 on any error returns NULL and prints the error.
  */
 cell** copy_current_board();
 /*
- *   This function recieves a pointer to a board that needs to be initialized.
- *	The function assumes that the sudoku's block_col_length and block_row_length
- *	are already initialized.
+ *	This function recieves a pointer to a board that needs to be free'd.
+ *	Any unsaved data is lost.
  *
- *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *   returns: EXIT_SUCCESS(0) on success.
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
-int free_board(cell** board);
+int free_board(cell** board, int block_col_len, int block_row_len);
 /*
- *   This function recieves a pointer to a board that needs to be initialized.
- *	The function assumes that the sudoku's block_col_length and block_row_length 
- *	are already initialized.
+ *  This function recieves a pointer to a board that needs to be initialized.
  *	The initialized board has all 0's in its cells.
  *
- *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *   returns: EXIT_SUCCESS(0) on success.
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
-int initialize_new_board(cell** board);
+int initialize_new_board(cell** board, int block_col_len, int block_row_len);
