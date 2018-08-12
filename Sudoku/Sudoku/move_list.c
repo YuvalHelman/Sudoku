@@ -325,7 +325,7 @@ int add_new_node_autofill(cell **prev_board, cell **updated_board) {
 	/* Build a new node and attach to list */
 	node_ptr = malloc(SIZE_OF_NODE);
 	if (node_ptr == NULL) {
-		perror("malloc failed in add_new_node() function\n");
+		perror("malloc failed in add_new_node() in autofill function");
 		return EXIT_FAILURE;
 	}
 
@@ -350,12 +350,12 @@ int initialize_list_parameters() {
 
 	move_list = malloc(SIZE_OF_LIST);
 	if (move_list == NULL) {
-		perror("malloc failed in initialize_list_parameters() function\n");
+		perror("malloc failed in initialize_list_parameters() function");
 		return EXIT_FAILURE;
 	}
 	head_ptr = calloc(6, sizeof(int));
 	if (head_ptr == NULL) {
-		perror("calloc failed in initialize_list_parameters() function\n");
+		perror("calloc failed in initialize_list_parameters() function");
 		return EXIT_FAILURE;
 	}
 	move_list->head = head_ptr;

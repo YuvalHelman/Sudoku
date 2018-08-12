@@ -7,6 +7,7 @@
 #include "game_logic.h"
 #include "aux_main.h"
 #include "move_list.h"
+#include "file_manipulation.h"
 
 
 
@@ -63,29 +64,39 @@ int user_command(char* buffer) {
 
 int set(int row_index, int col_index, int value) {
 
+	int prev_val, updated_val, board_len;
+
+	board_len = sudoku.block_row_length * sudoku.block_col_length; 
+	prev_val = sudoku.board[row_index][col_index].value;
+	updated_val = value;
+
 	/* check if (i,j) is a fixed cell */
-	if (sudoku.board[row_index][col_index].fixed) { /* it is fixed.*/
+	if (sudoku.board[row_index][col_index].is_fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
 		return false;
 	}
-	/* check if the value is ligall*/
-	if (value < 0 || value > sudoku.block_row_length*sudoku.block_col_length) {
+
+	// TODO: Check if row_index && col_index are valid ? (or mabye in the parser ?)
+
+	/* check if the value is legal */
+	if (value < 0 || value > board_len) {
 		printf("Error: value not in range 0-N\n");
 		return false;
 	}
-	else {
-		sudoku.board[row_index][col_index].value = value;
-		update_errors(row_index, col_index); /* update all the relevant cells */
-		print_board();
-		return true;
-		// counter, check last cell
-
+	
+	sudoku.board[row_index][col_index].value = value;
+	if (add_new_node(row_index, col_index, prev_val, updated_val) == EXIT_FAILURE) {
+		return false;
 	}
-
+	update_errors(row_index, col_index); /* update all the relevant cells */
+	print_board();
+	
+	return true;
+	// counter, check last cell
 
 }
 
-int print_board() {
+void print_board() {
 
 	/* variables declarations */
 	int i, j, board_length;
@@ -105,11 +116,11 @@ int print_board() {
 			{
 				printf("    ");
 			}
-			else if (sudoku.board[i][j].fixed) {				/* If fixed number */
+			else if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
 				printf(" "); /* DOT for fixed number */
 				printf("%2d.", sudoku.board[i][j].value); /* DOT for fixed number*/
 			}
-			else if (!sudoku.board[i][j].fixed) { /* Non-fixed number that the user inputed */
+			else if (!sudoku.board[i][j].is_fixed) { /* Non-fixed number that the user inputed */
 				printf(" "); /* space for normal number */
 				printf("%2d ", sudoku.board[i][j].value);
 				if (sudoku.mark_errors && sudoku.board[i][j].error) /* check if we need to mark an error */
@@ -201,4 +212,120 @@ int one_possible_value(int row_index, int col_index) {
 		}
 	}
 	return value;
+}
+
+
+int Solve(char* filepath) {
+	FILE* fd;
+	int ret_val;
+	int block_rows, block_cols;
+
+	/* Change the game mode */
+	game_mode = solve;
+
+	/* Open the file*/
+	fd = fopen(filepath, "r");
+	if (!fd) {
+		printf("Error: File doesn't exist or cannot be opened\n");
+		return EXIT_SUCCESS;
+	}
+
+	/* Reset basic game utilities */
+	delete_list_full();
+	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
+	sudoku.board = NULL;
+
+	/* Read from the file and initialize the board and sudoku's block_col/row lengths */
+	if (read_from_file(fd, &block_rows, &block_cols) == EXIT_FAILURE) {
+		free_board(sudoku.board, block_cols, block_rows);
+		return EXIT_FAILURE;
+	}
+
+	/* Set basic sudoku utilities */
+	sudoku.block_row_length = block_rows;
+	sudoku.block_col_length = block_cols;
+
+	print_board();
+
+	return EXIT_SUCCESS;
+}
+
+
+int Edit(char* filepath) {
+	FILE* fd;
+	int ret_val;
+	int block_rows, block_cols;
+
+	/* Change the game mode */
+	game_mode = edit;
+
+	/* Reset basic game utilities */
+	delete_list_full();
+	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
+	sudoku.board = NULL;
+
+	if (filepath != NULL) {
+		/* Open the file*/
+		fd = fopen(filepath, "r");
+		if (!fd) {
+			printf("Error: File cannot be opened\n");
+			return EXIT_SUCCESS;
+		}
+
+		/* Read from the file and initialize the board and sudoku's block_col/row lengths */
+		if (read_from_file(fd, &block_rows, &block_cols) == EXIT_FAILURE) {
+			free_board(sudoku.board, block_cols, block_rows);
+			return EXIT_FAILURE;
+		}
+
+		/* Set basic sudoku utilities */
+		sudoku.block_row_length = block_rows;
+		sudoku.block_col_length = block_cols;
+	}
+	else {
+		if (initialize_new_board(sudoku.board, DEFAULT_BLOCK_LEN, DEFAULT_BLOCK_LEN) == EXIT_FAILURE) {
+			return EXIT_FAILURE;
+		}
+
+		sudoku.block_row_length = DEFAULT_BLOCK_LEN;
+		sudoku.block_col_length = DEFAULT_BLOCK_LEN;
+
+	}
+
+	print_board();
+
+	return EXIT_SUCCESS;
+}
+
+int Save(char* filepath) {
+	FILE* fd;
+	int ret_val;
+	int block_rows, block_cols;
+
+	if (game_mode == edit) {
+
+		// TODO: check if board has errors, and if so --> exit and print:
+		//		printf("Error: board contains erroneous values\n");
+		
+		// TODO: validate. if validation fails, --> exit and print:
+		//		printf("Error: board validation failed\n");
+
+
+	}
+
+	/* Open the file*/
+	fd = fopen(filepath, "w");
+	if (!fd) {
+		printf("Error: File cannot be created or modified\n");
+		return EXIT_SUCCESS;
+	}
+
+	if (save_to_file(fd) == EXIT_FAILURE) {
+		return EXIT_FAILURE;
+	}
+	
+	printf("Saved to %s\n", filepath);
+
+
+
 }

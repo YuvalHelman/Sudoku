@@ -77,8 +77,9 @@ extern List *move_list;
  */
 char *test_list_module();
 /*
- *   This function is called first thing in "main" in order to initialize the objects that are needed to start
- *   working with the move_list module. It should be called only once before playing.
+ *  This function is called first thing in "main" in order to initialize
+ *	the objects that are needed to start working with the move_list module.
+ *	It should be called only once before playing.
  *
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
