@@ -143,6 +143,7 @@
     <ClCompile Include="file_manipulation.c" />
     <ClCompile Include="game_logic.c" />
     <ClCompile Include="game_logic.h" />
+    <ClCompile Include="ILP.c" />
     <ClCompile Include="move_list.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="solver.c" />

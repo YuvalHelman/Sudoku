@@ -1,31 +1,32 @@
 #include "aux_main.h"
 
 
-typedef enum {solve, edit, mark_errors,
-	print_board, set, validate, generate,
-	undo, redo, save, hint,
-	num_solutions, autofill, reset, exit} sudokuCommands;
+typedef enum {solve_command, edit_command, mark_errors_command,
+	print_board_command, set_command, validate_command, generate_command,
+	undo_command, redo_command, save_command, hint_command,
+	num_solutions_command, autofill_command, reset_command, exit_command, error_command} sudokuCommands;
 
 
 const static struct {
 	sudokuCommands val;
 	const char *str;
 } conversion[] = {
-	{ 0, "solve" },
-	{ 1, "edit" },
-	{ 2, "mark_errors" },
-	{ 3, "print_board" },
-	{ 4, "set" },
-	{ 5, "validate" },
-	{ 6, "generate" },
-	{ 7, "undo" },
-	{ 8, "redo" },
-	{ 9, "save" },
-	{ 10, "hint" },
-	{ 11, "num_solutions" },
-	{ 12, "autofill" },
-	{ 13, "reset" },
-	{ 14, "exit" }
+	{ 0, "solve_command" },
+	{ 1, "edit_command" },
+	{ 2, "mark_errors_command" },
+	{ 3, "print_board_command" },
+	{ 4, "set_command" },
+	{ 5, "validate_command" },
+	{ 6, "generate_command" },
+	{ 7, "undo_command" },
+	{ 8, "redo_command" },
+	{ 9, "save_command" },
+	{ 10, "hint_command" },
+	{ 11, "num_solutions_command" },
+	{ 12, "autofill_command" },
+	{ 13, "reset_command" },
+	{ 14, "exit_command" },
+	{ 15, "error_command" }
 };
 
 

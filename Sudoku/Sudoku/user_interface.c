@@ -17,7 +17,7 @@ str2enum(const char *str)
 	for (j = 0; j < sizeof(conversion) / sizeof(conversion[0]); ++j)
 		if (!strcmp(str, conversion[j].str))
 			return conversion[j].val;
-	error_message("no such string");
+	return error_command;
 }
 
 
@@ -36,23 +36,24 @@ int user_command(char* buffer) {
 	sudoku_command = str2enum(command);
 	switch (sudoku_command)
 	{
-	solve:break;
-	edit:break;
-	mark_errors: break;
-	print_board:break;
-	set:
+	case solve_command:break;
+	case edit_command:break;
+	case mark_errors_command: break;
+	case print_board_command: break;
+	case set_command:
 
 		break;
-	validate:break;
-	generate:break;
-	undo:break;
-	redo:break;
-	save:break;
-	hint:break;
-	num_solutions:break;
-	autofill:break;
-	reset:break;
-	exit:break;
+	case validate_command:break; 
+	case generate_command:break;
+	case undo_command:break;
+	case redo_command:break;
+	case save_command:break;
+	case hint_command:break;
+	case num_solutions_command:break;
+	case autofill_command:break;
+	case reset_command:break;
+	case exit_command:break;
+	case error_command:break;
 	default:
 		return 0;
 		break;
@@ -142,7 +143,7 @@ void separator_row() {
 }
 
 
-int autoFill() {
+int autofill() {
 	cell **prev_board, **updated_board;
 
 	/* create a copy of the board before the autofill function */
@@ -167,13 +168,13 @@ int autoFill() {
 }
 
 void autofill_board(int row_index, int col_index) {
-	int i, j, board_length, value;
+	int board_length, value;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	if (row_index >= board_length) { /* end of the board */
-		return;
+		/* do nothing */
 	}
 	else if (col_index >= board_length) { /* end of a line */
-		return autofill_board(row_index + 1, 0);
+		autofill_board(row_index + 1, 0);
 	}
 	else {
 		if (!sudoku.board[row_index][col_index].value) {

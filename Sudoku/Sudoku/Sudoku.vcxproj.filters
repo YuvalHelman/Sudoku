@@ -39,6 +39,9 @@
     <ClCompile Include="move_list.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ILP.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="solver.h">

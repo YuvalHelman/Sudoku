@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "aux_main.h"
+#include "minunit.h"
 #include "game_logic.h"
+
+
+
+
 
 
 
