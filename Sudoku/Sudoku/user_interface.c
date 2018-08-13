@@ -297,17 +297,46 @@ void separator_row() {
 
 int autofill() {
 	cell **prev_board, **updated_board;
+	int row_index, col_index, board_length, value, **new_values, i;
+	board_length = sudoku.block_col_length*sudoku.block_row_length;
+
+
+	if ((new_values = (int **)malloc(sizeof(int *) * board_length)) == NULL) {
+		printf("Error: Malloc has failed allocating the board\n");
+		return EXIT_FAILURE;
+	}
+	for (i = 0; i < board_length; i++) {
+		if ((new_values[i] = (int *)calloc(board_length, sizeof(int)) == NULL)) {
+			printf("Error: Malloc has failed allocating the board\n");
+			return EXIT_FAILURE;
+		}
+	}
 
 	/* create a copy of the board before the autofill function */
-	if( !(prev_board = copy_current_board()) ){
+	if (!(prev_board = copy_current_board())) {
 		return EXIT_FAILURE;
 	}
 
-	autofill_board(0, 0);
+	for (col_index = 0; col_index < board_length; col_index++) {
+		for (row_index = 0; row_index < board_length; row_index++) {
+			if (!sudoku.board[row_index][col_index].value) {
+				value = one_possible_value(row_index, col_index);  /* checks that there is only 1 valid value */
+				new_values[row_index][col_index] = value;
+			}
+		}
+	}
 
+	for (col_index = 0; col_index < board_length; col_index++) {
+		for (row_index = 0; row_index < board_length; row_index++) {
+			if (!sudoku.board[row_index][col_index].value) {
+				sudoku.board[row_index][col_index].value = new_values[row_index][col_index];
+			}
+		}
+	}
+	free_int_matrix(new_values, sudoku.block_col_length, sudoku.block_row_length);
 	/* create a copy of the newly board after the autofill function */
 	if ( !(updated_board = copy_current_board()) ) {
-		free(prev_board);
+		free_board(prev_board, sudoku.block_col_length, sudoku.block_row_length);
 		return EXIT_FAILURE;
 	}
 
@@ -319,25 +348,6 @@ int autofill() {
 	return EXIT_SUCCESS;
 }
 
-void autofill_board(int row_index, int col_index) {
-	int board_length, value;
-	board_length = sudoku.block_col_length*sudoku.block_row_length;
-	if (row_index >= board_length) { /* end of the board */
-		/* do nothing */
-	}
-	else if (col_index >= board_length) { /* end of a line */
-		autofill_board(row_index + 1, 0);
-	}
-	else {
-		if (!sudoku.board[row_index][col_index].value) {
-			value = one_possible_value(row_index, col_index);  /* checks that there is only 1 valid value */
-		}
-		autofill_board(row_index, col_index + 1); /* next cell */
-		sudoku.board[row_index][col_index].value = value; /* change the value after we checked all the cells */
-
-	}
-}
-
 int one_possible_value(int row_index, int col_index) {
 	int i, count, board_length, value;
 	count = 0;
@@ -347,7 +357,7 @@ int one_possible_value(int row_index, int col_index) {
 			count++;
 			value = i;
 			if (count > 1) {
-				return false;
+				return 0;
 			}
 		}
 	}

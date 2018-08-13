@@ -47,6 +47,23 @@ int free_board(cell** board, int block_col_len, int block_row_len) {
 	return EXIT_SUCCESS;
 }
 
+int free_int_matrix(int** board, int block_col_len, int block_row_len) {
+	int board_size, i;
+
+	if (board == NULL) {
+		return EXIT_SUCCESS;
+	}
+
+	board_size = block_col_len * block_row_len;
+
+	for (i = 0; i < board_size; i++) {
+		free(board[i]);
+	}
+	free(board);
+
+	return EXIT_SUCCESS;
+}
+
 
 int initialize_new_board(cell** board, int block_col_len, int block_row_len) {
 	int board_size, i;

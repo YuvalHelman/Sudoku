@@ -22,7 +22,7 @@ static char * all_tests() {
 
 int main() {
 
-
+	sudoku.board
 	initialize_list_parameters();
 
 

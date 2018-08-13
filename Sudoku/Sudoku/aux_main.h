@@ -53,6 +53,7 @@ cell** copy_current_board();
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int free_board(cell** board, int block_col_len, int block_row_len);
+int free_int_matrix(int** board, int block_col_len, int block_row_len);
 /*
  *  This function recieves a pointer to a board that needs to be initialized.
  *	The initialized board has all 0's in its cells.
