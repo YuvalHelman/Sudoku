@@ -160,6 +160,9 @@
     <ClInclude Include="solver.h" />
     <ClInclude Include="user_interface.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="makefile.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

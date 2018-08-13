@@ -108,4 +108,5 @@ int Edit(char* filepath);
 */
 int Save(char* filepath);
 
+void print_board_solution(); /* Helper function for testing the solution */
 
