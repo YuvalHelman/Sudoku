@@ -22,8 +22,8 @@ typedef struct cell_t {
 typedef struct sudoku_t {
 	cell **board;
 	int mark_errors;
-	int block_col_length;
-	int block_row_length;
+	int block_col_length; /* Meaning the number of ROWS per block in the game */
+	int block_row_length; /* Meaning the number of COLUMNS per block in the game */
 }sudoku_t;
 #endif
 
