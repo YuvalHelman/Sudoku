@@ -25,47 +25,188 @@ str2enum(const char *str)
 
 int user_command(char* buffer) {
 	/* */
-	int x, y, z;
 	sudokuCommands sudoku_command;
 	char *xchar, *ychar, *zchar, *command;
 	command = strtok(buffer, " \t\r\n");
 	xchar = strtok(NULL, " \t\r\n");
 	ychar = strtok(NULL, " \t\r\n");
+	zchar = strtok(NULL, " \t\r\n");
 	if (command == NULL) {
 		return 0;
 	}
 	sudoku_command = str2enum(command);
 	switch (sudoku_command)
 	{
-	case solve_command:break;
-	case edit_command:break;
-	case mark_errors_command: break;
-	case print_board_command: break;
-	case set_command:
-
+	case solve_command:
+		Solve(xchar);	
 		break;
-	case validate_command:break; 
-	case generate_command:break;
-	case undo_command:break;
-	case redo_command:break;
-	case save_command:break;
-	case hint_command:break;
-	case num_solutions_command:break;
-	case autofill_command:break;
-	case reset_command:break;
-	case exit_command:break;
-	case error_command:break;
+	case edit_command:
+		Edit(xchar);
+		break;
+	case mark_errors_command:
+		if (game_mode != solve) 
+			goto Error_Command;
+		mark_error(atoi(xchar));
+		break;
+	case print_board_command:
+		if (game_mode == init)
+			goto Error_Command;
+		else print_board();
+		break;
+	case set_command:
+		if (game_mode == init)
+			goto Error_Command;
+		else set(atoi(xchar), atoi(ychar), atoi(zchar));
+		break;
+	case validate_command:
+		if (game_mode == init)
+			goto Error_Command;
+		else validate();
+		break;
+	case generate_command:
+		if (game_mode != edit)
+			goto Error_Command;
+		else generate(atoi(xchar),atoi(ychar));
+		break;
+	case undo_command:
+		if (game_mode == init)
+			goto Error_Command;
+		else undo();
+		break;
+	case redo_command:
+		if (game_mode == init)
+			goto Error_Command;
+		else redo();
+		break;
+	case save_command:
+		if (game_mode == init)
+			goto Error_Command;
+		else Save(xchar);
+		break;
+	case hint_command:
+		if (game_mode != solve)
+			goto Error_Command;
+		hint(atoi(xchar), atoi(ychar));
+		break;
+	case num_solutions_command:
+		if (game_mode == init)
+			goto Error_Command;
+		else num_solutions();
+		break;
+	case autofill_command:
+		if (game_mode != solve)
+			goto Error_Command;
+		autofill();
+		break;
+	case reset_command:
+		if (game_mode == init)
+			goto Error_Command;
+		else reset();
+		break;
+	case exit_command:
+		Exit();
+		break;
+Error_Command:
+	case error_command:
+		printf("ERROR: invalid command\n");
+		break;
 	default:
 		return 0;
 		break;
 	}
 }
 	
+int Solve(char* filepath) {
+	FILE* fd;
+	int ret_val;
+	int block_rows, block_cols;
 
-int set(int row_index, int col_index, int value) {
+	/* Change the game mode */
+	game_mode = solve;
+
+	/* Open the file*/
+	fd = fopen(filepath, "r");
+	if (!fd) {
+		printf("Error: File doesn't exist or cannot be opened\n");
+		return EXIT_SUCCESS;
+	}
+
+	/* Reset basic game utilities */
+	delete_list_full();
+	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
+	sudoku.board = NULL;
+
+	/* Read from the file and initialize the board and sudoku's block_col/row lengths */
+	if (read_from_file(fd, &block_rows, &block_cols) == EXIT_FAILURE) {
+		free_board(sudoku.board, block_cols, block_rows);
+		return EXIT_FAILURE;
+	}
+
+	/* Set basic sudoku utilities */
+	sudoku.block_row_length = block_rows;
+	sudoku.block_col_length = block_cols;
+
+	print_board();
+
+	return EXIT_SUCCESS;
+}
+
+int Edit(char* filepath) {
+	FILE* fd;
+	int ret_val;
+	int block_rows, block_cols;
+
+	/* Change the game mode */
+	game_mode = edit;
+
+	/* Reset basic game utilities */
+	delete_list_full();
+	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
+	sudoku.board = NULL;
+
+	if (filepath != NULL) {
+		/* Open the file*/
+		fd = fopen(filepath, "r");
+		if (!fd) {
+			printf("Error: File cannot be opened\n");
+			return EXIT_SUCCESS;
+		}
+
+		/* Read from the file and initialize the board and sudoku's block_col/row lengths */
+		if (read_from_file(fd, &block_rows, &block_cols) == EXIT_FAILURE) {
+			free_board(sudoku.board, block_cols, block_rows);
+			return EXIT_FAILURE;
+		}
+
+		/* Set basic sudoku utilities */
+		sudoku.block_row_length = block_rows;
+		sudoku.block_col_length = block_cols;
+	}
+	else {
+		if (initialize_new_board(sudoku.board, DEFAULT_BLOCK_LEN, DEFAULT_BLOCK_LEN) == EXIT_FAILURE) {
+			return EXIT_FAILURE;
+		}
+
+		sudoku.block_row_length = DEFAULT_BLOCK_LEN;
+		sudoku.block_col_length = DEFAULT_BLOCK_LEN;
+
+	}
+
+	print_board();
+
+	return EXIT_SUCCESS;
+}
+
+void mark_errors(int value) {
+	if (value != 0 && value != 1) {
+		printf("Error: the value should be 0 or 1\n");
+	}
+	else sudoku.mark_errors = value;
+}
+
+int set(int col_index, int row_index, int value) {
 
 	int prev_val, updated_val, board_len;
-
 	board_len = sudoku.block_row_length * sudoku.block_col_length; 
 	prev_val = sudoku.board[row_index][col_index].value;
 	updated_val = value;
@@ -79,7 +220,9 @@ int set(int row_index, int col_index, int value) {
 	// TODO: Check if row_index && col_index are valid ? (or mabye in the parser ?)
 
 	/* check if the value is legal */
-	if (value < 0 || value > board_len) {
+	if (value < 0 || value > board_len || 
+		row_index < 0 || row_index > board_len ||
+		col_index < 0 || col_index > board_len) {
 		printf("Error: value not in range 0-N\n");
 		return false;
 	}
@@ -145,14 +288,12 @@ void print_board() {
 	}
 }
 
-
 void separator_row() {
 	int i;
 	for (i = 0; i <= sudoku.block_col_length*sudoku.block_row_length + sudoku.block_row_length; i++)
 		printf("-");
 	printf("\n");
 }
-
 
 int autofill() {
 	cell **prev_board, **updated_board;
@@ -197,7 +338,6 @@ void autofill_board(int row_index, int col_index) {
 	}
 }
 
-
 int one_possible_value(int row_index, int col_index) {
 	int i, count, board_length, value;
 	count = 0;
@@ -212,89 +352,6 @@ int one_possible_value(int row_index, int col_index) {
 		}
 	}
 	return value;
-}
-
-
-int Solve(char* filepath) {
-	FILE* fd;
-	int ret_val;
-	int block_rows, block_cols;
-
-	/* Change the game mode */
-	game_mode = solve;
-
-	/* Open the file*/
-	fd = fopen(filepath, "r");
-	if (!fd) {
-		printf("Error: File doesn't exist or cannot be opened\n");
-		return EXIT_SUCCESS;
-	}
-
-	/* Reset basic game utilities */
-	delete_list_full();
-	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
-	sudoku.board = NULL;
-
-	/* Read from the file and initialize the board and sudoku's block_col/row lengths */
-	if (read_from_file(fd, &block_rows, &block_cols) == EXIT_FAILURE) {
-		free_board(sudoku.board, block_cols, block_rows);
-		return EXIT_FAILURE;
-	}
-
-	/* Set basic sudoku utilities */
-	sudoku.block_row_length = block_rows;
-	sudoku.block_col_length = block_cols;
-
-	print_board();
-
-	return EXIT_SUCCESS;
-}
-
-
-int Edit(char* filepath) {
-	FILE* fd;
-	int ret_val;
-	int block_rows, block_cols;
-
-	/* Change the game mode */
-	game_mode = edit;
-
-	/* Reset basic game utilities */
-	delete_list_full();
-	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
-	sudoku.board = NULL;
-
-	if (filepath != NULL) {
-		/* Open the file*/
-		fd = fopen(filepath, "r");
-		if (!fd) {
-			printf("Error: File cannot be opened\n");
-			return EXIT_SUCCESS;
-		}
-
-		/* Read from the file and initialize the board and sudoku's block_col/row lengths */
-		if (read_from_file(fd, &block_rows, &block_cols) == EXIT_FAILURE) {
-			free_board(sudoku.board, block_cols, block_rows);
-			return EXIT_FAILURE;
-		}
-
-		/* Set basic sudoku utilities */
-		sudoku.block_row_length = block_rows;
-		sudoku.block_col_length = block_cols;
-	}
-	else {
-		if (initialize_new_board(sudoku.board, DEFAULT_BLOCK_LEN, DEFAULT_BLOCK_LEN) == EXIT_FAILURE) {
-			return EXIT_FAILURE;
-		}
-
-		sudoku.block_row_length = DEFAULT_BLOCK_LEN;
-		sudoku.block_col_length = DEFAULT_BLOCK_LEN;
-
-	}
-
-	print_board();
-
-	return EXIT_SUCCESS;
 }
 
 int Save(char* filepath) {
@@ -327,8 +384,6 @@ int Save(char* filepath) {
 	printf("Saved to %s\n", filepath);
 	return EXIT_SUCCESS;
 }
-
-
 
 void print_board_solution() {
 
@@ -378,3 +433,4 @@ void print_board_solution() {
 		}
 	}
 }
+
