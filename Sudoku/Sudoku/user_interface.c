@@ -44,7 +44,7 @@ int user_command(char* buffer) {
 	case set_command:
 
 		break;
-	case validate_command:break; 
+	case validate_command:break;
 	case generate_command:break;
 	case undo_command:break;
 	case redo_command:break;
@@ -329,3 +329,4 @@ int Save(char* filepath) {
 
 
 }
+

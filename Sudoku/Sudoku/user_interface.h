@@ -3,10 +3,11 @@
 
 #define DEFAULT_BLOCK_LEN 3
 
-typedef enum {solve, edit, mark_errors,
-	print_board, set, validate, generate,
-	undo, redo, save, hint,
-	num_solutions, autofill, reset, exit} sudokuCommands;
+typedef enum {solve_command, edit_command, mark_errors_command,
+	print_board_command, set_command, validate_command, generate_command,
+	undo_command, redo_command, save_command, hint_command,
+	num_solutions_command, autofill_command, reset_command, exit_command, error_command
+} sudokuCommands;
 
 typedef struct row_col_t {
 	int row;
@@ -32,7 +33,8 @@ const static struct {
 	{ 11, "num_solutions" },
 	{ 12, "autofill" },
 	{ 13, "reset" },
-	{ 14, "exit" }
+	{ 14, "exit" },
+	{ 15, "error_command" }
 };
 
 
@@ -80,7 +82,7 @@ void separator_row();
 /*
 * The Function ills all the board cells that have only 1 valid value.
 */
-int autoFill();
+int autofill();
 /* 
  *
  */

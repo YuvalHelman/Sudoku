@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="aux_main.h" />
     <ClInclude Include="file_manipulation.h" />
+    <ClInclude Include="gurobi_c.h" />
     <ClInclude Include="minunit.h" />
     <ClInclude Include="move_list.h" />
     <ClInclude Include="solver.h" />

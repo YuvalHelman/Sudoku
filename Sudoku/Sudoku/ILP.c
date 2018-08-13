@@ -18,7 +18,7 @@ int main(void)
 	GRBenv   *env = NULL;
 	GRBmodel *model = NULL;
 	int       error = 0;
-	int const variants_amount = sudoku.block_col_length*sudoku.block_row_length*9;
+	int const variants_amount = sudoku.block_col_length*sudoku.block_row_length*3*3;
 
 	double    *sol;
 	int       ind[3];
