@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include "aux_main.h"
 #include "move_list.h"
+#include "user_interface.h"
+#include "game_logic.h"
+#include "file_manipulation.h"
 
 #include "minunit.h" /* a simple testing header. */
 
@@ -32,6 +35,13 @@ int main() {
 	}
 	printf("Tests run: %d\n", tests_run);
 
-	return result != 0;
+
+	Edit("example.txt");
+
+	
+
+
+
+	return 0;
 	
 }

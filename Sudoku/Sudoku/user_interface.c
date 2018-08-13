@@ -44,7 +44,7 @@ int user_command(char* buffer) {
 	case set_command:
 
 		break;
-	case validate_command:break;
+	case validate_command:break; 
 	case generate_command:break;
 	case undo_command:break;
 	case redo_command:break;
@@ -100,7 +100,7 @@ void print_board() {
 
 	/* variables declarations */
 	int i, j, board_length;
-	board_length = sudoku.block_col_length*sudoku.block_row_length;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
 
 	/* Print 4N+n+1 dashes for the start*/
 	separator_row();
@@ -325,8 +325,56 @@ int Save(char* filepath) {
 	}
 	
 	printf("Saved to %s\n", filepath);
-
-
-
+	return EXIT_SUCCESS;
 }
 
+
+
+void print_board_solution() {
+
+	/* variables declarations */
+	int i, j, board_length;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
+
+	/* Print 4N+n+1 dashes for the start*/
+	separator_row();
+
+	/* Go over the columns */
+	for (i = 0; i < board_length; i++) {
+		printf("|"); /* Opening pipe */
+
+					 /* Go over Columns*/
+		for (j = 0; j < board_length; j++) {
+
+			if (sudoku.board[i][j].solution == 0) /* blank */
+			{
+				printf("    ");
+			}
+			else if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
+				printf(" "); /* DOT for fixed number */
+				printf("%2d.", sudoku.board[i][j].solution); /* DOT for fixed number*/
+			}
+			else if (!sudoku.board[i][j].is_fixed) { /* Non-fixed number that the user inputed */
+				printf(" "); /* space for normal number */
+				printf("%2d ", sudoku.board[i][j].solution);
+				if (sudoku.mark_errors && sudoku.board[i][j].error) /* check if we need to mark an error */
+					printf("*");
+				else printf(" ");
+			}
+
+			/* after every m numbers , print a pipe*/
+			if (j != board_length - 1) {
+				if (j % sudoku.block_col_length == sudoku.block_col_length - 1)
+					printf("|");
+			}
+			else printf("|");
+
+		}
+		printf("\n"); /*  Next line*/
+
+					  /*Print dashes every 3 lines*/
+		if (i % sudoku.block_row_length == sudoku.block_row_length - 1) {
+			separator_row();
+		}
+	}
+}
