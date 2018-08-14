@@ -40,6 +40,8 @@ extern sudoku_t sudoku;
  *	being played on when the function is called.
  *	The function assumes that there is a sudoku.board which is initialized and that the other
  *	sudoku's values are valid.
+ *	mainly used for the "autofill" or "generate" commands where we need to save a
+ *	'before' and 'after' boards. 
  *
  *   returns: a pointer to the newly allocated memmory for the new board.
  *			 on any error returns NULL and prints the error.
@@ -53,6 +55,7 @@ cell** copy_current_board();
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int free_board(cell** board, int block_col_len, int block_row_len);
+
 int free_int_matrix(int** board, int block_col_len, int block_row_len);
 /*
  *  This function recieves a pointer to a board that needs to be initialized.

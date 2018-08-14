@@ -9,10 +9,7 @@ typedef enum {solve_command, edit_command, mark_errors_command,
 	num_solutions_command, autofill_command, reset_command, exit_command, error_command
 } sudokuCommands;
 
-typedef struct row_col_t {
-	int row;
-	int col;
-} row_col;
+
 
 
 const static struct {
