@@ -82,7 +82,7 @@ char *test_list_module() { /* prints the message if (2nd arg) is false */
 	return 0;
 }
 
-
+// TODO: use set in order to update the errors. use the fanc updateerrors
 Node* redo() {
 	Node* curr_node;
 	int i, j, board_size, prev_b_val, updated_b_val;

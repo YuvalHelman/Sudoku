@@ -47,6 +47,7 @@ extern sudoku_t sudoku;
  *			 on any error returns NULL and prints the error.
  */
 cell** copy_current_board();
+
 /*
  *	This function recieves a pointer to a board that needs to be free'd.
  *	Any unsaved data is lost.

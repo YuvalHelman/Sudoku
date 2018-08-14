@@ -204,6 +204,7 @@ void mark_errors(int value) {
 	else sudoku.mark_errors = value;
 }
 
+//add nodes to the move list
 int set(int col_index, int row_index, int value) {
 
 	int prev_val, updated_val, board_len;
@@ -295,6 +296,8 @@ void separator_row() {
 	printf("\n");
 }
 
+
+//add nodes to the move list
 int autofill() {
 	cell **prev_board, **updated_board;
 	int row_index, col_index, board_length, value, **new_values, i;
