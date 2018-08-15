@@ -42,6 +42,9 @@
     <ClCompile Include="ILP.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="movelist2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="solver.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gurobi_c.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="movelist2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

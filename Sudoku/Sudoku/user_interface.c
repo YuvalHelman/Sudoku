@@ -81,8 +81,8 @@ int user_command(char* buffer) {
 		Edit(xchar);
 	break;
 	case mark_errors_command:
-		if (sudoku.game_mode != solve) { /* case b */
-			
+		if (sudoku.game_mode != solve) { 
+			printf("ERROR: invalid command\n"); /* case b */
 		} else {
 			errno = 0;
 			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
@@ -130,42 +130,42 @@ int user_command(char* buffer) {
 	break;
 	case validate_command:
 		if (sudoku.game_mode == init)
-			goto Error_Command;
+			printf("ERROR: invalid command\n"); /* case b */
 		else validate();
 	break;
 	case generate_command:
 		if (sudoku.game_mode != edit)
-			goto Error_Command;
+			printf("ERROR: invalid command\n"); /* case b */
 		else generate(atoi(xchar),atoi(ychar));
 	break;
 	case undo_command:
 		if (sudoku.game_mode == init)
-			goto Error_Command;
+			printf("ERROR: invalid command\n"); /* case b */
 		else undo();
 	break;
 	case redo_command:
 		if (sudoku.game_mode == init)
-			goto Error_Command;
+			printf("ERROR: invalid command\n"); /* case b */
 		else redo();
 	break;
 	case save_command:
 		if (sudoku.game_mode == init)
-			goto Error_Command;
+			printf("ERROR: invalid command\n"); /* case b */
 		else Save(xchar);
 	break;
 	case hint_command:
 		if (sudoku.game_mode != solve)
-			goto Error_Command;
+			printf("ERROR: invalid command\n"); /* case b */
 		hint(atoi(xchar), atoi(ychar));
 	break;
 	case num_solutions_command:
 		if (sudoku.game_mode == init)
-			goto Error_Command;
+			printf("ERROR: invalid command\n"); /* case b */
 		else num_solutions();
 	break;
 	case autofill_command:
 		if (sudoku.game_mode != solve)
-			goto Error_Command;
+			printf("ERROR: invalid command\n"); /* case b */
 		autofill();
 	break;
 	case reset_command:
@@ -382,7 +382,7 @@ void separator_row() {
 //add nodes to the move list
 int autofill() {
 	cell **prev_board, **updated_board;
-	int row_index, col_index, board_length, value, **new_values, i;
+	int row_index, col_index, board_length, value, **new_values;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 
 	new_values = NULL;
@@ -411,7 +411,7 @@ int autofill() {
 		for (row_index = 0; row_index < board_length; row_index++) {
 			if (!sudoku.board[row_index][col_index].value) {
 				sudoku.board[row_index][col_index].value = new_values[row_index][col_index];
-				update_num_of_filled_cells(ZERO, NON_ZERO);
+				update_num_of_filled_cells(ZERO, NON_ZERO); // ???
 			}
 		}
 	}
