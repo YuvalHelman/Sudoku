@@ -13,6 +13,8 @@ char *test_list_module() { /* prints the message if (2nd arg) is false */
 	int ret_val;
 	Node* curr;
 
+	curr = NULL;
+
 	initialize_list_parameters();
 	mu_assert("1", move_list != NULL); 
 	mu_assert("2", move_list->current_Node_move != NULL);
@@ -83,7 +85,7 @@ char *test_list_module() { /* prints the message if (2nd arg) is false */
 }
 
 // TODO: use set in order to update the errors. use the fanc updateerrors
-Node* redo() {
+Node* redo_list() {
 	Node* curr_node;
 	int i, j, board_size, prev_b_val, updated_b_val;
 	cell **prev_b, **updated_b;
@@ -91,7 +93,7 @@ Node* redo() {
 	curr_node = move_list->current_Node_move;
 	board_size = sudoku.block_col_length * sudoku.block_row_length;
 
-	if (game_mode == init) {/* only available in edit/solve mode */
+	if (sudoku.game_mode == init) {/* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
 		return NULL;
 	}
@@ -156,7 +158,7 @@ void redo_print(int row, int column, int prev_val, int updated_val) {
 }
 
 
-Node* undo() {
+Node* undo_list() {
 	Node* curr_node;
 	int i, j, board_size, prev_b_val, updated_b_val;
 	cell **prev_b, **updated_b;
@@ -164,7 +166,7 @@ Node* undo() {
 	curr_node = move_list->current_Node_move;
 	board_size = sudoku.block_col_length * sudoku.block_row_length;
 
-	if (game_mode == init) { /* only available in edit/solve mode */
+	if (sudoku.game_mode == init) { /* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
 		return NULL;
 	}
@@ -233,8 +235,8 @@ int node_delete(Node *node) {
 	}
 
 	if (node->prev_board || node->updated_board) {
-		free_board(node->prev_board);
-		free_board(node->updated_board);
+		free_board(node->prev_board, sudoku.block_col_length, sudoku.block_row_length);
+		free_board(node->updated_board, sudoku.block_col_length, sudoku.block_row_length);
 	}
 	
 	free(node);
@@ -258,6 +260,8 @@ int delete_list_full()
 		curr = next;
 	}
 
+	move_list->head->next = NULL;
+
 	return EXIT_SUCCESS;
 }
 
@@ -267,12 +271,6 @@ int delete_list_from_the_current_node() {
 
 	/* Check for atleast one Node in the list (besides the head) */
 	if (move_list == NULL || move_list->head == NULL || move_list->head->next == NULL) {
-		return EXIT_SUCCESS;
-	}
-
-	/* delete all list when the current pointer is the head, which is the step before doing any set's */
-	if (move_list->current_Node_move == move_list->head) {
-		delete_list_full();
 		return EXIT_SUCCESS;
 	}
 
@@ -311,9 +309,15 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 	node_ptr->prev_board = NULL;
 	node_ptr->updated_board = NULL;
 
+	/* Delete a part of the list if the current_node isn't the tail */
+	if (move_list->current_Node_move != move_list->tail) {
+		delete_list_from_the_current_node();
+	}
+
 	move_list->tail->next = node_ptr; /* set the tail's next pointer to be the new node */
 	move_list->tail = node_ptr; /* Set as new Tail of the move list */
-
+	move_list->current_Node_move = move_list->tail; /* set the current pointer to be the new tail */
+	
 	return EXIT_SUCCESS;
 }
 
@@ -338,8 +342,14 @@ int add_new_node_autofill(cell **prev_board, cell **updated_board) {
 	node_ptr->prev_board = prev_board;
 	node_ptr->updated_board = updated_board;
 
+	/* Delete a part of the list if the current_node isn't the tail */
+	if (move_list->current_Node_move != move_list->tail) {
+		delete_list_from_the_current_node();
+	}
+
 	move_list->tail->next = node_ptr; /* set the tail's next pointer to be the new node */
 	move_list->tail = node_ptr; /* Set as new Tail of the move list */
+	move_list->current_Node_move = move_list->tail; /* set the current pointer to be the new tail */
 
 	return EXIT_SUCCESS;
 }
@@ -353,7 +363,7 @@ int initialize_list_parameters() {
 		perror("malloc failed in initialize_list_parameters() function");
 		return EXIT_FAILURE;
 	}
-	head_ptr = calloc(6, sizeof(int));
+	head_ptr = calloc(NODE_NUM_OF_PTRS, sizeof(int));
 	if (head_ptr == NULL) {
 		perror("calloc failed in initialize_list_parameters() function");
 		return EXIT_FAILURE;
@@ -363,4 +373,10 @@ int initialize_list_parameters() {
 	move_list->tail = head_ptr;
 
 	return EXIT_SUCCESS;
+}
+
+void delete_list_on_exit() {
+	delete_list_full();
+	free(move_list->head);
+	free(move_list);
 }

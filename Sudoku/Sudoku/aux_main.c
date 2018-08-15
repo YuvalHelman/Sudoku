@@ -75,7 +75,7 @@ int initialize_new_board(cell** board, int block_col_len, int block_row_len) {
 
 	board_size = block_col_len * block_row_len;
 
-	if ((board = (cell **)malloc(sizeof(cell *) * board_size)) == NULL) {
+	if ((board = (cell **)malloc( board_size * sizeof(cell *) )) == NULL) {
 		printf("Error: Malloc has failed allocating the board\n");
 		return EXIT_FAILURE;
 	}
@@ -87,4 +87,24 @@ int initialize_new_board(cell** board, int block_col_len, int block_row_len) {
 	}
 
 	return EXIT_SUCCESS;
+}
+
+int free_on_exit() {
+	
+	/* delete list stuff */
+	
+
+}
+
+void update_num_of_filled_cells(int prev_val, int updated_val) {
+
+	if (prev_val != updated_val) {
+		if (prev_val == 0) { /* + updated_val isn't 0 */
+			sudoku.num_of_filled_cells++;
+		}
+		if (updated_val == 0) { /* + prev_val isn't 0 */
+			sudoku.num_of_filled_cells--;
+		}
+	}
+	/* else, if changed to same value.. nothing changes regarding the num_of_filled_cells */
 }

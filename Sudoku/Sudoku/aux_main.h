@@ -4,9 +4,14 @@ typedef enum { False = 0, True = 1 } bool;
 #define false 0
 #define true 1
 
-#ifndef __TYPES_H
+/* Defining main structs needed for our game */
+#ifndef __TYPES_H 
 #define __TYPES_H
 
+
+typedef enum game_mode_t {
+	init, solve, edit
+} GAME_MODE;
 
 /* a Cell struct
 Fixed explanations:
@@ -24,15 +29,12 @@ typedef struct sudoku_t {
 	int mark_errors;
 	int block_col_length; /* Meaning the number of ROWS per block in the game */
 	int block_row_length; /* Meaning the number of COLUMNS per block in the game */
+	GAME_MODE game_mode; /* The Current game-Mode */
+	int num_of_filled_cells;
 }sudoku_t;
 #endif
 
-typedef enum game_mode_t {
-	init, solve, edit
-} GAME_MODE;
 
-
-extern GAME_MODE game_mode;
 extern sudoku_t sudoku;
 
 /*
@@ -66,3 +68,20 @@ int free_int_matrix(int** board, int block_col_len, int block_row_len);
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int initialize_new_board(cell** board, int block_col_len, int block_row_len);
+
+/*
+ *	This function is called to free leftover stuff when exiting cleanly.
+ *	Things that are being free'd:
+ *	- 
+ */
+int free_on_exit();
+/*
+*	This function is called to update the sudoku.num_of_filled_cells value in the program.
+*	
+*	prev_val: the value that was previously in the cell that has been updated
+*	updated_val: the value that is being updated to.
+*/
+void update_num_of_filled_cells(int prev_val, int updated_val);
+
+// TODO: add this function to :
+//		Edit, Solve, generate, undo, redo, set, autofill.

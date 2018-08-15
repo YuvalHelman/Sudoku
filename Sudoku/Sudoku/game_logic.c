@@ -6,7 +6,7 @@
 
 
 char *test_game_logic_module() {
-	initialize_new_board();
+	
 
 
 

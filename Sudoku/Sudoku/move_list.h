@@ -3,32 +3,13 @@
 	This Module defines anything related to the list of moves used by the player.
 */
 
-#define SIZE_OF_NODE (6*sizeof(int))
+#define SIZE_OF_NODE (8*sizeof(int))
+#define NODE_NUM_OF_PTRS 8
 #define SIZE_OF_LIST (3*sizeof(void*))
 #define NOT_INIT -1
 
-#ifndef __TYPES_H
-#define __TYPES_H
-/* a Cell struct
-Fixed explanations:
-0 - Should be blank \\could be replaced for defult value 0=blank
-1 - a fixed cell */
-typedef struct cell_t {
-	int value;
-	int fixed;
-	int solution;
-	int error;
-}cell;
-
-typedef struct sudoku_t {
-	cell **board;
-	int mark_errors;
-	int block_col_length;
-	int block_row_length;
-}sudoku_t;
-#endif
-
-
+#ifndef NODE_STRUCT
+#define NODE_STRUCT
 /* A Node struct that will hold relavent info for a user move in the linked list
 - row,column specify which cell was modified in this move.
 - prev_val specifies the value that was at the cell before the turn.
@@ -46,6 +27,7 @@ typedef struct node_t {
 	cell **prev_board;
 	cell **updated_board;
 } Node;
+#endif
 
 /* A linked list of user moves within the game.
 The list implements a remembering idea of the user's last moves that were not yet deleted by him.
@@ -92,7 +74,7 @@ int initialize_list_parameters();
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
-Node* redo();
+Node* redo_list();
 /*
  *
  *
@@ -107,7 +89,7 @@ void redo_print(int row, int column, int prev_val, int updated_val);
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
-Node* undo();
+Node* undo_list();
 /*
  *   
  *
@@ -124,6 +106,12 @@ void undo_print(int row, int column, int prev_val, int updated_val);
 */
 int node_delete(Node *node);
 /*
+ *   This function is called to free leftover stuff when exiting cleanly.
+ *	Free'ing the list as a whole and the head.
+ *
+ */
+void delete_list_on_exit();
+/*
  *   This function is used for deleting the entire list (back to the initialized phase).
  *   should be used for the "RESTART", "EXIT" or any other program terminating step.
  *
@@ -134,10 +122,9 @@ int delete_list_full();
 /*
  *   This function is used for deleting the part of the list which is positioned
  * 	 right from the current Node (the current move which is pointed when the function is called).
- *   should be used for the "SET" command when done after undo's/redo's.
+ *   should be used for adding new nodes when done after undo's/redo's when the current_node != tail_node .
  *
  *   This function sets the current Node to be the new tail.
- *	 to make the "next" move of the set command, use the "add_new_node" function.
  *
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
@@ -168,7 +155,7 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 *   returns: EXIT_SUCCESS(0) on adding a new node.
 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int add_new_node_autofill(cell **prev_board, cell **updated_board);
+int add_new_node_autofill(cell** prev_board, cell** updated_board);
 
 
 

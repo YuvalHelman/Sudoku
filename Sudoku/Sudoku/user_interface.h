@@ -1,7 +1,10 @@
-#include "aux_main.h"
 
 
 #define DEFAULT_BLOCK_LEN 3
+#define MAX_COMMAND_SIZE 260
+#define BASE10 10
+#define ZERO 0
+#define NON_ZERO 1
 
 typedef enum {solve_command, edit_command, mark_errors_command,
 	print_board_command, set_command, validate_command, generate_command,
@@ -9,10 +12,29 @@ typedef enum {solve_command, edit_command, mark_errors_command,
 	num_solutions_command, autofill_command, reset_command, exit_command, error_command
 } sudokuCommands;
 
+#ifndef NODE_STRUCT
+#define NODE_STRUCT
+/* A Node struct that will hold relavent info for a user move in the linked list
+- row,column specify which cell was modified in this move.
+- prev_val specifies the value that was at the cell before the turn.
+- updated_val specifies the value that was at the cell after the turn.
+*/
+typedef struct node_t {
+	struct node_t *next;
+	struct node_t *prev;
+	/* Variables that defines a "move" within the board: */
+	unsigned int row;
+	unsigned int column;
+	int prev_val;
+	int updated_val;
+	/* A whole board saving for the "autofill" command */
+	cell **prev_board;
+	cell **updated_board;
+} Node;
+#endif
 
 
-
-const static struct {
+static struct {
 	sudokuCommands val;
 	const char *str;
 } conversion[] = {
@@ -106,6 +128,18 @@ int Edit(char* filepath);
 *
 */
 int Save(char* filepath);
+/*
+ *
+ *
+ */
 
 void print_board_solution(); /* Helper function for testing the solution */
 
+/*
+ *
+ *
+ *
+ *
+ *
+ */
+int get_command_and_parse();

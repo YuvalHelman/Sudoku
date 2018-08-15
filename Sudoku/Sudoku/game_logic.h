@@ -1,7 +1,6 @@
-#include "aux_main.h"
 
 /*
-* The Function checks if the value is a ligall value for cell[x][y].
+* The Function checks if the value is a legal value for cell[x][y].
 * @param row_index - index x.
 * @param col_index - index y.
 * @param value - The value we want to enter.
@@ -10,7 +9,7 @@
 int valid_value(int row_index, int col_index, int value);
 
 /*
-* The Function checks if the value is ligall for this row.
+* The Function checks if the value is legal for this row.
 * @param row_index - index x.
 * @param col_index - index y.
 * @param value - The value we want to enter.
@@ -19,7 +18,7 @@ int valid_value(int row_index, int col_index, int value);
 int check_row(int row_index, int col_index, int value);
 
 /*
-* The Function checks if the value is ligall for this col.
+* The Function checks if the value is legal for this col.
 * @param row_index - index x.
 * @param col_index - index y.
 * @param value - The value we want to enter.
@@ -28,7 +27,7 @@ int check_row(int row_index, int col_index, int value);
 int check_col(int row_index, int col_index, int value);
 
 /*
-* The Function checks if the value is ligall for this block.
+* The Function checks if the value is legal for this block.
 * @param row_index - index x.
 * @param col_index - index y.
 * @param value - The value we want to enter.

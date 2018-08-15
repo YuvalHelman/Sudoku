@@ -9,8 +9,8 @@
 #include "minunit.h" /* a simple testing header. */
 
 /* Defining Public varibles that are useable in all code areas. */
-GAME_MODE game_mode = init;
-sudoku_t sudoku = NULL; /* All fields initialized to 0 */
+sudoku_t sudoku = { 0 }; /* All fields initialized to 0.
+						game_mode is also 0 (which is init) */
 
 
 int tests_run = 0; /* Declared in minunit.h */
@@ -22,11 +22,14 @@ static char * all_tests() {
 
 int main() {
 
-
+	initialize_list_parameters();
+	/*
+	char *result;
+	
 	initialize_list_parameters();
 
 
-	char *result = all_tests();
+	result = all_tests();
 	if (result != 0) {
 		printf("%s\n", result);
 	}
@@ -34,13 +37,16 @@ int main() {
 		printf("ALL TESTS PASSED\n");
 	}
 	printf("Tests run: %d\n", tests_run);
-
+	*/
 
 	Edit("example.txt");
-
+	
 	
 
 
+
+	/* free stuff before exiting cleanly */
+	delete_list_on_exit();
 
 	return 0;
 	
