@@ -300,14 +300,42 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 		perror("malloc failed in add_new_node() function");
 		return EXIT_FAILURE;
 	}
+
+	node_ptr->next = NULL;
+	node_ptr->prev = move_list->tail;
+	node_ptr->values = calloc(1, sizeof(node_values));
+
+	/* Delete a part of the list if the current_node isn't the tail */
+	if (move_list->current_Node_move != move_list->tail) {
+		delete_list_from_the_current_node();
+	}
+
+	move_list->tail->next = node_ptr; /* set the tail's next pointer to be the new node */
+	move_list->tail = node_ptr; /* Set as new Tail of the move list */
+	move_list->current_Node_move = move_list->tail; /* set the current pointer to be the new tail */
+
+	return EXIT_SUCCESS;
+
+}
+
+
+/* Used for "set" for adding a new move */
+int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg) {
+	Node* node_ptr;
+
+	/* Build a new node and attach to list */
+	node_ptr = malloc(SIZE_OF_NODE);
+	if (node_ptr == NULL) {
+		perror("malloc failed in add_new_node() function");
+		return EXIT_FAILURE;
+	}
 	node_ptr->row = row_arg;
 	node_ptr->column = column_arg;
 	node_ptr->prev_val = prev_val_arg;
 	node_ptr->updated_val = updated_val_arg;
 	node_ptr->next = NULL;
 	node_ptr->prev = move_list->tail;
-	node_ptr->prev_board = NULL;
-	node_ptr->updated_board = NULL;
+	
 
 	/* Delete a part of the list if the current_node isn't the tail */
 	if (move_list->current_Node_move != move_list->tail) {
