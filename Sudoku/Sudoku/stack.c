@@ -16,8 +16,8 @@ void push(int row_index, int col_index, int value)
 	temp->col_index = col_index;
 	temp->row_index = row_index;
 	temp->value = value;
-	temp->link = top;
-	top = temp;
+	temp->link = top_node;
+	top_node = temp;
 
 }
 
@@ -25,15 +25,15 @@ void push(int row_index, int col_index, int value)
 void pop(int *row_index, int *col_index, int *value)
 {
 	struct node_stack *temp;
-	if (top == NULL)
+	if (top_node == NULL)
 		printf("**Stack is empty**\n");
 	else
 	{
-		*row_index = top->row_index;
-		*col_index = top->col_index;
-		*value = top->value;
-		temp = top;
-		top = top->link;
+		*row_index = top_node->row_index;
+		*col_index = top_node->col_index;
+		*value = top_node->value;
+		temp = top_node;
+		top_node = top_node->link;
 		free(temp);
 	}
 }
@@ -41,7 +41,7 @@ void pop(int *row_index, int *col_index, int *value)
 // to check if stack is empty
 int empty()
 {
-	if (top == NULL)
+	if (top_node == NULL)
 		return true;
 	else
 		return false;
@@ -55,7 +55,7 @@ void destroy()
 {
 	struct node_stack *temp;
 	int *row_index, *col_index, *value;
-	temp = top;
+	temp = top_node;
 	while (temp!= NULL)
 	{
 		pop(row_index, col_index, value);

@@ -70,10 +70,12 @@ int save_to_file(FILE* fd){
 }
 
 
-int read_from_file(FILE* fd, int* pRow, int* pCol) { // why pointer to rows/cols
+int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) { 
 	char vals[BUF_SIZE];
-	int rows, columns, res, val, board_len, curr_row, curr_col, ret_code, value;
+	int rows, columns, res, val, board_len, curr_row, curr_col, ret_code, value, num_of_filled_cells;
 	char token;
+
+	num_of_filled_cells = 0;
 
 	/* Read the row, column from the file */
 	res = fscanf(fd, "%d", &rows);  
@@ -107,6 +109,10 @@ int read_from_file(FILE* fd, int* pRow, int* pCol) { // why pointer to rows/cols
 			sudoku.board[curr_row][curr_col].value = value;
 			sudoku.board[curr_row][curr_col].is_fixed = 0;
 
+			if (value != 0) { /* Count how many numbers are filled */
+				num_of_filled_cells++;
+			}
+
 			if ((strchr(token, '.')) != NULL) { /* Check for a '.' in the token */
 				sudoku.board[curr_row][curr_col].is_fixed = true;
 			}
@@ -134,5 +140,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol) { // why pointer to rows/cols
 			return EXIT_FAILURE;
 		}
 	}
+
+	(*pNumOfCellsFilled) = num_of_filled_cells;
 	return EXIT_SUCCESS;
 }

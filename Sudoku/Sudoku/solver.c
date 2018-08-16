@@ -6,7 +6,7 @@
 #include "gurobi_c.h"
 #include "aux_main.h"
 #include "game_logic.h"
-#include "stack.h"
+
 
 
 /*
@@ -259,7 +259,7 @@ int numberOfSolotions() {
 							push(row_index, col_index, value);
 							sudoku.board[row_index][col_index].value = value;
 							break;
-							REC: 
+						REC:;
 						}
 						else if (value == board_length) {
 							pop(&row_index,&col_index,&value);

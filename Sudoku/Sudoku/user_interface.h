@@ -66,12 +66,27 @@ false(0) if some error occured.
 */
 int user_command(char* buffer);
 /*
-* The Function set a value into cell [x][y].
-* @param row_index - index x;
-* @param col_index - index y;
-* @return - true(1) if now errors, otherwise false(0).
-*/
+ * The Function set a value into cell [x][y].
+ * @param row_index - index x;
+ * @param col_index - index y;
+ * @return - true(1) if now errors, otherwise false(0).
+ */
 int set(int row_index, int col_index, int value);
+/*
+ * The Function traverse to the previous turn in the game.
+ * 
+ * 
+ * 
+ */
+int undo();
+/*
+ * The Function traverse to the future turn in the game.
+ * 
+ *
+ *
+ */
+int redo();
+
 /*
 * The Function prints the sudoku board.
 * if mark_erorrs is on put '*' near errors.

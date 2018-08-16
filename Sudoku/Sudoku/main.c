@@ -18,9 +18,10 @@ static char * all_tests() {
 
 int main() {
 
+	initialize_list_parameters();
 
 	get_command_and_parse();
-	initialize_list_parameters();
+	
 	/*
 	char *result;
 	
@@ -40,8 +41,6 @@ int main() {
 	Edit("example.txt");
 	
 	
-
-
 
 	/* free stuff before exiting cleanly */
 	delete_list_on_exit();

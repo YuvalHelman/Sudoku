@@ -13,8 +13,7 @@ List *move_list = NULL;
 // TODO: use set in order to update the errors. use the fanc updateerrors (in the user_interface.c)
 node_vals* redo_list(int* num_of_values) {
 	Node* curr_node;
-	int i, j, board_size, prev_b_val, updated_b_val;
-	cell **prev_b, **updated_b;
+	int  board_size;
 
 	curr_node = (Node*)move_list->current_Node_move;
 	board_size = sudoku.block_col_length * sudoku.block_row_length;
@@ -23,7 +22,7 @@ node_vals* redo_list(int* num_of_values) {
 		printf("ERROR: invalid command\n");
 		return NULL;
 	}
-	if (curr_node == move_list->tail) {
+	if (curr_node == move_list->tail) { /* case d */
 		printf("ERROR: no moves to redo\n");
 		return NULL;
 	}
@@ -44,8 +43,7 @@ node_vals* redo_list(int* num_of_values) {
 
 node_vals* undo_list(int* num_of_values) {
 	Node* curr_node;
-	int i, j, board_size, prev_b_val, updated_b_val;
-	cell **prev_b, **updated_b;
+	int board_size;
 
 	curr_node = move_list->current_Node_move;
 	board_size = sudoku.block_col_length * sudoku.block_row_length;
@@ -69,9 +67,6 @@ node_vals* undo_list(int* num_of_values) {
 	(*num_of_values) = curr_node->num_of_values;
 	return curr_node->values;
 	
-
-
-	return curr_node;
 }
 
 

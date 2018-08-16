@@ -87,5 +87,6 @@ void update_num_of_filled_cells(int prev_val, int updated_val);
 
 // TODO: add this function to :
 //		Edit, Solve, generate, undo, redo, set, autofill.
+//		** added:** Edit, Solve, set, autofill
 
 #endif /* AUX_MAIN */
