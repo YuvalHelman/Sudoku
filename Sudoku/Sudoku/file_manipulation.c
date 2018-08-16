@@ -108,7 +108,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol) { // why pointer to rows/cols
 			sudoku.board[curr_row][curr_col].is_fixed = 0;
 
 			if ((strchr(token, '.')) != NULL) { /* Check for a '.' in the token */
-				sudoku.board[curr_row][curr_col].is_fixed = True;
+				sudoku.board[curr_row][curr_col].is_fixed = true;
 			}
 			/* Iterate the current column\row values */
 			if (curr_col == board_len - 1) {

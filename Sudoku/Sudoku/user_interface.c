@@ -49,10 +49,7 @@ int get_command_and_parse() {
 		}
 
 		
-	} while (
-		(fgets_ret != NULL) && 
-		( 
-		!= EXIT_GAME);
+	} while (fgets_ret != NULL);
 
 
 	
@@ -528,19 +525,7 @@ void print_board_solution() {
 	}
 }
 
-// TODO: complete this. 
-//		add everything which isn't list-related to this function.
-Node* redo() {
 
-
-	// update sudoku.num_of_filled_cells.
-}
-
-// TODO: complete this. 
-//		add everything which isn't list-related to this function.
-Node* undo() {
-
-}
 
 /*
 *  This function recieves a pointer to an integer matrix that needs to be initialized.

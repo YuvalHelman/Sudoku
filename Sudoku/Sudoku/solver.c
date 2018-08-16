@@ -71,7 +71,10 @@ int gurobi_initializer(cell** board) {
 		/* Create an empty model */
 		error = GRBnewmodel(env, &model, "sudoku", DIM*DIM*DIM, NULL, lb, NULL,
 			vtype, NULL);
-		if (error) goto QUIT;
+		if (error) {
+			perror("gurobi new model failed");
+			return EXIT_FAILURE;
+		}
 
 
 		/* Each cell gets only one value.
@@ -85,7 +88,10 @@ int gurobi_initializer(cell** board) {
 				}
 
 				error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
-				if (error) goto QUIT;
+				if (error) {
+					perror("gurobi new model failed");
+					return EXIT_FAILURE;
+				}
 			}
 		}
 
@@ -100,7 +106,10 @@ int gurobi_initializer(cell** board) {
 				}
 
 				error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
-				if (error) goto QUIT;
+				if (error) {
+					perror("gurobi new model failed");
+					return EXIT_FAILURE;
+				}
 			}
 		}
 
@@ -115,7 +124,10 @@ int gurobi_initializer(cell** board) {
 				}
 
 				error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
-				if (error) goto QUIT;
+				if (error) {
+					perror("gurobi new model failed");
+					return EXIT_FAILURE;
+				}
 			}
 		}
 
@@ -135,23 +147,35 @@ int gurobi_initializer(cell** board) {
 					}
 
 					error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
-					if (error) goto QUIT;
+					if (error) {
+						perror("gurobi new model failed");
+						return EXIT_FAILURE;
+					}
 				}
 			}
 		}
 
 		/* Optimize model for a solution */
 		error = GRBoptimize(model);
-		if (error) goto QUIT;
+		if (error) {
+			perror("gurobi new model failed");
+			return EXIT_FAILURE;
+		}
 
 		/* Capture solution information */
 		error = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
-		if (error) goto QUIT;
+		if (error) {
+			perror("gurobi new model failed");
+			return EXIT_FAILURE;
+		}
 
 		if (optimstatus == GRB_OPTIMAL) {
 
 			error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, DIM*DIM*DIM, sol);
-			if (error) goto QUIT;
+			if (error) {
+				perror("gurobi new model failed");
+				return EXIT_FAILURE;
+			}
 			/* Update the board.solution from the given solution array */
 			for (i = 0; i < DIM; i++) {
 				for (j = 0; j < DIM; j++) {

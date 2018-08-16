@@ -1,6 +1,5 @@
 #pragma once
 
-typedef enum { False = 0, True = 1 } bool;
 #define false 0
 #define true 1
 
@@ -19,7 +18,7 @@ Fixed explanations:
 1 - a fixed cell */
 typedef struct cell_t {
 	int value;
-	bool is_fixed;
+	int is_fixed;
 	int solution;
 	int error;
 }cell;

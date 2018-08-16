@@ -1,3 +1,4 @@
+
 #pragma once
 /*
 	This Module defines anything related to the list of moves used by the player.
@@ -8,6 +9,35 @@
 #define SIZE_OF_LIST (3*sizeof(void*))
 #define NOT_INIT -1
 
+/* Defining main structs needed for our game */
+#ifndef __TYPES_H 
+#define __TYPES_H
+
+
+typedef enum game_mode_t {
+	init, solve, edit
+} GAME_MODE;
+
+/* a Cell struct
+Fixed explanations:
+0 - Should be blank \\could be replaced for defult value 0=blank
+1 - a fixed cell */
+typedef struct cell_t {
+	int value;
+	int is_fixed;
+	int solution;
+	int error;
+}cell;
+
+typedef struct sudoku_t {
+	cell **board;
+	int mark_errors;
+	int block_col_length; /* Meaning the number of ROWS per block in the game */
+	int block_row_length; /* Meaning the number of COLUMNS per block in the game */
+	GAME_MODE game_mode; /* The Current game-Mode */
+	int num_of_filled_cells;
+}sudoku_t;
+#endif
 #ifndef NODE_STRUCT
 #define NODE_STRUCT
 /* A Node struct that will hold relavent info for a user move in the linked list

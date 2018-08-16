@@ -22,6 +22,8 @@ static char * all_tests() {
 
 int main() {
 
+
+	get_command_and_parse();
 	initialize_list_parameters();
 	/*
 	char *result;
