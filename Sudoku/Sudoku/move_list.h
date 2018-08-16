@@ -4,7 +4,8 @@
 	This Module defines anything related to the list of moves used by the player.
 */
 
-#define SIZE_OF_NODE (8*sizeof(int))
+#define SIZE_OF_NODE (4*sizeof(int*))
+#define SIZE_OF_NODE_VALS (4*sizeof(int))
 #define NODE_NUM_OF_PTRS 8
 #define SIZE_OF_LIST (3*sizeof(void*))
 #define NOT_INIT -1
@@ -48,15 +49,17 @@ typedef struct sudoku_t {
 typedef struct node_t {
 	struct node_t *next;
 	struct node_t *prev;
-	/* Variables that defines a "move" within the board: */
+	node_vals * values;
+	size_t num_of_values;
+} Node;
+
+/* Variables that defines a "move" within the board: */
+typedef struct node_values_t {
 	unsigned int row;
 	unsigned int column;
 	int prev_val;
 	int updated_val;
-	/* A whole board saving for the "autofill" command */
-	cell **prev_board;
-	cell **updated_board;
-} Node;
+} node_vals;
 #endif
 
 /* A linked list of user moves within the game.
