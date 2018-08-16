@@ -8,10 +8,6 @@
 
 #include "minunit.h" /* a simple testing header. */
 
-/* Defining Public varibles that are useable in all code areas. */
-sudoku_t sudoku = { 0 }; /* All fields initialized to 0.
-						game_mode is also 0 (which is init) */
-
 
 int tests_run = 0; /* Declared in minunit.h */
 static char * all_tests() {

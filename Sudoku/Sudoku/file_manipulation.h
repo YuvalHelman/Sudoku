@@ -1,4 +1,6 @@
 
+#ifndef FILE_HEADER
+#define FILE_HEADER
 /*
 * This Module is responsible for anything related to files within the program.
 */
@@ -6,7 +8,6 @@
 
 #define BUF_SIZE 2048
 #define TEMP_BUFF_SIZE 2400
-
 
 
 /*
@@ -31,3 +32,6 @@ int read_from_file(FILE* fd, int* pRow, int* pCol);
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  */
 int save_to_file(FILE* fd);
+
+
+#endif /* FILE_HEADER */

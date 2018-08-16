@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+sudoku_t sudoku = { 0 }; /* All fields initialized to 0.
+						 game_mode is also 0 (which is init) */
+
+
 cell** copy_current_board() {
 	cell **current_board, **new_board;
 	int i, j, board_size;

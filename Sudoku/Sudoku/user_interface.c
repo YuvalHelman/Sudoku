@@ -557,3 +557,64 @@ int initialize_integer_board(int** board, int block_col_len, int block_row_len) 
 
 	return EXIT_SUCCESS;
 }
+
+
+/*
+*
+*	The function handles the printing of the undo function.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*			  on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+void redo_print(int row, int column, int prev_val, int updated_val) {
+	if (updated_val == 0) {
+		if (prev_val == 0) {
+			printf("Redo %d,%d from %c to %c\n",
+				row, column, '_', '_');
+		}
+		else {
+			printf("Redo %d,%d from %d to %c\n",
+				row, column, prev_val, '_');
+		}
+	}
+	else {
+		if (prev_val == 0) { /* updated not 0 , prev = 0 */
+			printf("Redo %d,%d from %c to %d\n",
+				row, column, '_', updated_val);
+		}
+		else {
+			printf("Redo %d,%d from %d to %d\n",
+				row, column, prev_val, updated_val);
+		}
+	}
+}
+
+
+/*
+*	The function handles the printing of the undo function.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*			  on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+void undo_print(int row, int column, int prev_val, int updated_val) {
+	if (updated_val == 0) {
+		if (prev_val == 0) {
+			printf("Undo %d,%d from %c to %c\n",
+				row, column, '_', '_');
+		}
+		else {
+			printf("Undo %d,%d from %c to %d\n",
+				row, column, '_', prev_val);
+		}
+	}
+	else {
+		if (prev_val == 0) {
+			printf("Undo %d,%d from %d to %c\n",
+				row, column, updated_val, '_');
+		}
+		else {
+			printf("Undo %d,%d from %d to %d\n",
+				row, column, updated_val, prev_val);
+		}
+	}
+}

@@ -1,12 +1,15 @@
-#pragma once
+
+#ifndef AUX_MAIN
+#define AUX_MAIN
 
 #define false 0
 #define true 1
 
+#include "move_list.h"
+
 /* Defining main structs needed for our game */
 #ifndef __TYPES_H 
 #define __TYPES_H
-
 
 typedef enum game_mode_t {
 	init, solve, edit
@@ -84,3 +87,5 @@ void update_num_of_filled_cells(int prev_val, int updated_val);
 
 // TODO: add this function to :
 //		Edit, Solve, generate, undo, redo, set, autofill.
+
+#endif /* AUX_MAIN */

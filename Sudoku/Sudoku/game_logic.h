@@ -1,10 +1,12 @@
 
+#ifndef GAME_LOGIC
+#define GAME_LOGIC
 /*
 * The Function checks if the value is a legal value for cell[x][y].
 * @param row_index - index x.
 * @param col_index - index y.
 * @param value - The value we want to enter.
-* @return -true(1) if the value is a ligall value for the cell, false(0) otherwise.
+* @return -true(1) if the value is a legal value for the cell, false(0) otherwise.
 */
 int valid_value(int row_index, int col_index, int value);
 
@@ -62,3 +64,5 @@ void update_errors_col(int row_index, int col_index);
 * @param col_index - index y.
 */
 void update_errors_block(int row_index, int col_index);
+
+#endif /* GAME_LOGIC */

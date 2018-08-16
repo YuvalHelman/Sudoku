@@ -1,5 +1,9 @@
 
-#pragma once
+#ifndef NOVE_LIST_HEADER
+#define NOVE_LIST_HEADER
+
+#include "aux_main.h"
+
 /*
 	This Module defines anything related to the list of moves used by the player.
 */
@@ -10,48 +14,9 @@
 #define SIZE_OF_LIST (3*sizeof(void*))
 #define NOT_INIT -1
 
-/* Defining main structs needed for our game */
-#ifndef __TYPES_H 
-#define __TYPES_H
-
-
-typedef enum game_mode_t {
-	init, solve, edit
-} GAME_MODE;
-
-/* a Cell struct
-Fixed explanations:
-0 - Should be blank \\could be replaced for defult value 0=blank
-1 - a fixed cell */
-typedef struct cell_t {
-	int value;
-	int is_fixed;
-	int solution;
-	int error;
-}cell;
-
-typedef struct sudoku_t {
-	cell **board;
-	int mark_errors;
-	int block_col_length; /* Meaning the number of ROWS per block in the game */
-	int block_row_length; /* Meaning the number of COLUMNS per block in the game */
-	GAME_MODE game_mode; /* The Current game-Mode */
-	int num_of_filled_cells;
-}sudoku_t;
-#endif
 #ifndef NODE_STRUCT
 #define NODE_STRUCT
-/* A Node struct that will hold relavent info for a user move in the linked list
-- row,column specify which cell was modified in this move.
-- prev_val specifies the value that was at the cell before the turn.
-- updated_val specifies the value that was at the cell after the turn.
-*/
-typedef struct node_t {
-	struct node_t *next;
-	struct node_t *prev;
-	node_vals * values;
-	size_t num_of_values;
-} Node;
+
 
 /* Variables that defines a "move" within the board: */
 typedef struct node_values_t {
@@ -60,7 +25,21 @@ typedef struct node_values_t {
 	int prev_val;
 	int updated_val;
 } node_vals;
+/* A Node struct that will hold relavent info for a user move in the linked list
+- row,column specify which cell was modified in this move.
+- prev_val specifies the value that was at the cell before the turn.
+- updated_val specifies the value that was at the cell after the turn.
+*/
+typedef struct node_t {
+	struct node_t *next;
+	struct node_t *prev;
+	struct node_vals_t *values;
+	size_t num_of_values;
+} Node;
+
+
 #endif
+
 
 /* A linked list of user moves within the game.
 The list implements a remembering idea of the user's last moves that were not yet deleted by him.
@@ -75,16 +54,6 @@ typedef struct list_t {
 /* Global Variables related to the module: */
 extern List *move_list;
 
-
-
-/*				functions that needs to be defined in here for now:
-
-1. redo (also updates the board with the current Node's move)
-2. undo (also updates the board with the current Node's move)
-3. delete and free the list in a whole.
-4. delete and free the list from a certain Node pointer. (which is used in "set")
-5. Add a new node to the tail of the list (or the head if its new)
-*/
 
 
 /* 
@@ -107,14 +76,8 @@ int initialize_list_parameters();
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
-Node* redo_list();
-/*
- *
- *
- *   returns: EXIT_SUCCESS(0) on adding a new node.
- *			  on any error returns EXIT_FAILURE(1) and prints the error.
- */
-void redo_print(int row, int column, int prev_val, int updated_val);
+node_vals* redo_list(int* num_of_values);
+
 /*
  *   This function goes forward one move from the current move and changes the list position and board.
  *   If there isnt a move forward, the function does nothing and returns SUCCESS.
@@ -122,21 +85,15 @@ void redo_print(int row, int column, int prev_val, int updated_val);
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
-Node* undo_list();
+node_vals* undo_list(int* num_of_values);
+
 /*
- *   
+ *   This function is used for deleting a node while free'ing all its content.
+ *   should be used in any function that deletes a part of the list.
  *
  *   returns: EXIT_SUCCESS(0) on adding a new node.
- *			  on any error returns EXIT_FAILURE(1) and prints the error.
+ *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
-void undo_print(int row, int column, int prev_val, int updated_val);
-/*
-*   This function is used for deleting a node while free'ing all its content.
-*   should be used in any function that deletes a part of the list.
-*
-*   returns: EXIT_SUCCESS(0) on adding a new node.
-*			 on any error returns EXIT_FAILURE(1) and prints the error.
-*/
 int node_delete(Node *node);
 /*
  *   This function is called to free leftover stuff when exiting cleanly.
@@ -178,18 +135,18 @@ int delete_list_from_the_current_node();
  */
 int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg);
 /*
-*   adds a new Node to the tail of the move_list. should be used in the "autofull" command.
-*   Each new node should be added with dynamiclly allocated boards that indicates  
-*	The board before doing the Autofill command, and one after that.
+*   adds a new value to the move_list->current_node->values array.
+*	should be used in the "autofill"/"generate" command.
 *
-*   prev_board: the row in which the change was made
-*   updated_board: the column in which the change was made
+*   row_arg: the row in which the change was made
+*   column_arg: the column in which the change was made
+*   prev_val_arg: the value of the cell before the change. (0 if empty)
+*   updated_val_arg: the new value that is being put into that cell.
 *
 *   returns: EXIT_SUCCESS(0) on adding a new node.
 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int add_new_node_autofill(cell** prev_board, cell** updated_board);
-
+int add_val_to_current_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg);
 
 
 /* List explained for "SET" implemantation: */
@@ -208,3 +165,5 @@ when the move_list->current_Node_move points to a certain node, the "new_value_i
 currently updated in the game_board.
 
 */
+
+#endif /* MOVE_LIST_HEADER */
