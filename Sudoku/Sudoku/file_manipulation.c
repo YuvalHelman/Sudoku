@@ -21,7 +21,7 @@ int save_to_file(FILE* fd){
 		return EXIT_FAILURE;
 	}
 
-	read_counter = 1;
+	read_counter = 1; //???
 	board_len = sudoku.block_col_length * sudoku.block_row_length;
 	for (i = 0; i < board_len; i++) {
 		for (j = 0; j < board_len; j++) {
@@ -70,13 +70,13 @@ int save_to_file(FILE* fd){
 }
 
 
-int read_from_file(FILE* fd, int* pRow, int* pCol) {
+int read_from_file(FILE* fd, int* pRow, int* pCol) { // why pointer to rows/cols
 	char vals[BUF_SIZE];
 	int rows, columns, res, val, board_len, curr_row, curr_col, ret_code, value;
 	char token;
 
 	/* Read the row, column from the file */
-	res = fscanf(fd, "%d", &rows);
+	res = fscanf(fd, "%d", &rows);  
 	if (res <= 0) {
 		return EXIT_FAILURE;
 	}
