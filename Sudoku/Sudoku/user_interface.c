@@ -13,6 +13,10 @@ void redo_print(int row, int column, int prev_val, int updated_val);
 void undo_print(int row, int column, int prev_val, int updated_val);
 /* TODO: implement these */
 
+
+
+
+
 int Exit();
 int generate();
 int hint();
@@ -21,13 +25,45 @@ int num_solutions();
 int reset();
 int validate();
 
-int Exit() {}
-int generate() {}
-int hint() {}
-int mark_error() {}
-int num_solutions() {}
-int reset() {}
-int validate() {}
+int Exit() { return 0; }
+int generate() { return 0; }
+int hint() { return 0; }
+int mark_error() { return 0; }
+int num_solutions() { return 0; }
+int reset() { return 0; }
+int validate() { return 0; }
+
+
+/*
+*  This function recieves a pointer to an integer matrix that needs to be initialized.
+*	The initialized matrix has all 0's in its cells.
+*
+*   returns: EXIT_SUCCESS(0) on success.
+*			 on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int initialize_integer_board(int** board, int block_col_len, int block_row_len) {
+	int board_size, i;
+
+	if (board) {
+		printf("board should be NULL in order to be initialized. might contain needed data\n");
+		return EXIT_FAILURE;
+	}
+
+	board_size = block_col_len * block_row_len;
+
+	if ((board = (int **)malloc(board_size * sizeof(int *))) == NULL) {
+		printf("Error: Malloc has failed allocating the board\n");
+		return EXIT_FAILURE;
+	}
+	for (i = 0; i < board_size; i++) {
+		if ((board[i] = (int *)calloc(board_size, sizeof(int)) == NULL)) {
+			printf("Error: Malloc has failed allocating the board\n");
+			return EXIT_FAILURE;
+		}
+	}
+
+	return EXIT_SUCCESS;
+}
 
 
 sudokuCommands 
@@ -70,7 +106,7 @@ int get_command_and_parse() {
 		
 	} while (fgets_ret != NULL);
 
-
+	return EXIT_SUCCESS;
 	
 }
 
@@ -206,7 +242,7 @@ int user_command(char* buffer) {
 	
 int Solve(char* filepath) {
 	FILE* fd;
-	int ret_val, num_of_filled_cells;
+	int num_of_filled_cells;
 	int block_rows, block_cols;
 
 	/* Change the game mode */
@@ -246,7 +282,6 @@ int Solve(char* filepath) {
 
 int Edit(char* filepath) {
 	FILE* fd;
-	int ret_val;
 	int block_rows, block_cols, num_of_filled_cells;
 
 	/* Change the game mode */
@@ -494,7 +529,7 @@ void separator_row() {
 
 
 int autofill() {
-	int updated_val, prev_val, add_node_flag;
+	int updated_val ,add_node_flag;
 	int row_index, col_index, board_length, value, **temp_matrice_values;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 
@@ -575,8 +610,6 @@ int one_possible_value(int row_index, int col_index) {
 
 int Save(char* filepath) {
 	FILE* fd;
-	int ret_val;
-	int block_rows, block_cols;
 
 	if (sudoku.game_mode == edit) {
 
@@ -655,36 +688,7 @@ void print_board_solution() {
 
 
 
-/*
-*  This function recieves a pointer to an integer matrix that needs to be initialized.
-*	The initialized matrix has all 0's in its cells.
-*
-*   returns: EXIT_SUCCESS(0) on success.
-*			 on any error returns EXIT_FAILURE(1) and prints the error.
-*/
-int initialize_integer_board(int** board, int block_col_len, int block_row_len) {
-	int board_size, i;
 
-	if (board) {
-		printf("board should be NULL in order to be initialized. might contain needed data\n");
-		return EXIT_FAILURE;
-	}
-
-	board_size = block_col_len * block_row_len;
-
-	if ((board = (int **)malloc(board_size * sizeof(int *))) == NULL) {
-		printf("Error: Malloc has failed allocating the board\n");
-		return EXIT_FAILURE;
-	}
-	for (i = 0; i < board_size; i++) {
-		if ((board[i] = (int *)calloc(board_size, sizeof(int)) == NULL)) {
-			printf("Error: Malloc has failed allocating the board\n");
-			return EXIT_FAILURE;
-		}
-	}
-
-	return EXIT_SUCCESS;
-}
 
 
 /*

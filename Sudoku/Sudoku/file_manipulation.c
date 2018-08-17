@@ -6,8 +6,7 @@
 
 
 int save_to_file(FILE* fd){
-	int temp_buff[TEMP_BUFF_SIZE];
-	int rows, columns, res, val, i, j, curr_col, read_counter, board_len;
+	int res, i, j, read_counter, board_len;
 	
 	/* Read the row, column from the file */
 	res = fprintf(fd, "%d", sudoku.block_row_length);
@@ -21,7 +20,7 @@ int save_to_file(FILE* fd){
 		return EXIT_FAILURE;
 	}
 
-	read_counter = 1; //???
+	read_counter = 1; 
 	board_len = sudoku.block_col_length * sudoku.block_row_length;
 	for (i = 0; i < board_len; i++) {
 		for (j = 0; j < board_len; j++) {
@@ -72,8 +71,8 @@ int save_to_file(FILE* fd){
 
 int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) { 
 	char vals[BUF_SIZE];
-	int rows, columns, res, val, board_len, curr_row, curr_col, ret_code, value, num_of_filled_cells;
-	char token;
+	int rows, columns, res, board_len, curr_row, curr_col, ret_code, value, num_of_filled_cells;
+	char *token;
 
 	num_of_filled_cells = 0;
 
@@ -87,7 +86,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 		return EXIT_FAILURE;
 	}
 
-	if (initialize_new_board(sudoku.board, columns, rows) == EXIT_FAILURE) {
+	if (initialize_new_board(columns, rows) == EXIT_FAILURE) {
 		return EXIT_FAILURE;
 	}
 

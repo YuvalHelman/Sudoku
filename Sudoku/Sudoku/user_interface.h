@@ -11,14 +11,15 @@
 #define ZERO 0
 #define NON_ZERO 1
 
-typedef enum {solve_command, edit_command, mark_errors_command,
+typedef enum sudokucomm {solve_command, edit_command, mark_errors_command,
 	print_board_command, set_command, validate_command, generate_command,
 	undo_command, redo_command, save_command, hint_command,
 	num_solutions_command, autofill_command, reset_command, exit_command, error_command
 } sudokuCommands;
 
 
-static struct {
+
+static struct abc_t{
 	sudokuCommands val;
 	const char *str;
 } conversion[] = {

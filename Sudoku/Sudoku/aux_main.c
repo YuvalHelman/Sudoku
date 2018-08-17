@@ -8,7 +8,7 @@ sudoku_t sudoku = { 0 }; /* All fields initialized to 0.
 
 
 int initialize_new_board(int block_col_len, int block_row_len) {
-	int board_size, i, j;
+	int board_size, i;
 
 
 	board_size = block_col_len * block_row_len;
@@ -99,6 +99,7 @@ int free_on_exit() {
 	
 	/* delete list stuff */
 	
+	return 0;
 
 }
 

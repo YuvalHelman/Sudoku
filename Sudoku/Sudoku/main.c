@@ -10,11 +10,12 @@
 
 
 int tests_run = 0; /* Declared in minunit.h */
+/**
 static char * all_tests() {
 	mu_run_test(test_list_module);
 	return 0;
 }
-
+*/
 
 int main() {
 
