@@ -278,7 +278,7 @@ int Edit(char* filepath) {
 		sudoku.num_of_filled_cells = num_of_filled_cells;
 	}
 	else {
-		if (initialize_new_board(sudoku.board, DEFAULT_BLOCK_LEN, DEFAULT_BLOCK_LEN) == EXIT_FAILURE) {
+		if (initialize_new_board(DEFAULT_BLOCK_LEN, DEFAULT_BLOCK_LEN) == EXIT_FAILURE) {
 			return EXIT_FAILURE;
 		}
 
@@ -307,6 +307,7 @@ void mark_errors(int value) {
 int set(int col_index, int row_index, int value) {
 
 	int prev_val, updated_val, board_len, num_of_cells;
+	int row_index_board, col_index_board;
 
 	board_len = sudoku.block_row_length * sudoku.block_col_length;
 	num_of_cells = board_len * board_len;
@@ -321,36 +322,39 @@ int set(int col_index, int row_index, int value) {
 		return false;
 	}
 
+	row_index_board = row_index - 1;
+	col_index_board = col_index - 1;
+
 	/* check if (i,j) is a fixed cell (case e) */
-	if (sudoku.board[row_index][col_index].is_fixed) { /* it is fixed.*/
+	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
 		return false;
 	}
 
 	/* check if (i,j) is a fixed cell (case e) */
-	if (sudoku.board[row_index][col_index].is_fixed) { /* it is fixed.*/
+	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
 		return false;
 	}
 
 	/* Update the value in the board itself and the number of filled cells */
-	sudoku.board[row_index][col_index].value = value;
+	sudoku.board[row_index_board][col_index_board].value = value;
 	update_num_of_filled_cells(prev_val, updated_val);
 
 	/* Update the move_list. (Case f,  */
-	if (add_new_node(row_index, col_index, prev_val, updated_val) == EXIT_FAILURE) {
+	if (add_new_node(row_index_board, col_index_board, prev_val, updated_val) == EXIT_FAILURE) {
 		return EXIT_FAILURE;
 	}
 
 	/* update errors for all relevant cells */
-	update_errors(row_index, col_index); 
+	update_errors(row_index_board, col_index_board); 
 
 	print_board();
 	
 	/* Validate the board, and print this if it's not valid: (case c)*/
 	/* TODO TODO */
 	if (sudoku.game_mode == solve && sudoku.num_of_filled_cells == num_of_cells) {
-		
+		/*
 		if( validate() == EXIT_SUCCESS ) {
 			printf("Puzzle solved successfully\n");
 			sudoku.game_mode = init;
@@ -358,7 +362,7 @@ int set(int col_index, int row_index, int value) {
 		else {
 			printf("Puzzle solution erroneous\n");
 		}
-
+		*/
 	}
 	
 	return EXIT_SUCCESS;
