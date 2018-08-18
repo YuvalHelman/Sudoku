@@ -15,7 +15,7 @@ struct node_stack
 }*top_node = NULL;
 
 
-// function prototypes
+/* function prototypes */
 void push(int row_index, int col_index, int value);
 void pop(int *row_index, int *col_index, int *value);
 int empty();

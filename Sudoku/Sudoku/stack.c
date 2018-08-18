@@ -7,7 +7,7 @@
 #include "stack.h"
 
 
-// to insert elements in stack
+/* to insert elements in stack*/
 void push(int row_index, int col_index, int value)
 {
 	struct node_stack *temp;
@@ -21,7 +21,7 @@ void push(int row_index, int col_index, int value)
 
 }
 
-// to delete elements from stack
+/* to delete elements from stack */
 void pop(int *row_index, int *col_index, int *value)
 {
 	struct node_stack *temp;
@@ -38,7 +38,7 @@ void pop(int *row_index, int *col_index, int *value)
 	}
 }
 
-// to check if stack is empty
+/* to check if stack is empty*/
 int empty()
 {
 	if (top_node == NULL)
@@ -50,7 +50,7 @@ int empty()
 
 
 
-// to empty and destroy the stack
+/* to empty and destroy the stack*/
 void destroy()
 {
 	struct node_stack *temp;

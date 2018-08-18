@@ -1,8 +1,9 @@
 CC = gcc
-OBJS = main.o aux_main.o file_manipulation.o game_logic.o move_list.o solver.o user_interface.o
+OBJS = main.o aux_main.o file_manipulation.o game_logic.o move_list.o solver.o stack.o user_interface.o
  
 EXEC = sudoku
-COMP_FLAGS = 
+COMP_FLAGS = -ansi -Wall -Wextra \
+-Werror -pedantic-errors
 GUROBI_COMP = -I/usr/local/lib/gurobi563/include
 GUROBI_LIB = -L/usr/local/lib/gurobi563/lib -lgurobi56
 
@@ -18,10 +19,11 @@ game_logic.o: game_logic.c game_logic.h aux_main.h
 	$(CC) $(COMP_FLAGS) -c $*.c
 move_list.o: move_list.c move_list.h aux_main.h
 	$(CC) $(COMP_FLAGS) -c $*.c
-solver.o: solver.c solver.h gurobi_c.h aux_main.h
+solver.o: solver.c solver.h gurobi_c.h aux_main.h game_logic.h stack.h
 	$(CC) $(COMP_FLAGS) $(GUROBI_COMP) -c $*.c
+stack.o: stack.c stack.h 	
+	$(CC) $(COMP_FLAGS) -c $*.c
 user_interface.o: user_interface.c user_interface.h game_logic.h move_list.h file_manipulation.h aux_main.h
 	$(CC) $(COMP_FLAGS) -c $*.c
-
 clean:
 	rm -f *.o $(EXEC)

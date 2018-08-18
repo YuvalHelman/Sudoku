@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "solver.h"
 #include "gurobi_c.h"
 #include "aux_main.h"
 #include "game_logic.h"
-
-
+#include "stack.h"
 
 /*
 *	all Arrays are refferenced as 3-dimensions with [(i * DIM*DIM) + (j * DIM) + v] reffrences. 
@@ -24,8 +24,6 @@ int gurobi_initializer(cell** board) {
 	double	  *lb; /* Lower bounds for the values */
 	char      *vtype; /* Variable types : BINARY for all of them */
 	int       optimstatus;
-	double    objval;
-	int       zero;
 	int		  DIM; /* The board dimensions */
 	int       i; /* rows */
 	int		  j; /* Columns */
@@ -45,7 +43,6 @@ int gurobi_initializer(cell** board) {
 
 	env = NULL;
 	model = NULL;
-	zero = 0;
 	error = 0;
 
 	/* Fill the lower bound to 1 for any cell that already has a value (non-zero) */
@@ -62,7 +59,7 @@ int gurobi_initializer(cell** board) {
 
 			}
 		}
-
+	}
 
 		/* Create environment */
 		error = GRBloadenv(&env, "sudokuGurobi.log"); /* TODO: change 2nd argument to NULL when no need for log anymore */
@@ -226,15 +223,8 @@ int gurobi_initializer(cell** board) {
 		return 0;
 
 
-	}
 }
 
-
-int ILP_solver() {
-
-
-
-}
 
 
 /*
@@ -276,6 +266,8 @@ int numberOfSolotions() {
 			
 		}
 	}
+
+	return count; /* Yuval added this. cause there was no 'return' at all*/
 }
 
 

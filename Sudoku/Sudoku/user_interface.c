@@ -3,6 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "user_interface.h"
 #include "game_logic.h"
 #include "aux_main.h"
@@ -38,31 +39,29 @@ int validate() { return 0; }
 *  This function recieves a pointer to an integer matrix that needs to be initialized.
 *	The initialized matrix has all 0's in its cells.
 *
-*   returns: EXIT_SUCCESS(0) on success.
-*			 on any error returns EXIT_FAILURE(1) and prints the error.
+*   returns: a pointer to the board on success.
+*			 on any error returns NULL and prints the error.
 */
-int initialize_integer_board(int** board, int block_col_len, int block_row_len) {
+int** initialize_integer_board(int block_col_len, int block_row_len) {
 	int board_size, i;
-
-	if (board) {
-		printf("board should be NULL in order to be initialized. might contain needed data\n");
-		return EXIT_FAILURE;
-	}
+	int **board;
 
 	board_size = block_col_len * block_row_len;
 
-	if ((board = (int **)malloc(board_size * sizeof(int *))) == NULL) {
+	board = (int **)malloc(board_size * sizeof(int *));
+	if (!board) {
 		printf("Error: Malloc has failed allocating the board\n");
-		return EXIT_FAILURE;
+		return NULL;
 	}
 	for (i = 0; i < board_size; i++) {
-		if ((board[i] = (int *)calloc(board_size, sizeof(int)) == NULL)) {
+		board[i] = (int *)calloc(board_size, sizeof(int));
+		if (!(board[i])) {
 			printf("Error: Malloc has failed allocating the board\n");
-			return EXIT_FAILURE;
+			return NULL;
 		}
 	}
 
-	return EXIT_SUCCESS;
+	return board;
 }
 
 
@@ -544,8 +543,8 @@ int autofill() {
 	*/
 
 	/* Initialize a temp matrix */
-	if (initialize_integer_board(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length) 
-		== EXIT_FAILURE) {
+	temp_matrice_values = initialize_integer_board(sudoku.block_col_length, sudoku.block_row_length);
+	if (!temp_matrice_values) {
 		return EXIT_FAILURE;
 	}
 
