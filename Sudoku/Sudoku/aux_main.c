@@ -115,3 +115,4 @@ void update_num_of_filled_cells(int prev_val, int updated_val) {
 	}
 	/* else, if changed to same value.. nothing changes regarding the num_of_filled_cells */
 }
+

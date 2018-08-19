@@ -9,12 +9,12 @@ int save_to_file(FILE* fd){
 	int res, i, j, read_counter, board_len;
 	
 	/* Read the row, column from the file */
-	res = fprintf(fd, "%d", sudoku.block_row_length);
+	res = fprintf(fd, "%d ", sudoku.block_row_length);
 	if (res <= 0) {
 		printf("writing block row size to the file has failed. exiting\n");
 		return EXIT_FAILURE;
 	}
-	res = fprintf(fd, "%d\n", sudoku.block_col_length);
+	res = fprintf(fd, "%d \n", sudoku.block_col_length);
 	if (res <= 0) {
 		printf("writing block column size to the file has failed. exiting\n");
 		return EXIT_FAILURE;
@@ -65,6 +65,8 @@ int save_to_file(FILE* fd){
 		}
 
 	}
+
+	close(fd);
 	return EXIT_SUCCESS;
 }
 
@@ -141,5 +143,8 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 	}
 
 	(*pNumOfCellsFilled) = num_of_filled_cells;
+	
+	close(fd);
+
 	return EXIT_SUCCESS;
 }

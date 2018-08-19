@@ -9,15 +9,12 @@
 #include "aux_main.h"
 #include "move_list.h"
 #include "file_manipulation.h"
+#include "solver.h"
 
 void redo_print(int row, int column, int prev_val, int updated_val);
 void undo_print(int row, int column, int prev_val, int updated_val);
+
 /* TODO: implement these */
-
-
-
-
-
 int Exit();
 int generate();
 int hint();
@@ -32,7 +29,11 @@ int hint() { return 0; }
 int mark_error() { return 0; }
 int num_solutions() { return 0; }
 int reset() { return 0; }
-int validate() { return 0; }
+int validate() {
+	gurobi_initializer();
+	
+	return 0;
+}
 
 
 /*
@@ -89,7 +90,7 @@ int get_command_and_parse() {
 	do {
 		/* Get commands */
 		if (feof(stdin)) { /* EOF reached. exit. */
-			printf("Exiting...");
+			printf("Exiting...\n");
 			return EXIT_SUCCESS;
 		}
 
@@ -101,6 +102,9 @@ int get_command_and_parse() {
 			perror("Error: fgets has failed.");
 			return EXIT_FAILURE;
 		}
+
+		printf("board Solution:\n");
+		print_board_solution();
 
 		
 	} while (fgets_ret != NULL);
@@ -187,7 +191,21 @@ int user_command(char* buffer) {
 	case generate_command:
 		if (sudoku.game_mode != edit)
 			printf("ERROR: invalid command\n"); /* case b */
-		else generate(atoi(xchar),atoi(ychar));
+		else { 
+			errno = 0;
+			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			errno = 0;
+			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			generate(xchar_asInt, ychar_asInt);
+		}
 	break;
 	case undo_command:
 		if (sudoku.game_mode == init)
@@ -200,14 +218,26 @@ int user_command(char* buffer) {
 		else redo();
 	break;
 	case save_command:
-		if (sudoku.game_mode == init)
-			printf("ERROR: invalid command\n"); /* case b */
-		else Save(xchar);
+			Save(xchar);
 	break;
 	case hint_command:
 		if (sudoku.game_mode != solve)
 			printf("ERROR: invalid command\n"); /* case b */
-		hint(atoi(xchar), atoi(ychar));
+		else {
+			errno = 0;
+			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			errno = 0;
+			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			hint(xchar_asInt, ychar_asInt);
+		}
 	break;
 	case num_solutions_command:
 		if (sudoku.game_mode == init)
@@ -217,7 +247,9 @@ int user_command(char* buffer) {
 	case autofill_command:
 		if (sudoku.game_mode != solve)
 			printf("ERROR: invalid command\n"); /* case b */
-		autofill();
+		else {
+			autofill();
+		}
 	break;
 	case reset_command:
 		if (sudoku.game_mode == init) {
@@ -345,7 +377,7 @@ int set(int col_index, int row_index, int value) {
 
 	board_len = sudoku.block_row_length * sudoku.block_col_length;
 	num_of_cells = board_len * board_len;
-	prev_val = sudoku.board[row_index][col_index].value;
+	prev_val = sudoku.board[row_index-1][col_index-1].value;
 	updated_val = value;
 	
 	/* check if the values are legal */
@@ -562,7 +594,7 @@ int autofill() {
 	/* Copy value from the temp matrix to the board */
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
-			if (!sudoku.board[row_index][col_index].value) {
+			if (sudoku.board[row_index][col_index].value == 0) {
 				updated_val = temp_matrice_values[row_index][col_index];
 				if (add_node_flag == true) {
 					if (add_new_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
@@ -588,12 +620,15 @@ int autofill() {
 
 	free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
 
+	print_board(); /* case g */
+
 	return EXIT_SUCCESS;
 }
 
 int one_possible_value(int row_index, int col_index) {
 	int i, count, board_length, value;
 	count = 0;
+	value = 0;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	for (i = 1; i <= board_length; i++) {
 		if (valid_value(col_index, row_index, i)) {
