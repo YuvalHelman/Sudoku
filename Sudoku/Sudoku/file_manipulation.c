@@ -66,7 +66,6 @@ int save_to_file(FILE* fd){
 
 	}
 
-	close(fd);
 	return EXIT_SUCCESS;
 }
 
@@ -143,8 +142,6 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 	}
 
 	(*pNumOfCellsFilled) = num_of_filled_cells;
-	
-	close(fd);
 
 	return EXIT_SUCCESS;
 }

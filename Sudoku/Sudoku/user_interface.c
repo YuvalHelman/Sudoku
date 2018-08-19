@@ -668,6 +668,7 @@ int Save(char* filepath) {
 	}
 	
 	printf("Saved to %s\n", filepath);
+	fclose(fd);
 	return EXIT_SUCCESS;
 }
 
