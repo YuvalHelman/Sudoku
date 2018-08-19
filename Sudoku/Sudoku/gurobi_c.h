@@ -1057,4 +1057,4 @@ GRBtunemodeladv(GRBmodel *model, GRBmodel *ignore, GRBmodel *hint);
 int __stdcall
 GRBsync(GRBmodel *model);
 
-#endif#pragma once
+#endif

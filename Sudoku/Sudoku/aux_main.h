@@ -50,16 +50,19 @@ extern sudoku_t sudoku;
  *   returns: a pointer to the newly allocated memmory for the new board.
  *			 on any error returns NULL and prints the error.
  */
-cell** copy_current_board();
+/* cell** copy_current_board(); */
+
+
+
 
 /*
- *	This function recieves a pointer to a board that needs to be free'd.
+ *	This function free's the game board.
  *	Any unsaved data is lost.
  *
  *   returns: EXIT_SUCCESS(0) on success.
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
-int free_board(cell** board, int block_col_len, int block_row_len);
+int free_board();
 
 int free_int_matrix(int** board, int block_col_len, int block_row_len);
 /*
@@ -85,8 +88,8 @@ int free_on_exit();
 */
 void update_num_of_filled_cells(int prev_val, int updated_val);
 
-// TODO: add this function to :
-//		Edit, Solve, generate, undo, redo, set, autofill.
-//		** added:** Edit, Solve, set, autofill
+/* TODO: add this function to :
+		Edit, Solve, generate, undo, redo, set, autofill.
+		** added:** Edit, Solve, set, autofill */
 
 #endif /* AUX_MAIN */

@@ -3,6 +3,7 @@
 #define NOVE_LIST_HEADER
 
 #include "aux_main.h"
+#include <stdio.h>
 
 /*
 	This Module defines anything related to the list of moves used by the player.

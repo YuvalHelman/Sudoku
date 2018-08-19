@@ -10,7 +10,7 @@ char *test_game_logic_module() {
 
 
 
-
+	return (char*)0;
 }
 
 

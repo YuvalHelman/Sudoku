@@ -3,16 +3,18 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "user_interface.h"
 #include "game_logic.h"
 #include "aux_main.h"
 #include "move_list.h"
 #include "file_manipulation.h"
+#include "solver.h"
 
 void redo_print(int row, int column, int prev_val, int updated_val);
 void undo_print(int row, int column, int prev_val, int updated_val);
-/* TODO: implement these */
 
+/* TODO: implement these */
 int Exit();
 int generate();
 int hint();
@@ -21,13 +23,85 @@ int num_solutions();
 int reset();
 int validate();
 
-int Exit() {}
-int generate() {}
-int hint() {}
-int mark_error() {}
-int num_solutions() {}
-int reset() {}
-int validate() {}
+int Exit() { 
+	free_board();
+	delete_list_on_exit();
+
+	printf("Exiting...\n");
+
+	/* Terminate the program */
+	exit(EXIT_SUCCESS);
+
+}
+int generate() { return 0; }
+int hint() { return 0; }
+int mark_error() { return 0; }
+int num_solutions() { return 0; }
+int reset() { 
+
+	int num_of_values, i, row, col, prev, updated;
+	node_vals* values_array;
+	int reset_flag;
+
+	reset_flag = true;
+	do { /* Initiate undo on the list until the head */
+		values_array = undo_list(&num_of_values, reset_flag);
+
+		if (values_array) {
+			/* Update the board to the values in the previous turn */
+			for (i = 0; i < num_of_values; i++) {
+				row = values_array[i].row;
+				col = values_array[i].column;
+				prev = values_array[i].prev_val;
+				updated = values_array[i].updated_val;
+
+				sudoku.board[row][col].value = prev;
+			}
+		}
+	} while (values_array);
+
+	/* Delete the list except the head */
+	delete_list_from_the_current_node();
+
+	printf("Board reset\n");
+
+	return EXIT_SUCCESS; 
+}
+int validate() {
+	gurobi_initializer();
+	
+	return 0;
+}
+
+
+/*
+*  This function recieves a pointer to an integer matrix that needs to be initialized.
+*	The initialized matrix has all 0's in its cells.
+*
+*   returns: a pointer to the board on success.
+*			 on any error returns NULL and prints the error.
+*/
+int** initialize_integer_board(int block_col_len, int block_row_len) {
+	int board_size, i;
+	int **board;
+
+	board_size = block_col_len * block_row_len;
+
+	board = (int **)malloc(board_size * sizeof(int *));
+	if (!board) {
+		printf("Error: Malloc has failed allocating the board\n");
+		return NULL;
+	}
+	for (i = 0; i < board_size; i++) {
+		board[i] = (int *)calloc(board_size, sizeof(int));
+		if (!(board[i])) {
+			printf("Error: Malloc has failed allocating the board\n");
+			return NULL;
+		}
+	}
+
+	return board;
+}
 
 
 sudokuCommands 
@@ -54,7 +128,7 @@ int get_command_and_parse() {
 	do {
 		/* Get commands */
 		if (feof(stdin)) { /* EOF reached. exit. */
-			printf("Exiting...");
+			printf("Exiting...\n");
 			return EXIT_SUCCESS;
 		}
 
@@ -67,10 +141,13 @@ int get_command_and_parse() {
 			return EXIT_FAILURE;
 		}
 
+		/*printf("board Solution:\n");*/
+		/* DEBUG: print_board_solution();*/
+
 		
 	} while (fgets_ret != NULL);
 
-
+	return EXIT_SUCCESS;
 	
 }
 
@@ -152,7 +229,21 @@ int user_command(char* buffer) {
 	case generate_command:
 		if (sudoku.game_mode != edit)
 			printf("ERROR: invalid command\n"); /* case b */
-		else generate(atoi(xchar),atoi(ychar));
+		else { 
+			errno = 0;
+			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			errno = 0;
+			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			generate(xchar_asInt, ychar_asInt);
+		}
 	break;
 	case undo_command:
 		if (sudoku.game_mode == init)
@@ -165,14 +256,26 @@ int user_command(char* buffer) {
 		else redo();
 	break;
 	case save_command:
-		if (sudoku.game_mode == init)
-			printf("ERROR: invalid command\n"); /* case b */
-		else Save(xchar);
+			Save(xchar);
 	break;
 	case hint_command:
 		if (sudoku.game_mode != solve)
 			printf("ERROR: invalid command\n"); /* case b */
-		hint(atoi(xchar), atoi(ychar));
+		else {
+			errno = 0;
+			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			errno = 0;
+			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			hint(xchar_asInt, ychar_asInt);
+		}
 	break;
 	case num_solutions_command:
 		if (sudoku.game_mode == init)
@@ -182,7 +285,9 @@ int user_command(char* buffer) {
 	case autofill_command:
 		if (sudoku.game_mode != solve)
 			printf("ERROR: invalid command\n"); /* case b */
-		autofill();
+		else {
+			autofill();
+		}
 	break;
 	case reset_command:
 		if (sudoku.game_mode == init) {
@@ -206,7 +311,7 @@ int user_command(char* buffer) {
 	
 int Solve(char* filepath) {
 	FILE* fd;
-	int ret_val, num_of_filled_cells;
+	int num_of_filled_cells;
 	int block_rows, block_cols;
 
 	/* Change the game mode */
@@ -222,12 +327,12 @@ int Solve(char* filepath) {
 
 	/* Reset basic game utilities (case d) */
 	delete_list_full();
-	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
+	free_board();
 	sudoku.board = NULL;
 
 	/* Read from the file and initialize the board and sudoku's block_col/row lengths */
 	if (read_from_file(fd, &block_rows, &block_cols, &num_of_filled_cells) == EXIT_FAILURE) {
-		free_board(sudoku.board, block_cols, block_rows);
+		free_board();
 		return EXIT_FAILURE;
 	}
 
@@ -241,12 +346,13 @@ int Solve(char* filepath) {
 
 	print_board();
 
+	fclose(fd);
+
 	return EXIT_SUCCESS;
 }
 
 int Edit(char* filepath) {
 	FILE* fd;
-	int ret_val;
 	int block_rows, block_cols, num_of_filled_cells;
 
 	/* Change the game mode */
@@ -255,7 +361,7 @@ int Edit(char* filepath) {
 
 	/* Reset basic game utilities (case f) */
 	delete_list_full();
-	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
+	free_board();
 	sudoku.board = NULL;
 
 	if (filepath != NULL) {
@@ -268,7 +374,6 @@ int Edit(char* filepath) {
 
 		/* Read from the file and initialize the board and sudoku's block_col/row lengths */
 		if (read_from_file(fd, &block_rows, &block_cols, &num_of_filled_cells) == EXIT_FAILURE) {
-			free_board(sudoku.board, block_cols, block_rows);
 			return EXIT_FAILURE;
 		}
 
@@ -278,7 +383,7 @@ int Edit(char* filepath) {
 		sudoku.num_of_filled_cells = num_of_filled_cells;
 	}
 	else {
-		if (initialize_new_board(sudoku.board, DEFAULT_BLOCK_LEN, DEFAULT_BLOCK_LEN) == EXIT_FAILURE) {
+		if (initialize_new_board(DEFAULT_BLOCK_LEN, DEFAULT_BLOCK_LEN) == EXIT_FAILURE) {
 			return EXIT_FAILURE;
 		}
 
@@ -291,6 +396,8 @@ int Edit(char* filepath) {
 	sudoku.mark_errors = 0;
 
 	print_board();
+
+	fclose(fd);
 
 	return EXIT_SUCCESS;
 }
@@ -307,10 +414,11 @@ void mark_errors(int value) {
 int set(int col_index, int row_index, int value) {
 
 	int prev_val, updated_val, board_len, num_of_cells;
+	int row_index_board, col_index_board;
 
 	board_len = sudoku.block_row_length * sudoku.block_col_length;
 	num_of_cells = board_len * board_len;
-	prev_val = sudoku.board[row_index][col_index].value;
+
 	updated_val = value;
 	
 	/* check if the values are legal */
@@ -321,36 +429,42 @@ int set(int col_index, int row_index, int value) {
 		return false;
 	}
 
+	row_index_board = row_index - 1;
+	col_index_board = col_index - 1;
+
+	prev_val = sudoku.board[row_index_board][col_index_board].value;
+
+
 	/* check if (i,j) is a fixed cell (case e) */
-	if (sudoku.board[row_index][col_index].is_fixed) { /* it is fixed.*/
+	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
 		return false;
 	}
 
 	/* check if (i,j) is a fixed cell (case e) */
-	if (sudoku.board[row_index][col_index].is_fixed) { /* it is fixed.*/
+	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
 		return false;
 	}
 
 	/* Update the value in the board itself and the number of filled cells */
-	sudoku.board[row_index][col_index].value = value;
+	sudoku.board[row_index_board][col_index_board].value = value;
 	update_num_of_filled_cells(prev_val, updated_val);
 
 	/* Update the move_list. (Case f,  */
-	if (add_new_node(row_index, col_index, prev_val, updated_val) == EXIT_FAILURE) {
+	if (add_new_node(row_index_board, col_index_board, prev_val, updated_val) == EXIT_FAILURE) {
 		return EXIT_FAILURE;
 	}
 
 	/* update errors for all relevant cells */
-	update_errors(row_index, col_index); 
+	update_errors(row_index_board, col_index_board); 
 
 	print_board();
 	
 	/* Validate the board, and print this if it's not valid: (case c)*/
 	/* TODO TODO */
 	if (sudoku.game_mode == solve && sudoku.num_of_filled_cells == num_of_cells) {
-		
+		/*
 		if( validate() == EXIT_SUCCESS ) {
 			printf("Puzzle solved successfully\n");
 			sudoku.game_mode = init;
@@ -358,7 +472,7 @@ int set(int col_index, int row_index, int value) {
 		else {
 			printf("Puzzle solution erroneous\n");
 		}
-
+		*/
 	}
 	
 	return EXIT_SUCCESS;
@@ -369,8 +483,11 @@ int undo() {
 
 	int num_of_values, i, row, col, prev, updated;
 	node_vals* values_array;
+	int reset_flag;
 
-	values_array = undo_list(&num_of_values);
+	reset_flag = false;
+
+	values_array = undo_list(&num_of_values , reset_flag);
 
 	if (values_array) {
 		/* Update the board to the values in the previous turn */
@@ -490,7 +607,7 @@ void separator_row() {
 
 
 int autofill() {
-	int updated_val, prev_val, add_node_flag;
+	int updated_val ,add_node_flag;
 	int row_index, col_index, board_length, value, **temp_matrice_values;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 
@@ -505,8 +622,8 @@ int autofill() {
 	*/
 
 	/* Initialize a temp matrix */
-	if (initialize_integer_board(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length) 
-		== EXIT_FAILURE) {
+	temp_matrice_values = initialize_integer_board(sudoku.block_col_length, sudoku.block_row_length);
+	if (!temp_matrice_values) {
 		return EXIT_FAILURE;
 	}
 
@@ -524,7 +641,7 @@ int autofill() {
 	/* Copy value from the temp matrix to the board */
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
-			if (!sudoku.board[row_index][col_index].value) {
+			if (sudoku.board[row_index][col_index].value == 0) {
 				updated_val = temp_matrice_values[row_index][col_index];
 				if (add_node_flag == true) {
 					if (add_new_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
@@ -550,12 +667,15 @@ int autofill() {
 
 	free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
 
+	print_board(); /* case g */
+
 	return EXIT_SUCCESS;
 }
 
 int one_possible_value(int row_index, int col_index) {
 	int i, count, board_length, value;
 	count = 0;
+	value = 0;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	for (i = 1; i <= board_length; i++) {
 		if (valid_value(col_index, row_index, i)) {
@@ -571,8 +691,6 @@ int one_possible_value(int row_index, int col_index) {
 
 int Save(char* filepath) {
 	FILE* fd;
-	int ret_val;
-	int block_rows, block_cols;
 
 	if (sudoku.game_mode == edit) {
 
@@ -597,6 +715,7 @@ int Save(char* filepath) {
 	}
 	
 	printf("Saved to %s\n", filepath);
+	fclose(fd);
 	return EXIT_SUCCESS;
 }
 
@@ -651,36 +770,7 @@ void print_board_solution() {
 
 
 
-/*
-*  This function recieves a pointer to an integer matrix that needs to be initialized.
-*	The initialized matrix has all 0's in its cells.
-*
-*   returns: EXIT_SUCCESS(0) on success.
-*			 on any error returns EXIT_FAILURE(1) and prints the error.
-*/
-int initialize_integer_board(int** board, int block_col_len, int block_row_len) {
-	int board_size, i;
 
-	if (board) {
-		printf("board should be NULL in order to be initialized. might contain needed data\n");
-		return EXIT_FAILURE;
-	}
-
-	board_size = block_col_len * block_row_len;
-
-	if ((board = (int **)malloc(board_size * sizeof(int *))) == NULL) {
-		printf("Error: Malloc has failed allocating the board\n");
-		return EXIT_FAILURE;
-	}
-	for (i = 0; i < board_size; i++) {
-		if ((board[i] = (int *)calloc(board_size, sizeof(int)) == NULL)) {
-			printf("Error: Malloc has failed allocating the board\n");
-			return EXIT_FAILURE;
-		}
-	}
-
-	return EXIT_SUCCESS;
-}
 
 
 /*

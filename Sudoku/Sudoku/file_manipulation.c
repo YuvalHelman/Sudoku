@@ -6,22 +6,21 @@
 
 
 int save_to_file(FILE* fd){
-	int temp_buff[TEMP_BUFF_SIZE];
-	int rows, columns, res, val, i, j, curr_col, read_counter, board_len;
+	int res, i, j, read_counter, board_len;
 	
 	/* Read the row, column from the file */
-	res = fprintf(fd, "%d", sudoku.block_row_length);
+	res = fprintf(fd, "%d ", sudoku.block_row_length);
 	if (res <= 0) {
 		printf("writing block row size to the file has failed. exiting\n");
 		return EXIT_FAILURE;
 	}
-	res = fprintf(fd, "%d\n", sudoku.block_col_length);
+	res = fprintf(fd, "%d \n", sudoku.block_col_length);
 	if (res <= 0) {
 		printf("writing block column size to the file has failed. exiting\n");
 		return EXIT_FAILURE;
 	}
 
-	read_counter = 1; //???
+	read_counter = 1; 
 	board_len = sudoku.block_col_length * sudoku.block_row_length;
 	for (i = 0; i < board_len; i++) {
 		for (j = 0; j < board_len; j++) {
@@ -66,16 +65,17 @@ int save_to_file(FILE* fd){
 		}
 
 	}
+
 	return EXIT_SUCCESS;
 }
 
 
 int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) { 
 	char vals[BUF_SIZE];
-	int rows,i, columns, res, val, board_len, curr_row, curr_col, ret_code, value, num_of_filled_cells;
-	char* token;
+	int rows, columns, res, board_len, curr_row, curr_col, ret_code, value, num_of_filled_cells;
+	char *token;
 
-	num_of_filled_cells = i = 0;
+	num_of_filled_cells = 0;
 
 	/* Read the row, column from the file */
 	res = fscanf(fd, "%d", &rows);  
@@ -91,6 +91,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 		return EXIT_FAILURE;
 	}
 
+	board_len = rows * columns;
 	(*pRow) = rows;
 	(*pCol) = columns;
 	ret_code = BUF_SIZE;
@@ -141,5 +142,6 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 	}
 
 	(*pNumOfCellsFilled) = num_of_filled_cells;
+
 	return EXIT_SUCCESS;
 }

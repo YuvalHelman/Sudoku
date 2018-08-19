@@ -2,18 +2,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "solver.h"
 #include "gurobi_c.h"
 #include "aux_main.h"
 #include "game_logic.h"
 
-
-
 /*
 *	all Arrays are refferenced as 3-dimensions with [(i * DIM*DIM) + (j * DIM) + v] reffrences. 
 *
 */
-int gurobi_initializer(cell** board) {
+int gurobi_initializer() {
 
 	GRBenv   *env;
 	GRBmodel *model;
@@ -24,8 +23,6 @@ int gurobi_initializer(cell** board) {
 	double	  *lb; /* Lower bounds for the values */
 	char      *vtype; /* Variable types : BINARY for all of them */
 	int       optimstatus;
-	double    objval;
-	int       zero;
 	int		  DIM; /* The board dimensions */
 	int       i; /* rows */
 	int		  j; /* Columns */
@@ -43,9 +40,9 @@ int gurobi_initializer(cell** board) {
 	sol = malloc(sizeof(char)*DIM*DIM*DIM);
 
 
+
 	env = NULL;
 	model = NULL;
-	zero = 0;
 	error = 0;
 
 	/* Fill the lower bound to 1 for any cell that already has a value (non-zero) */
@@ -53,7 +50,7 @@ int gurobi_initializer(cell** board) {
 		for (j = 0; j < DIM; j++) {
 			/*TODO: Added the below row v to (v+1). check if its ok */
 			for (v = 0; v < DIM; v++) { /* v = Fixed Value.*/
-				if (board[i][j].value == (v + 1))
+				if (sudoku.board[i][j].value == (v + 1))
 					lb[i*DIM*DIM + j * DIM + v] = 1.0;
 				else
 					lb[i*DIM*DIM + j * DIM + v] = 0.0;
@@ -62,14 +59,22 @@ int gurobi_initializer(cell** board) {
 
 			}
 		}
-
-
+	}
+		/* Debug */
+			fflush(stdin); fflush(stdout);
+			printf("error printing 1\n");
+		/* Debug */
 		/* Create environment */
 		error = GRBloadenv(&env, "sudokuGurobi.log"); /* TODO: change 2nd argument to NULL when no need for log anymore */
 		if (error || env == NULL) {
 			fprintf(stderr, "Error: could not create environment\n");
 			exit(1);
 		}
+
+		/* Debug */
+		fflush(stdin); fflush(stdout);
+		printf("error printing 2\n");
+		/* Debug */
 
 		/* Create an empty model */
 		error = GRBnewmodel(env, &model, "sudoku", DIM*DIM*DIM, NULL, lb, NULL,
@@ -226,57 +231,11 @@ int gurobi_initializer(cell** board) {
 		return 0;
 
 
-	}
 }
 
 
-int ILP_solver() {
 
 
-
-}
-
-
-/*
-* The function uses a determenistic algorithem to solve the sudoku.
-* The function also updates the "solution matrice" to the new solution if there is one. (if there isn't , the previous solution is kept)
-* @param board - matrice with the cells inforamtion
-* @param row_index - the row of the cell we are checking
-* @param col_index - the column of the cell we are checking
-* @return -true(0) if the sudoku is solvebale and store the solution in cell.solution matrix, false(1) otherwise and do nothing(not sure if it work).
-*/
-int numberOfSolotions() {
-	/* variables declarations */
-	int row_index, col_index, count, value, board_length;
-	board_length = sudoku.block_col_length * sudoku.block_row_length;
-
-	for (row_index = 0; row_index < board_length; row_index++) {
-		for (col_index = 0;col_index < board_length;col_index++) {
-			if (sudoku.board[row_index][col_index].is_fixed == false) {
-				if (sudoku.board[row_index][col_index].value == 0) {
-					for (value = 1; value <= board_length; value++) {
-						if (valid_value(row_index, col_index, value)) {
-							push(row_index, col_index, value);
-							sudoku.board[row_index][col_index].value = value;
-							break;
-						REC:;
-						}
-						else if (value == board_length) {
-							pop(&row_index,&col_index,&value);
-							goto REC;
-						}
-					}
-				}
-			}
-			if (row_index == board_length - 1 && col_index == board_length - 1) {
-				count++;
-				pop(&row_index, &col_index, &value);
-				goto REC;
-			}
-			
-		}
-	}
-}
 
 
 
