@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include "user_interface.h"
 #include "game_logic.h"
+#include "user_interface.h"
 #include "aux_main.h"
 #include "move_list.h"
 #include "file_manipulation.h"
@@ -18,7 +18,7 @@ void undo_print(int row, int column, int prev_val, int updated_val);
 int Exit();
 int generate();
 int hint();
-int mark_error();
+void mark_errors(int value);
 int num_solutions();
 int reset();
 int validate();
@@ -35,7 +35,6 @@ int Exit() {
 }
 int generate() { return 0; }
 int hint() { return 0; }
-int mark_error() { return 0; }
 int num_solutions() { return 0; }
 int reset() { 
 
@@ -67,8 +66,9 @@ int reset() {
 
 	return EXIT_SUCCESS; 
 }
+/**/
 int validate() {
-	gurobi_initializer();
+	//gurobi_initializer();
 	
 	return 0;
 }
@@ -183,7 +183,7 @@ int user_command(char* buffer) {
 				perror("strtol function failed.");
 				return EXIT_FAILURE;
 			}
-			mark_error(xchar_asInt);
+			mark_errors(xchar_asInt);
 		}
 	break;
 	case print_board_command:
@@ -432,20 +432,15 @@ int set(int col_index, int row_index, int value) {
 	row_index_board = row_index - 1;
 	col_index_board = col_index - 1;
 
+
+	/* check if (i,j) is a fixed cell (case e) */
+	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
+		printf("Error: cell is fixed\n");
+		return false;
+	}
+
 	prev_val = sudoku.board[row_index_board][col_index_board].value;
 
-
-	/* check if (i,j) is a fixed cell (case e) */
-	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
-		printf("Error: cell is fixed\n");
-		return false;
-	}
-
-	/* check if (i,j) is a fixed cell (case e) */
-	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
-		printf("Error: cell is fixed\n");
-		return false;
-	}
 
 	/* Update the value in the board itself and the number of filled cells */
 	sudoku.board[row_index_board][col_index_board].value = value;
@@ -548,7 +543,7 @@ int redo() {
 	return EXIT_SUCCESS;
 }
 
-void print_board() {
+ void print_board() {
 
 	/* variables declarations */
 	int i, j, board_length;
@@ -569,12 +564,11 @@ void print_board() {
 				printf("    ");
 			}
 			else if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
-				printf(" "); /* DOT for fixed number */
-				printf("%2d.", sudoku.board[i][j].value); /* DOT for fixed number*/
+				
+				printf(" %2d.", sudoku.board[i][j].value); /* DOT for fixed number*/
 			}
 			else if (!sudoku.board[i][j].is_fixed) { /* Non-fixed number that the user inputed */
-				printf(" "); /* space for normal number */
-				printf("%2d ", sudoku.board[i][j].value);
+				printf(" %2d", sudoku.board[i][j].value);
 				if (sudoku.mark_errors && sudoku.board[i][j].error) /* check if we need to mark an error */
 					printf("*");
 				else printf(" ");
@@ -599,7 +593,7 @@ void print_board() {
 
 void separator_row() {
 	int i;
-	for (i = 0; i <= sudoku.block_col_length*sudoku.block_row_length + sudoku.block_row_length; i++)
+	for (i = 0; i <= 4*sudoku.block_col_length*sudoku.block_row_length + sudoku.block_row_length; i++)
 		printf("-");
 	printf("\n");
 }
@@ -641,7 +635,7 @@ int autofill() {
 	/* Copy value from the temp matrix to the board */
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
-			if (sudoku.board[row_index][col_index].value == 0) {
+			if (temp_matrice_values[row_index][col_index] == 0) {
 				updated_val = temp_matrice_values[row_index][col_index];
 				if (add_node_flag == true) {
 					if (add_new_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
@@ -678,7 +672,7 @@ int one_possible_value(int row_index, int col_index) {
 	value = 0;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	for (i = 1; i <= board_length; i++) {
-		if (valid_value(col_index, row_index, i)) {
+		if (valid_value(row_index, col_index, i)) {
 			count++;
 			value = i;
 			if (count > 1) {

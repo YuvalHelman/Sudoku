@@ -39,7 +39,7 @@ int main() {
 
 	initialize_list_parameters();
 
-	initialize_test_board(); /* test board for testing stuff ... add the function for different boards */
+	//initialize_test_board(); /* test board for testing stuff ... add the function for different boards */
 
 	get_command_and_parse();
 	

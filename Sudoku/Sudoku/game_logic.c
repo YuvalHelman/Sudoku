@@ -16,13 +16,19 @@ char *test_game_logic_module() {
 
 
 int valid_value(int row_index, int col_index, int value) {
+	if (value == 2) {
+		printf("");
+	}
+	if (value == 0) {
+		return true;
+	}
 	return check_row(row_index, col_index, value) &&
 		check_col(row_index, col_index, value) &&
 		check_block(row_index, col_index, value);
 }
 
 /* checks if the value can be place in the row */
-int check_row(int row_index, int col_index, int value) {
+int check_col(int row_index, int col_index, int value) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	for (i = 0;i < board_length;i++) {
@@ -34,7 +40,7 @@ int check_row(int row_index, int col_index, int value) {
 }
 
 /* checks if the value can be place in the col */
-int check_col(int row_index, int col_index, int value) {
+int check_row(int row_index, int col_index, int value) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	for (i = 0;i < board_length;i++) {
@@ -54,7 +60,7 @@ int check_block(int row_index, int col_index, int value) {
 	for (i = 0; i < sudoku.block_row_length; i++) {
 		for (j = 0; j < sudoku.block_col_length; j++) {
 			if (sudoku.board[first_block_index_row + i][first_block_index_col + j].value == value &&
-				!(i == col_index && i == row_index))
+				!(first_block_index_col + j == col_index && first_block_index_row + i == row_index))
 				return false;
 		}
 	}
@@ -69,7 +75,7 @@ void update_errors(int row_index, int col_index) {
 
 
 /* checks if the value can be place in the row */
-void update_errors_row(int row_index, int col_index) {
+void update_errors_col(int row_index, int col_index) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	for (i = 0;i < board_length;i++) {
@@ -80,7 +86,7 @@ void update_errors_row(int row_index, int col_index) {
 }
 
 /* checks if the value can be place in the col */
-void update_errors_col(int row_index, int col_index) {
+void update_errors_row(int row_index, int col_index) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	for (i = 0;i < board_length;i++) {
@@ -98,10 +104,10 @@ void update_errors_block(int row_index, int col_index) {
 																							 /* Check the block with the boundaries we have set */
 	for (i = 0; i < sudoku.block_row_length; i++) {
 		for (j = 0; j < sudoku.block_col_length; j++) {
-			if (!(row_index == i || col_index == j)) { /* we already updated the row and the col */
-				if (valid_value(i, j, sudoku.board[j][i].value))
-					sudoku.board[i][j].error = false;
-				else sudoku.board[i][j].error = true;
+			if (!(row_index == i + first_block_index_row || col_index == j + first_block_index_col)) { /* we already updated the row and the col */
+				if (valid_value(i + first_block_index_row , j + first_block_index_col, sudoku.board[i + first_block_index_row][j + first_block_index_col].value))
+					sudoku.board[i + first_block_index_row ][j + first_block_index_col].error = false;
+				else sudoku.board[i + first_block_index_row ][j + first_block_index_col].error = true;
 			}
 		}
 	}
