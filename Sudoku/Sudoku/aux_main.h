@@ -56,13 +56,13 @@ extern sudoku_t sudoku;
 
 
 /*
- *	This function recieves a pointer to a board that needs to be free'd.
+ *	This function free's the game board.
  *	Any unsaved data is lost.
  *
  *   returns: EXIT_SUCCESS(0) on success.
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
-int free_board(cell** board, int block_col_len, int block_row_len);
+int free_board();
 
 int free_int_matrix(int** board, int block_col_len, int block_row_len);
 /*

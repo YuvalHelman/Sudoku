@@ -40,6 +40,7 @@ int gurobi_initializer() {
 	sol = malloc(sizeof(char)*DIM*DIM*DIM);
 
 
+
 	env = NULL;
 	model = NULL;
 	error = 0;
@@ -59,13 +60,21 @@ int gurobi_initializer() {
 			}
 		}
 	}
-
+		/* Debug */
+			fflush(stdin); fflush(stdout);
+			printf("error printing 1\n");
+		/* Debug */
 		/* Create environment */
 		error = GRBloadenv(&env, "sudokuGurobi.log"); /* TODO: change 2nd argument to NULL when no need for log anymore */
 		if (error || env == NULL) {
 			fprintf(stderr, "Error: could not create environment\n");
 			exit(1);
 		}
+
+		/* Debug */
+		fflush(stdin); fflush(stdout);
+		printf("error printing 2\n");
+		/* Debug */
 
 		/* Create an empty model */
 		error = GRBnewmodel(env, &model, "sudoku", DIM*DIM*DIM, NULL, lb, NULL,

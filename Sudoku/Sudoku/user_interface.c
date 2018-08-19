@@ -23,12 +23,50 @@ int num_solutions();
 int reset();
 int validate();
 
-int Exit() { return 0; }
+int Exit() { 
+	free_board();
+	delete_list_on_exit();
+
+	printf("Exiting...\n");
+
+	/* Terminate the program */
+	exit(EXIT_SUCCESS);
+
+}
 int generate() { return 0; }
 int hint() { return 0; }
 int mark_error() { return 0; }
 int num_solutions() { return 0; }
-int reset() { return 0; }
+int reset() { 
+
+	int num_of_values, i, row, col, prev, updated;
+	node_vals* values_array;
+	int reset_flag;
+
+	reset_flag = true;
+	do { /* Initiate undo on the list until the head */
+		values_array = undo_list(&num_of_values, reset_flag);
+
+		if (values_array) {
+			/* Update the board to the values in the previous turn */
+			for (i = 0; i < num_of_values; i++) {
+				row = values_array[i].row;
+				col = values_array[i].column;
+				prev = values_array[i].prev_val;
+				updated = values_array[i].updated_val;
+
+				sudoku.board[row][col].value = prev;
+			}
+		}
+	} while (values_array);
+
+	/* Delete the list except the head */
+	delete_list_from_the_current_node();
+
+	printf("Board reset\n");
+
+	return EXIT_SUCCESS; 
+}
 int validate() {
 	gurobi_initializer();
 	
@@ -103,8 +141,8 @@ int get_command_and_parse() {
 			return EXIT_FAILURE;
 		}
 
-		printf("board Solution:\n");
-		print_board_solution();
+		/*printf("board Solution:\n");*/
+		/* DEBUG: print_board_solution();*/
 
 		
 	} while (fgets_ret != NULL);
@@ -289,12 +327,12 @@ int Solve(char* filepath) {
 
 	/* Reset basic game utilities (case d) */
 	delete_list_full();
-	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
+	free_board();
 	sudoku.board = NULL;
 
 	/* Read from the file and initialize the board and sudoku's block_col/row lengths */
 	if (read_from_file(fd, &block_rows, &block_cols, &num_of_filled_cells) == EXIT_FAILURE) {
-		free_board(sudoku.board, block_cols, block_rows);
+		free_board();
 		return EXIT_FAILURE;
 	}
 
@@ -307,6 +345,8 @@ int Solve(char* filepath) {
 	sudoku.mark_errors = 0;
 
 	print_board();
+
+	fclose(fd);
 
 	return EXIT_SUCCESS;
 }
@@ -321,7 +361,7 @@ int Edit(char* filepath) {
 
 	/* Reset basic game utilities (case f) */
 	delete_list_full();
-	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
+	free_board();
 	sudoku.board = NULL;
 
 	if (filepath != NULL) {
@@ -334,7 +374,6 @@ int Edit(char* filepath) {
 
 		/* Read from the file and initialize the board and sudoku's block_col/row lengths */
 		if (read_from_file(fd, &block_rows, &block_cols, &num_of_filled_cells) == EXIT_FAILURE) {
-			free_board(sudoku.board, block_cols, block_rows);
 			return EXIT_FAILURE;
 		}
 
@@ -358,6 +397,8 @@ int Edit(char* filepath) {
 
 	print_board();
 
+	fclose(fd);
+
 	return EXIT_SUCCESS;
 }
 
@@ -377,7 +418,7 @@ int set(int col_index, int row_index, int value) {
 
 	board_len = sudoku.block_row_length * sudoku.block_col_length;
 	num_of_cells = board_len * board_len;
-	prev_val = sudoku.board[row_index-1][col_index-1].value;
+
 	updated_val = value;
 	
 	/* check if the values are legal */
@@ -390,6 +431,9 @@ int set(int col_index, int row_index, int value) {
 
 	row_index_board = row_index - 1;
 	col_index_board = col_index - 1;
+
+	prev_val = sudoku.board[row_index_board][col_index_board].value;
+
 
 	/* check if (i,j) is a fixed cell (case e) */
 	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
@@ -439,8 +483,11 @@ int undo() {
 
 	int num_of_values, i, row, col, prev, updated;
 	node_vals* values_array;
+	int reset_flag;
 
-	values_array = undo_list(&num_of_values);
+	reset_flag = false;
+
+	values_array = undo_list(&num_of_values , reset_flag);
 
 	if (values_array) {
 		/* Update the board to the values in the previous turn */

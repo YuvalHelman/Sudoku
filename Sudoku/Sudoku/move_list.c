@@ -10,29 +10,26 @@ List *move_list = NULL;
 
 
 
-// TODO: use set in order to update the errors. use the fanc updateerrors (in the user_interface.c)
+/* TODO: use set in order to update the errors. use the fanc updateerrors (in the user_interface.c)*/
 node_vals* redo_list(int* num_of_values) {
 	Node* curr_node;
 	int  board_size;
 
-	curr_node = (Node*)move_list->current_Node_move;
 	board_size = sudoku.block_col_length * sudoku.block_row_length;
 
 	if (sudoku.game_mode == init) {/* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
 		return NULL;
 	}
-	if (curr_node == move_list->tail) { /* case d */
+	if (move_list->current_Node_move == move_list->tail) { /* case d */
 		printf("ERROR: no moves to redo\n");
 		return NULL;
 	}
 
 	/* Set the current_node_move pointer to the next node in the list */
 	move_list->current_Node_move = move_list->current_Node_move->next;
-	curr_node = curr_node->next;
 
-	/* Change game board cell to the updated_val. somewhere, but not in this module */
-	/* TODO: game_board[curr_node->row][curr_node->column] = curr_node->updated_val; */
+	curr_node = (Node*)move_list->current_Node_move;
 
 	(*num_of_values) = curr_node->num_of_values;
 	return curr_node->values;
@@ -41,7 +38,7 @@ node_vals* redo_list(int* num_of_values) {
 
 
 
-node_vals* undo_list(int* num_of_values) {
+node_vals* undo_list(int* num_of_values, int reset_flag) {
 	Node* curr_node;
 	int board_size;
 
@@ -53,16 +50,18 @@ node_vals* undo_list(int* num_of_values) {
 		return NULL;
 	}
 	if (curr_node == move_list->head) {
-		printf("Error: no moves to undo\n");
-		return NULL;
+		if (reset_flag == true) {
+			(*num_of_values) = -1;
+			return NULL;
+		}
+		else {
+			printf("Error: no moves to undo\n");
+			return NULL;
+		}
 	}
 
 	/* Set the node pointer to its previous node in the list */
-	move_list->current_Node_move = curr_node->prev;
-
-	/* Change game board cell to the prev_val. somewhere, but not in this module */
-	// TODO: game_board[curr_node->row][curr_node->column] = curr_node->prev_val;
-	// Solution: return the curr_node->values pointer outside, and use it on autofill \ generate etc..
+	move_list->current_Node_move = move_list->current_Node_move->prev;
 
 	(*num_of_values) = curr_node->num_of_values;
 	return curr_node->values;
@@ -108,7 +107,10 @@ int delete_list_from_the_current_node() {
 	Node *curr, *next;
 
 	/* Check for atleast one Node in the list (besides the head) */
-	if (move_list == NULL || move_list->head == NULL || move_list->head->next == NULL) {
+	if (move_list == NULL ||
+		move_list->head == NULL ||
+		move_list->head->next == NULL ||
+		move_list->current_Node_move == move_list->tail) /* if the current_node is the tail, there's nothing to erase */{
 		return EXIT_SUCCESS;
 	}
 
@@ -140,8 +142,7 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 		return EXIT_FAILURE;
 	}
 	
-	node_ptr->next = NULL;
-	node_ptr->prev = move_list->tail;
+
 	node_ptr->values = (node_vals*)calloc(1, SIZE_OF_NODE_VALS);
 	node_ptr->num_of_values = 1;
 
@@ -155,9 +156,11 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 
 
 	/* Delete a part of the list if the current_node isn't the tail */
-	if (move_list->current_Node_move != move_list->tail) {
-		delete_list_from_the_current_node();
-	}
+	delete_list_from_the_current_node();
+
+	/* Connect the node to the list */
+	node_ptr->next = NULL;
+	node_ptr->prev = move_list->tail;
 
 	move_list->tail->next = node_ptr; /* set the tail's next pointer to be the new node */
 	move_list->tail = node_ptr; /* Set as new Tail of the move list */
@@ -189,12 +192,10 @@ int add_val_to_current_node(int row_arg, int column_arg, int prev_val_arg, int u
 	(vals_array[last_array_index]).prev_val = prev_val_arg;
 	vals_array[last_array_index].updated_val = updated_val_arg;
 
-	node_ptr->num_of_values++;
+	(node_ptr->num_of_values)++;
 
 	return EXIT_SUCCESS;
 }
-
-
 
 
 

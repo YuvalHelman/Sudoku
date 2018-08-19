@@ -55,15 +55,17 @@ int main() {
 
 void initialize_test_board() {
 
-	sudoku.game_mode = solve;
-	delete_list_full();
-	free_board(sudoku.board, sudoku.block_col_length, sudoku.block_row_length);
-	sudoku.board = NULL;
-
 	/* Set basic sudoku utilities */
 	sudoku.block_row_length = 2;
 	sudoku.block_col_length = 3;
 	sudoku.num_of_filled_cells = 0;
+
+	sudoku.game_mode = solve;
+	delete_list_full();
+	free_board();
+	sudoku.board = NULL;
+
+	
 	/* restart Sudoku's essential variables */
 	sudoku.mark_errors = 0;
 
