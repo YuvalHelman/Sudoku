@@ -18,9 +18,6 @@
     <ClCompile Include="game_logic.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="solver.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="user_interface.c">
       <Filter>Source Files</Filter>
     </ClCompile>

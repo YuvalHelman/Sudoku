@@ -69,7 +69,7 @@ int free_int_matrix(int** board, int block_col_len, int block_row_len);
  *   returns: EXIT_SUCCESS(0) on success.
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
-int initialize_new_board(cell** board, int block_col_len, int block_row_len);
+int initialize_new_board(int block_col_len, int block_row_len);
 
 /*
  *	This function is called to free leftover stuff when exiting cleanly.

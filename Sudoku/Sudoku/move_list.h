@@ -34,7 +34,7 @@ typedef struct node_t {
 	struct node_t *next;
 	struct node_t *prev;
 	struct node_vals_t *values;
-	size_t num_of_values;
+	unsigned int num_of_values;
 } Node;
 
 

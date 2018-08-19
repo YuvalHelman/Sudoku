@@ -72,10 +72,10 @@ int save_to_file(FILE* fd){
 
 int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) { 
 	char vals[BUF_SIZE];
-	int rows, columns, res, val, board_len, curr_row, curr_col, ret_code, value, num_of_filled_cells;
-	char token;
+	int rows,i, columns, res, val, board_len, curr_row, curr_col, ret_code, value, num_of_filled_cells;
+	char* token;
 
-	num_of_filled_cells = 0;
+	num_of_filled_cells = i = 0;
 
 	/* Read the row, column from the file */
 	res = fscanf(fd, "%d", &rows);  
@@ -87,11 +87,10 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 		return EXIT_FAILURE;
 	}
 
-	if (initialize_new_board(sudoku.board, columns, rows) == EXIT_FAILURE) {
+	if (initialize_new_board(columns, rows) == EXIT_FAILURE) {
 		return EXIT_FAILURE;
 	}
 
-	board_len = rows * columns;
 	(*pRow) = rows;
 	(*pCol) = columns;
 	ret_code = BUF_SIZE;

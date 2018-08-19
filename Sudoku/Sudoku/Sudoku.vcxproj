@@ -148,7 +148,6 @@
     <ClCompile Include="game_logic.h" />
     <ClCompile Include="move_list.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="solver.c" />
     <ClCompile Include="stack.c" />
     <ClCompile Include="user_interface.c" />
   </ItemGroup>

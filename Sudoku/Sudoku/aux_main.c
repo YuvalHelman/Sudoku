@@ -70,27 +70,27 @@ int free_int_matrix(int** board, int block_col_len, int block_row_len) {
 }
 
 
-int initialize_new_board(cell** board, int block_col_len, int block_row_len) {
+int initialize_new_board(int block_col_len, int block_row_len) {
 	int board_size, i;
 
-	if (board) {
+	if (sudoku.board) {
 		printf("board should be NULL in order to be initialized. might contain needed data\n");
 		return EXIT_FAILURE;
 	}
 
 	board_size = block_col_len * block_row_len;
-
-	if ((board = (cell **)malloc( board_size * sizeof(cell *) )) == NULL) {
+	sudoku.board = (cell **)malloc(board_size * sizeof(cell *));
+	if (sudoku.board == NULL) {
 		printf("Error: Malloc has failed allocating the board\n");
 		return EXIT_FAILURE;
 	}
 	for (i = 0; i < board_size; i++) {
-		if ( (board[i] = (cell *)calloc(board_size, sizeof(cell)) == NULL) ) {
+		sudoku.board[i] = (cell *)malloc(board_size * sizeof(cell));
+		if (sudoku.board[i] == NULL) {
 			printf("Error: Malloc has failed allocating the board\n");
 			return EXIT_FAILURE;
 		}
 	}
-
 	return EXIT_SUCCESS;
 }
 
