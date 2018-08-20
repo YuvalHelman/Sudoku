@@ -11,75 +11,95 @@
 #include "file_manipulation.h"
 #include "solver.h"
 
-void redo_print(int row, int column, int prev_val, int updated_val);
-void undo_print(int row, int column, int prev_val, int updated_val);
+/*
+ *	File's  only helper functions:
+ */
 
-/* TODO: implement these */
-int Exit();
-int generate();
-int hint();
-void mark_errors(int value);
-int num_solutions();
-int reset();
-int validate();
-
-int Exit() { 
-	free_board();
-	delete_list_on_exit();
-
-	printf("Exiting...\n");
-
-	/* Terminate the program */
-	exit(EXIT_SUCCESS);
-
+ /*
+ *	The Function receives an integer and if it's 0\1 changes the game's mark_errors field accordingly.
+ *
+ *	 value: the integer which decides if errors should be marked or not
+ *
+ */
+void mark_errors(int value) {
+	if (value != 0 && value != 1) {
+		printf("Error: the value should be 0 or 1\n");
+	}
+	else sudoku.mark_errors = value;
 }
-int generate() { return 0; }
-int hint() { return 0; }
-int num_solutions() { return 0; }
-int reset() { 
-
-	int num_of_values, i, row, col, prev, updated;
-	node_vals* values_array;
-	int reset_flag;
-
-	reset_flag = true;
-	do { /* Initiate undo on the list until the head */
-		values_array = undo_list(&num_of_values, reset_flag);
-
-		if (values_array) {
-			/* Update the board to the values in the previous turn */
-			for (i = 0; i < num_of_values; i++) {
-				row = values_array[i].row;
-				col = values_array[i].column;
-				prev = values_array[i].prev_val;
-				updated = values_array[i].updated_val;
-
-				sudoku.board[row][col].value = prev;
-			}
-		}
-	} while (values_array);
-
-	/* Delete the list except the head */
-	delete_list_from_the_current_node();
-
-	printf("Board reset\n");
-
-	return EXIT_SUCCESS; 
-}
-/**/
-int validate() {
-	//gurobi_initializer();
-	
-	return 0;
-}
-
 
 /*
-*  This function recieves a pointer to an integer matrix that needs to be initialized.
-*	The initialized matrix has all 0's in its cells.
+*	The Function prints a message accordingly to its arguments regarding a recent redo change in the board.
+*	The row\column arguments are the board locations (not the ones we want to print)
 *
-*   returns: a pointer to the board on success.
-*			 on any error returns NULL and prints the error.
+*	row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
+*	column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
+*	prev_val: the value that was previously in the cell that has been updated
+*	updated_val: the value that is being updated to.
+*/
+void redo_print(int row, int column, int prev_val, int updated_val) {
+	if (updated_val == 0) {
+		if (prev_val == 0) {
+			printf("Redo %d,%d from %c to %c\n",
+				row, column, '_', '_');
+		}
+		else {
+			printf("Redo %d,%d from %d to %c\n",
+				row, column, prev_val, '_');
+		}
+	}
+	else {
+		if (prev_val == 0) { /* updated not 0 , prev = 0 */
+			printf("Redo %d,%d from %c to %d\n",
+				row, column, '_', updated_val);
+		}
+		else {
+			printf("Redo %d,%d from %d to %d\n",
+				row, column, prev_val, updated_val);
+		}
+	}
+}
+
+/*
+*	The Function prints a message accordingly to its arguments regarding a recent undo change in the board.
+*	The row\column arguments are the board locations (not the ones we want to print)
+*
+*	row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
+*	column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
+*	prev_val: the value that was previously in the cell that has been updated
+*	updated_val: the value that is being updated to.
+*/
+void undo_print(int row, int column, int prev_val, int updated_val) {
+	if (updated_val == 0) {
+		if (prev_val == 0) {
+			printf("Undo %d,%d from %c to %c\n",
+				row, column, '_', '_');
+		}
+		else {
+			printf("Undo %d,%d from %c to %d\n",
+				row, column, '_', prev_val);
+		}
+	}
+	else {
+		if (prev_val == 0) {
+			printf("Undo %d,%d from %d to %c\n",
+				row, column, updated_val, '_');
+		}
+		else {
+			printf("Undo %d,%d from %d to %d\n",
+				row, column, updated_val, prev_val);
+		}
+	}
+}
+
+/*
+*	The Function initializes a new "values_only" board for working on temporary boards.
+*
+*	block_col_len: the board's block column length
+*	block_row_len: the board's block row length
+*
+*	returns: a pointer to the new board on success.
+*	    	 on any error returns NULL and prints the error.
 */
 int** initialize_integer_board(int block_col_len, int block_row_len) {
 	int board_size, i;
@@ -103,212 +123,17 @@ int** initialize_integer_board(int block_col_len, int block_row_len) {
 	return board;
 }
 
-
-sudokuCommands 
-str2enum(const char *str)
-{
-	int j;
-	for (j = 0; j < sizeof(conversion) / sizeof(conversion[0]); ++j)
-		if (!strcmp(str, conversion[j].str))
-			return conversion[j].val;
-	return error_command;
-}
-
-int get_command_and_parse() {
-	
-	int ret_command;
-	char command[MAX_COMMAND_SIZE];
-	unsigned int seed_arg;
-	char* fgets_ret; /* for EOF checking */
-
-
-	/* Get Commands and Play*/
-	ret_command = 0;
-	
-	do {
-		/* Get commands */
-		if (feof(stdin)) { /* EOF reached. exit. */
-			printf("Exiting...\n");
-			return EXIT_SUCCESS;
-		}
-
-		printf("Enter your command:\n");
-		fgets_ret = fgets(command, MAX_COMMAND_SIZE, stdin);
-		ret_command = user_command(command);
-
-		if (fgets_ret == NULL && ferror(stdin)) { /* fgets ancountered some error */
-			perror("Error: fgets has failed.");
-			return EXIT_FAILURE;
-		}
-
-		/*printf("board Solution:\n");*/
-		/* DEBUG: print_board_solution();*/
-
-		
-	} while (fgets_ret != NULL);
-
-	return EXIT_SUCCESS;
-	
-}
-
-
-int user_command(char* buffer) {
-	/* */
-	sudokuCommands sudoku_command;
-	char *xchar, *ychar, *zchar, *command;
-	int xchar_asInt, ychar_asInt, zchar_asInt;
-	command = strtok(buffer, " \t\r\n");
-	xchar = strtok(NULL, " \t\r\n");
-	ychar = strtok(NULL, " \t\r\n");
-	zchar = strtok(NULL, " \t\r\n");
-	if (command == NULL) {
-		return 0;
-	}
-	sudoku_command = str2enum(command);
-	switch (sudoku_command)
-	{
-	case solve_command:
-		return Solve(xchar);	
-	break;
-	case edit_command:
-		return Edit(xchar);
-	break;
-	case mark_errors_command:
-		if (sudoku.game_mode != solve) { 
-			printf("ERROR: invalid command\n"); /* case b */
-		} else {
-			errno = 0;
-			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
-			if (errno != 0) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			mark_errors(xchar_asInt);
-		}
-	break;
-	case print_board_command:
-		if (sudoku.game_mode == init) {
-			printf("ERROR: invalid command\n"); /* case b */
-		}
-		else {
-			print_board();
-		}
-	break;
-	case set_command:
-		if (sudoku.game_mode == init) {
-			printf("ERROR: invalid command\n"); /* case b */
-		}
-		else {
-			errno = 0;
-			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			errno = 0;
-			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
-			if (errno != 0) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			errno = 0;
-			zchar_asInt = (int)(strtol(zchar, NULL, BASE10));
-			if (errno != 0) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-
-			set(xchar_asInt, ychar_asInt, zchar_asInt);
-		}
-	break;
-	case validate_command:
-		if (sudoku.game_mode == init)
-			printf("ERROR: invalid command\n"); /* case b */
-		else validate();
-	break;
-	case generate_command:
-		if (sudoku.game_mode != edit)
-			printf("ERROR: invalid command\n"); /* case b */
-		else { 
-			errno = 0;
-			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			errno = 0;
-			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			generate(xchar_asInt, ychar_asInt);
-		}
-	break;
-	case undo_command:
-		if (sudoku.game_mode == init)
-			printf("ERROR: invalid command\n"); /* case b */
-		else undo();
-	break;
-	case redo_command:
-		if (sudoku.game_mode == init)
-			printf("ERROR: invalid command\n"); /* case b */
-		else redo();
-	break;
-	case save_command:
-			Save(xchar);
-	break;
-	case hint_command:
-		if (sudoku.game_mode != solve)
-			printf("ERROR: invalid command\n"); /* case b */
-		else {
-			errno = 0;
-			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			errno = 0;
-			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			hint(xchar_asInt, ychar_asInt);
-		}
-	break;
-	case num_solutions_command:
-		if (sudoku.game_mode == init)
-			printf("ERROR: invalid command\n"); /* case b */
-		else num_solutions();
-	break;
-	case autofill_command:
-		if (sudoku.game_mode != solve)
-			printf("ERROR: invalid command\n"); /* case b */
-		else {
-			autofill();
-		}
-	break;
-	case reset_command:
-		if (sudoku.game_mode == init) {
-			printf("ERROR: invalid command\n");
-			return EXIT_SUCCESS;
-		}
-		else {
-			reset();
-		}
-	break;
-	case exit_command:
-		Exit();
-	break;
-	default:
-		printf("ERROR: invalid command\n");
-	break;
-	}
-
-	return EXIT_SUCCESS;
-}
-	
+/*
+*   Starts a puzzle in Solve mode, loaded from a file with the name "filepath".
+*   "filepath" can be a full or relative path to the file.
+*	We assume the file contains valid data and is correctly formatted.
+*	Available from Solve,Edit,Init. 
+*
+*   filepath: a full or relative path to the file being opened.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
 int Solve(char* filepath) {
 	FILE* fd;
 	int num_of_filled_cells;
@@ -351,6 +176,18 @@ int Solve(char* filepath) {
 	return EXIT_SUCCESS;
 }
 
+/*
+*   Starts a puzzle in Edit mode, loaded from a file with the name "filepath".
+*   "filepath" can be a full or relative path to the file.
+*	If no paramater is passed. the program initiates with an empty 9x9 board.
+*	We assume the file contains valid data and is correctly formatted.
+*	Available from Solve,Edit,Init.
+*
+*   filepath: a full or relative path to the file being opened.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
 int Edit(char* filepath) {
 	FILE* fd;
 	int block_rows, block_cols, num_of_filled_cells;
@@ -402,16 +239,19 @@ int Edit(char* filepath) {
 	return EXIT_SUCCESS;
 }
 
-void mark_errors(int value) {
-	if (value != 0 && value != 1) {
-		printf("Error: the value should be 0 or 1\n");
-	}
-	else sudoku.mark_errors = value;
-}
-
-//add nodes to the move list
-// check if return values could be changed to EXIT_SUCCESS \ EXIT_FAILURE.
-int set(int col_index, int row_index, int value) {
+/*	Sets the value of cell <col_index,row_index> to value
+*	only available in Edit and Solve modes.
+*	This command prints the game board
+*	In solve Mode, checks if all board's cells are filled, validates and prints an according message
+*
+*	col_index: the cell's column where the change is made (as the user inputted them. 1 <--> board_len )
+*	row_index: the cell's row where the change is made (as the user inputted them. 1 <--> board_len )
+*	value: the value that that will be put in the cell.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node. ////// TODO: check if this is the right returning method 
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int set(int col_index, int row_index, int value) { /* TODO: check if return values could be changed to EXIT_SUCCESS \ EXIT_FAILURE. */
 
 	int prev_val, updated_val, board_len, num_of_cells;
 	int row_index_board, col_index_board;
@@ -420,7 +260,7 @@ int set(int col_index, int row_index, int value) {
 	num_of_cells = board_len * board_len;
 
 	updated_val = value;
-	
+
 	/* check if the values are legal */
 	if (value < 0 || value > board_len ||
 		row_index < 1 || row_index > board_len ||
@@ -452,26 +292,315 @@ int set(int col_index, int row_index, int value) {
 	}
 
 	/* update errors for all relevant cells */
-	update_errors(row_index_board, col_index_board); 
+	update_errors(row_index_board, col_index_board);
 
 	print_board();
-	
+
 	/* Validate the board, and print this if it's not valid: (case c)*/
 	/* TODO TODO */
 	if (sudoku.game_mode == solve && sudoku.num_of_filled_cells == num_of_cells) {
 		/*
 		if( validate() == EXIT_SUCCESS ) {
-			printf("Puzzle solved successfully\n");
-			sudoku.game_mode = init;
+		printf("Puzzle solved successfully\n");
+		sudoku.game_mode = init;
 		}
 		else {
-			printf("Puzzle solution erroneous\n");
+		printf("Puzzle solution erroneous\n");
 		}
 		*/
 	}
-	
+
 	return EXIT_SUCCESS;
 }
+
+
+
+/*
+*	The Function converts a string to one of the possbilties in the enum sudokuCommands.
+*
+*	 str: the given string which will be converted.
+*
+*	returns: the matching sudokuCommands(enum).
+*/
+sudokuCommands str2enum(const char *str)
+{
+	int j;
+	for (j = 0; j < sizeof(conversion) / sizeof(conversion[0]); ++j)
+		if (!strcmp(str, conversion[j].str))
+			return conversion[j].val;
+	return error_command;
+}
+
+/* TODO: document
+* The Function recives the command from the user and interprets it to a function that handles the command.
+************************* TODO: The function should check if the buffer is even valid, or to accept only valid ones*****
+* @param buffer - the user's command. (its contents may be erased after calling this function)
+* @return true(1) when no errors. 0 otherwise
+false(0) if some error occured.
+* buffer is destroyed after this function.
+*/
+int user_command(char* buffer) {
+	/* */
+	sudokuCommands sudoku_command;
+	char *xchar, *ychar, *zchar, *command;
+	int xchar_asInt, ychar_asInt, zchar_asInt;
+	command = strtok(buffer, " \t\r\n");
+	xchar = strtok(NULL, " \t\r\n");
+	ychar = strtok(NULL, " \t\r\n");
+	zchar = strtok(NULL, " \t\r\n");
+	if (command == NULL) {
+		return 0;
+	}
+	sudoku_command = str2enum(command);
+	switch (sudoku_command)
+	{
+	case solve_command:
+		return Solve(xchar);
+		break;
+	case edit_command:
+		return Edit(xchar);
+		break;
+	case mark_errors_command:
+		if (sudoku.game_mode != solve) {
+			printf("ERROR: invalid command\n"); /* case b */
+		}
+		else {
+			errno = 0;
+			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
+			if (errno != 0) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			mark_errors(xchar_asInt);
+		}
+		break;
+	case print_board_command:
+		if (sudoku.game_mode == init) {
+			printf("ERROR: invalid command\n"); /* case b */
+		}
+		else {
+			print_board();
+		}
+		break;
+	case set_command:
+		if (sudoku.game_mode == init) {
+			printf("ERROR: invalid command\n"); /* case b */
+		}
+		else {
+			errno = 0;
+			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			errno = 0;
+			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
+			if (errno != 0) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			errno = 0;
+			zchar_asInt = (int)(strtol(zchar, NULL, BASE10));
+			if (errno != 0) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+
+			set(xchar_asInt, ychar_asInt, zchar_asInt);
+		}
+		break;
+	case validate_command:
+		if (sudoku.game_mode == init)
+			printf("ERROR: invalid command\n"); /* case b */
+		else validate();
+		break;
+	case generate_command:
+		if (sudoku.game_mode != edit)
+			printf("ERROR: invalid command\n"); /* case b */
+		else {
+			errno = 0;
+			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			errno = 0;
+			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			generate(xchar_asInt, ychar_asInt);
+		}
+		break;
+	case undo_command:
+		if (sudoku.game_mode == init)
+			printf("ERROR: invalid command\n"); /* case b */
+		else undo();
+		break;
+	case redo_command:
+		if (sudoku.game_mode == init)
+			printf("ERROR: invalid command\n"); /* case b */
+		else redo();
+		break;
+	case save_command:
+		Save(xchar);
+		break;
+	case hint_command:
+		if (sudoku.game_mode != solve)
+			printf("ERROR: invalid command\n"); /* case b */
+		else {
+			errno = 0;
+			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			errno = 0;
+			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
+			if (errno == ERANGE || errno == EINVAL) {
+				perror("strtol function failed.");
+				return EXIT_FAILURE;
+			}
+			hint(xchar_asInt, ychar_asInt);
+		}
+		break;
+	case num_solutions_command:
+		if (sudoku.game_mode == init)
+			printf("ERROR: invalid command\n"); /* case b */
+		else num_solutions();
+		break;
+	case autofill_command:
+		if (sudoku.game_mode != solve)
+			printf("ERROR: invalid command\n"); /* case b */
+		else {
+			autofill();
+		}
+		break;
+	case reset_command:
+		if (sudoku.game_mode == init) {
+			printf("ERROR: invalid command\n");
+			return EXIT_SUCCESS;
+		}
+		else {
+			reset();
+		}
+		break;
+	case exit_command:
+		Exit();
+		break;
+	default:
+		printf("ERROR: invalid command\n");
+		break;
+	}
+
+	return EXIT_SUCCESS;
+}
+
+
+
+/* TODO: implement these */
+int Exit();
+int generate();
+int hint();
+int num_solutions();
+int reset();
+int validate();
+
+/*
+ *	The Function free's all memory resources that are open and terminates the program.
+ *
+ *   returns: EXIT_SUCCESS(0) on exiting gracefully.
+ */
+int Exit() { 
+	free_board();
+	delete_list_on_exit();
+
+	printf("Exiting...\n");
+
+	/* Terminate the program */
+	exit(EXIT_SUCCESS);
+
+}
+int generate() { return 0; }
+int hint() { return 0; }
+int num_solutions() { return 0; }
+int reset() { 
+
+	int num_of_values, i, row, col, prev, updated;
+	node_vals* values_array;
+	int reset_flag;
+
+	reset_flag = true;
+	do { /* Initiate undo on the list until the head */
+		values_array = undo_list(&num_of_values, reset_flag);
+
+		if (values_array) {
+			/* Update the board to the values in the previous turn */
+			for (i = 0; i < num_of_values; i++) {
+				row = values_array[i].row;
+				col = values_array[i].column;
+				prev = values_array[i].prev_val;
+				updated = values_array[i].updated_val;
+
+				sudoku.board[row][col].value = prev; /* Update the board accordingly */
+			}
+		}
+	} while (values_array);
+
+	/* Delete the list except the head */
+	delete_list_from_the_current_node();
+
+	printf("Board reset\n");
+
+	return EXIT_SUCCESS; 
+}
+/**/
+int validate() {
+	gurobi_initializer();
+	print_board_solution(); /* TODO: erase this before done */
+
+	return 0;
+}
+
+
+int get_command_and_parse() {
+	
+	int ret_command;
+	char command[MAX_COMMAND_SIZE];
+	unsigned int seed_arg;
+	char* fgets_ret; /* for EOF checking */
+
+
+	/* Get Commands and Play*/
+	ret_command = 0;
+	
+	do {
+		/* Get commands */
+		if (feof(stdin)) { /* EOF reached. exit. */
+			printf("Exiting...\n");
+			return EXIT_SUCCESS;
+		}
+
+		printf("Enter your command:\n");
+		fgets_ret = fgets(command, MAX_COMMAND_SIZE, stdin);
+		ret_command = user_command(command);
+
+		if (fgets_ret == NULL && ferror(stdin)) { /* fgets ancountered some error */
+			perror("Error: fgets has failed.");
+			return EXIT_FAILURE;
+		}
+
+		/*printf("board Solution:\n");*/
+		/* DEBUG: print_board_solution();*/
+
+		
+	} while (fgets_ret != NULL);
+
+	return EXIT_SUCCESS;
+	
+}
+
 
 
 int undo() {
@@ -635,9 +764,9 @@ int autofill() {
 	/* Copy value from the temp matrix to the board */
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
-			if (temp_matrice_values[row_index][col_index] == 0) {
+			if (temp_matrice_values[row_index][col_index] != 0) {
 				updated_val = temp_matrice_values[row_index][col_index];
-				if (add_node_flag == true) {
+				if (add_node_flag == true) { /* In case this is the first value which is being changed in the board */
 					if (add_new_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
 						printf("add new node failed. Exiting.\n");
 						return EXIT_FAILURE;
@@ -652,7 +781,7 @@ int autofill() {
 				}
 				/* Update the value in the board, and print a message regarding */
 				sudoku.board[row_index][col_index].value = updated_val;
-				printf("Cell <%d,%d> set to %d\n", col_index, row_index, updated_val);
+				printf("Cell <%d,%d> set to %d\n", col_index+1, row_index+1, updated_val);
 
 				update_num_of_filled_cells(ZERO, updated_val);
 			}
@@ -767,58 +896,4 @@ void print_board_solution() {
 
 
 
-/*
-*
-*	The function handles the printing of the redo function.
-*
-*/
-void redo_print(int row, int column, int prev_val, int updated_val) {
-	if (updated_val == 0) {
-		if (prev_val == 0) {
-			printf("Redo %d,%d from %c to %c\n",
-				row, column, '_', '_');
-		}
-		else {
-			printf("Redo %d,%d from %d to %c\n",
-				row, column, prev_val, '_');
-		}
-	}
-	else {
-		if (prev_val == 0) { /* updated not 0 , prev = 0 */
-			printf("Redo %d,%d from %c to %d\n",
-				row, column, '_', updated_val);
-		}
-		else {
-			printf("Redo %d,%d from %d to %d\n",
-				row, column, prev_val, updated_val);
-		}
-	}
-}
 
-
-/*
- *	The function handles the printing of the undo function.
- *
- */
-void undo_print(int row, int column, int prev_val, int updated_val) {
-	if (updated_val == 0) {
-		if (prev_val == 0) {
-			printf("Undo %d,%d from %c to %c\n",
-				row, column, '_', '_');
-		}
-		else {
-			printf("Undo %d,%d from %c to %d\n",
-				row, column, '_', prev_val);
-		}
-	}
-	else {
-		if (prev_val == 0) {
-			printf("Undo %d,%d from %d to %c\n",
-				row, column, updated_val, '_');
-		}
-		else {
-			printf("Undo %d,%d from %d to %d\n",
-				row, column, updated_val, prev_val);
-		}
-	}
-}

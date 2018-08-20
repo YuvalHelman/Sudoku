@@ -5,8 +5,12 @@
 #include "minunit.h" /* a simple testing header. */
 
 
+/* TODO: */
+/*
+ *	sudoku.num_of_filled_cells -> check that we update that like we should.
+ ***/
 
-void initialize_test_board(); 
+void initialize_test_board();
 
 int tests_run = 0; /* Declared in minunit.h */
 /**
@@ -39,7 +43,7 @@ int main() {
 
 	initialize_list_parameters();
 
-	//initialize_test_board(); /* test board for testing stuff ... add the function for different boards */
+	initialize_test_board(); /* test board for testing stuff ... add the function for different boards */
 
 	get_command_and_parse();
 	

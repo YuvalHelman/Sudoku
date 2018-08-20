@@ -24,7 +24,8 @@ int save_to_file(FILE* fd){
 	board_len = sudoku.block_col_length * sudoku.block_row_length;
 	for (i = 0; i < board_len; i++) {
 		for (j = 0; j < board_len; j++) {
-			if (sudoku.game_mode == edit || sudoku.board[i][j].is_fixed) { /* Saving in "edit mode" all cells are saved as fixed values */
+			/* Saving in "edit mode" all cells are saved as fixed values. (except 0's) */
+			if (sudoku.board[i][j].value != 0 && (sudoku.game_mode == edit || sudoku.board[i][j].is_fixed) ) { 
 				/* After num_of_rows numbers, print a new line */
 				if (read_counter == board_len) { 
 					res = fprintf(fd, "%d.\n", sudoku.board[i][j].value);

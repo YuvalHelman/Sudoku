@@ -43,30 +43,6 @@ static struct abc_t{
 
 
 /*
-* The Function  
-* @param - 
-* @param -
-* @param -
-* @param -
-* @return - 
-*/
-
-/*
-* The Function convert a string to one on the possbilties in the emun sudokuCommands.
-* @param str - the given string.
-* @return - the maching sudokuCommands(enum);
-*/
-sudokuCommands str2enum(const char *str);
-/*
-* The Function recives the command from the user and interprets it to a function that handles the command.
-************************* TODO: The function should check if the buffer is even valid, or to accept only valid ones*****
-* @param buffer - the user's command. (its contents may be erased after calling this function)
-* @return true(1) when no errors. 0 otherwise
-false(0) if some error occured.
-* buffer is destroyed after this function.
-*/
-int user_command(char* buffer);
-/*
  * The Function set a value into cell [x][y].
  * @param row_index - index x;
  * @param col_index - index y;
@@ -113,21 +89,7 @@ void autofill_board(int row_index, int col_index);
 * @return - the one possible value if there is one, otherwise return 0.
 */
 int one_possible_value(int row_index, int col_index);
-/*
- *
- *
- */
-int Solve(char* filepath);
-/*
-*
-*
-*/
-int Edit(char* filepath);
-/*
-*
-*
-*/
-int Save(char* filepath);
+
 /*
  *
  *

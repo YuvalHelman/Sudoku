@@ -35,11 +35,14 @@ int gurobi_initializer() {
 
 	ind = malloc(sizeof(int)*DIM);
 	val = malloc(sizeof(double)*DIM);
+	lb = malloc(sizeof(double)*DIM*DIM*DIM);
 	vtype = malloc(sizeof(char)*DIM*DIM*DIM);
-	lb = malloc(sizeof(char)*DIM*DIM*DIM);
-	sol = malloc(sizeof(char)*DIM*DIM*DIM);
+	sol = malloc(sizeof(double)*DIM*DIM*DIM);
 
-
+	if (!ind || !val || !lb || !val || !vtype || !sol) {
+		printf("Error: malloc has failed on ILP solver\n");
+		exit(EXIT_FAILURE);
+	}
 
 	env = NULL;
 	model = NULL;
@@ -64,11 +67,18 @@ int gurobi_initializer() {
 			fflush(stdin); fflush(stdout);
 			printf("error printing 1\n");
 		/* Debug */
+
 		/* Create environment */
 		error = GRBloadenv(&env, "sudokuGurobi.log"); /* TODO: change 2nd argument to NULL when no need for log anymore */
 		if (error || env == NULL) {
-			fprintf(stderr, "Error: could not create environment\n");
-			exit(1);
+			printf("Error: could not create environment. error %d\n", error);
+			return EXIT_FAILURE;
+		}
+
+		error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
+		if (error) {
+			perror("Error: gurobi removing output has failed. Exiting.");
+			return EXIT_FAILURE;
 		}
 
 		/* Debug */
@@ -84,6 +94,10 @@ int gurobi_initializer() {
 			return EXIT_FAILURE;
 		}
 
+		/* Debug */
+		fflush(stdin); fflush(stdout);
+		printf("error printing 1\n");
+		/* Debug */
 
 		/* Each cell gets only one value.
 		   a constraint is conducted on each cell to have only one value chosen.
@@ -213,19 +227,15 @@ int gurobi_initializer() {
 			exit(1);
 		}
 
-
+		/* Free arrays */
 		free(ind);
 		free(val);
 		free(sol);
 		free(vtype);
 		free(lb);
-
 		/* Free model */
-
 		GRBfreemodel(model);
-
 		/* Free environment */
-
 		GRBfreeenv(env);
 
 		return 0;

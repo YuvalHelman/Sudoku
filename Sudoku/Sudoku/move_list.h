@@ -86,7 +86,7 @@ node_vals* redo_list(int* num_of_values);
  *   returns: EXIT_SUCCESS(0) on adding a new node.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
-node_vals* undo_list(int* num_of_values);
+node_vals* undo_list(int* num_of_values, int reset_flag);
 
 /*
  *   This function is used for deleting a node while free'ing all its content.
