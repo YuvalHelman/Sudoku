@@ -108,7 +108,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 			value = (int)strtol(token, NULL, 10);
 
 			sudoku.board[curr_row][curr_col].value = value;
-			sudoku.board[curr_row][curr_col].is_fixed = 0;
+			
 
 			if (value != 0) { /* Count how many numbers are filled */
 				num_of_filled_cells++;
@@ -117,6 +117,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 			if ((strchr(token, '.')) != NULL) { /* Check for a '.' in the token */
 				sudoku.board[curr_row][curr_col].is_fixed = true;
 			}
+			else sudoku.board[curr_row][curr_col].is_fixed = false;
 			/* Iterate the current column\row values */
 			if (curr_col == board_len - 1) {
 				if (curr_row == board_len - 1) {
@@ -131,7 +132,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 				curr_col++;
 			}
 
-			token = strtok(NULL, " ");
+			token = strtok(NULL, " \t\r\n");
 		}
 		if (feof(fd)) {
 			return EXIT_SUCCESS;

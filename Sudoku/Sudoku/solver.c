@@ -2,9 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "solver.h"
 #include "gurobi_c.h"
+#include "solver.h"
 #include "aux_main.h"
 #include "game_logic.h"
 

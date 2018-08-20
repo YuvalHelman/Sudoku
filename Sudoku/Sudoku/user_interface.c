@@ -557,7 +557,7 @@ int reset() {
 }
 /**/
 int validate() {
-	gurobi_initializer();
+	//gurobi_initializer();
 	print_board_solution(); /* TODO: erase this before done */
 
 	return 0;
