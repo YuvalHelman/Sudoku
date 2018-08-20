@@ -63,7 +63,7 @@ int gurobi_initializer() {
 			}
 		}
 	}
-		/* Debug */
+		/* DEBUG
 			fflush(stdin); fflush(stdout);
 			printf("error printing 1\n");
 		/* Debug */
@@ -71,33 +71,26 @@ int gurobi_initializer() {
 		/* Create environment */
 		error = GRBloadenv(&env, "sudokuGurobi.log"); /* TODO: change 2nd argument to NULL when no need for log anymore */
 		if (error || env == NULL) {
-			printf("Error: could not create environment. error %d\n", error);
+			printf("Error: could not create environment.\n");
+			printf("ERROR: %s\n", GRBgeterrormsg(env));
 			return EXIT_FAILURE;
 		}
 
 		error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
 		if (error) {
-			perror("Error: gurobi removing output has failed. Exiting.");
+			printf("Error: gurobi removing output has failed.");
+			printf("ERROR: %s\n", GRBgeterrormsg(env));
 			return EXIT_FAILURE;
 		}
-
-		/* Debug */
-		fflush(stdin); fflush(stdout);
-		printf("error printing 2\n");
-		/* Debug */
 
 		/* Create an empty model */
 		error = GRBnewmodel(env, &model, "sudoku", DIM*DIM*DIM, NULL, lb, NULL,
 			vtype, NULL);
 		if (error) {
-			perror("gurobi new model failed");
+			perror("Error: gurobi new model failed");
+			printf("ERROR: %s\n", GRBgeterrormsg(env));
 			return EXIT_FAILURE;
 		}
-
-		/* Debug */
-		fflush(stdin); fflush(stdout);
-		printf("error printing 1\n");
-		/* Debug */
 
 		/* Each cell gets only one value.
 		   a constraint is conducted on each cell to have only one value chosen.
@@ -111,7 +104,8 @@ int gurobi_initializer() {
 
 				error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
 				if (error) {
-					perror("gurobi new model failed");
+					printf("Error: GRBaddconstr failed.\n");
+					printf("ERROR: %s\n", GRBgeterrormsg(env));
 					return EXIT_FAILURE;
 				}
 			}
@@ -129,7 +123,8 @@ int gurobi_initializer() {
 
 				error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
 				if (error) {
-					perror("gurobi new model failed");
+					printf("Error: GRBaddconstr failed.\n");
+					printf("ERROR: %s\n", GRBgeterrormsg(env));
 					return EXIT_FAILURE;
 				}
 			}
@@ -147,7 +142,8 @@ int gurobi_initializer() {
 
 				error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
 				if (error) {
-					perror("gurobi new model failed");
+					printf("Error: GRBaddconstr failed.\n");
+					printf("ERROR: %s\n", GRBgeterrormsg(env));
 					return EXIT_FAILURE;
 				}
 			}
@@ -170,7 +166,8 @@ int gurobi_initializer() {
 
 					error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
 					if (error) {
-						perror("gurobi new model failed");
+						printf("Error: GRBaddconstr failed.\n");
+						printf("ERROR: %s\n", GRBgeterrormsg(env));
 						return EXIT_FAILURE;
 					}
 				}
@@ -180,14 +177,16 @@ int gurobi_initializer() {
 		/* Optimize model for a solution */
 		error = GRBoptimize(model);
 		if (error) {
-			perror("gurobi new model failed");
+			printf("Error: GRBoptimize failed.\n");
+			printf("ERROR: %s\n", GRBgeterrormsg(env));
 			return EXIT_FAILURE;
 		}
 
 		/* Capture solution information */
 		error = GRBgetintattr(model, GRB_INT_ATTR_STATUS, &optimstatus);
 		if (error) {
-			perror("gurobi new model failed");
+			printf("Error: GRBgetintattr failed.\n");
+			printf("ERROR: %s\n", GRBgeterrormsg(env));
 			return EXIT_FAILURE;
 		}
 
@@ -195,7 +194,8 @@ int gurobi_initializer() {
 
 			error = GRBgetdblattrarray(model, GRB_DBL_ATTR_X, 0, DIM*DIM*DIM, sol);
 			if (error) {
-				perror("gurobi new model failed");
+				printf("Error: GRBgetdblattrarray failed.\n");
+				printf("ERROR: %s\n", GRBgeterrormsg(env));
 				return EXIT_FAILURE;
 			}
 			/* Update the board.solution from the given solution array */
