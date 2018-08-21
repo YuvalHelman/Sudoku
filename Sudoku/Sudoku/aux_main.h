@@ -5,11 +5,12 @@
 #define false 0
 #define true 1
 
-#include "move_list.h"
+/*typedef enum bool_t{
+	false = 0,
+	true = 1
+} bool; */
 
-/* Defining main structs needed for our game */
-#ifndef __TYPES_H 
-#define __TYPES_H
+#include "move_list.h"
 
 typedef enum game_mode_t {
 	init, solve, edit
@@ -34,52 +35,34 @@ typedef struct sudoku_t {
 	GAME_MODE game_mode; /* The Current game-Mode */
 	int num_of_filled_cells;
 }sudoku_t;
-#endif
 
 
+/* Global Variables: */
 extern sudoku_t sudoku;
 
+
 /*
- *  This function creates a new board which is a copy of the current board which is
- *	being played on when the function is called.
- *	The function assumes that there is a sudoku.board which is initialized and that the other
- *	sudoku's values are valid.
- *	mainly used for the "autofill" or "generate" commands where we need to save a
- *	'before' and 'after' boards. 
- *
- *   returns: a pointer to the newly allocated memmory for the new board.
- *			 on any error returns NULL and prints the error.
- */
-/* cell** copy_current_board(); */
-
-
+*   This function initialize the sudoku.board
+*	The initialized board has all 0's in its cells.
+*	should be free'd with free_board() function when the board isn't needed anymore.
+*
+*   returns: EXIT_SUCCESS(0) on success.
+*			 on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int initialize_new_board(int block_col_len, int block_row_len);
 
 
 /*
  *	This function free's the game board.
- *	Any unsaved data is lost.
+ *	Any unsaved data is lost. any other refference to the sudoku.board after that should be only after
+ *	initialize_new_board function is called.
  *
  *   returns: EXIT_SUCCESS(0) on success.
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int free_board();
 
-int free_int_matrix(int** board, int block_col_len, int block_row_len);
-/*
- *  This function recieves a pointer to a board that needs to be initialized.
- *	The initialized board has all 0's in its cells.
- *
- *   returns: EXIT_SUCCESS(0) on success.
- *			 on any error returns EXIT_FAILURE(1) and prints the error.
- */
-int initialize_new_board(int block_col_len, int block_row_len);
 
-/*
- *	This function is called to free leftover stuff when exiting cleanly.
- *	Things that are being free'd:
- *	- 
- */
-int free_on_exit();
 /*
 *	This function is called to update the sudoku.num_of_filled_cells value in the program.
 *	
@@ -87,9 +70,9 @@ int free_on_exit();
 *	updated_val: the value that is being updated to.
 */
 void update_num_of_filled_cells(int prev_val, int updated_val);
-
 /* TODO: add this function to :
 		Edit, Solve, generate, undo, redo, set, autofill.
 		** added:** Edit, Solve, set, autofill */
+
 
 #endif /* AUX_MAIN */

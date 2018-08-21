@@ -42,68 +42,21 @@ static struct abc_t{
 };
 
 
-/*
- * The Function set a value into cell [x][y].
- * @param row_index - index x;
- * @param col_index - index y;
- * @return - true(1) if now errors, otherwise false(0).
- */
+/* TODO: erase those declarations before done:
+They are here just for debugging */
 int set(int row_index, int col_index, int value);
-/*
- * The Function traverse to the previous turn in the game.
- * 
- * 
- * 
- */
 int undo();
-/*
- * The Function traverse to the future turn in the game.
- * 
- *
- *
- */
 int redo();
-
-/*
-* The Function prints the sudoku board.
-* if mark_erorrs is on put '*' near errors.
-* put '.' near fixed value.
-*/
-void print_board();
-/*
-* The Function prints 4N+n+1 '-'. (Sub fanc of print board). 
-*/
-void separator_row();
-/*
-* The Function ills all the board cells that have only 1 valid value.
-*/
-int autofill();
-/* 
- *
- */
-void autofill_board(int row_index, int col_index);
-/*
-* The Function checks if there is only onr valid value for cell [x][y].
-* @param row_index - index x;
-* @param col_index - index y;
-* @return - the one possible value if there is one, otherwise return 0.
-*/
-int one_possible_value(int row_index, int col_index);
-
-/*
- *
- *
- */
-
 void print_board_solution(); /* Helper function for testing the solution */
+void print_board();
 
 /*
- *
- *
- *
- *
- *
- */
+*	The Function handles the user's input from stdin or files.
+*	This command is looped until the program terminates (using the exit command or ctrl+C).
+*
+*   returns: EXIT_SUCCESS(0) for no errors.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
 int get_command_and_parse();
 
 #endif

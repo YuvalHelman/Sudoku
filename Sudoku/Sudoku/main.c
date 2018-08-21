@@ -49,8 +49,9 @@ int main() {
 	
 	
 
-	/* free stuff before exiting cleanly */
+	/* free stuff before exiting when get_command_and_parse might fail. */
 	delete_list_on_exit();
+	free_board();
 
 	return 0;
 	
