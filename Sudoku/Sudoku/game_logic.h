@@ -1,6 +1,9 @@
 
 #ifndef GAME_LOGIC
 #define GAME_LOGIC
+
+#include "aux_main.h"
+
 /*
 * The Function checks if the value is a legal value for cell[x][y].
 * @param row_index - index x.
@@ -64,5 +67,13 @@ void update_errors_col(int row_index, int col_index);
 * @param col_index - index y.
 */
 void update_errors_block(int row_index, int col_index);
+
+/*
+*	The function checks if there are any errors on the current board.
+*
+*   returns: true(1) when there is a solution to the current board.
+*			 false(0) when there isn't a solution.
+*/
+bool is_board_erronous();
 
 #endif /* GAME_LOGIC */

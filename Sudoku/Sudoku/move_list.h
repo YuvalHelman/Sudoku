@@ -144,7 +144,7 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 *   prev_val_arg: the value of the cell before the change. (0 if empty)
 *   updated_val_arg: the new value that is being put into that cell.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*   returns: EXIT_SUCCESS(0) on success.
 			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int add_val_to_current_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg);

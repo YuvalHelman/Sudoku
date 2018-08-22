@@ -2,13 +2,13 @@
 #ifndef AUX_MAIN
 #define AUX_MAIN
 
+typedef enum {
+	FALSE = (0 != 0),
+	TRUE = ( 0 == 0)
+} bool;
+
 #define false 0
 #define true 1
-
-/*typedef enum bool_t{
-	false = 0,
-	true = 1
-} bool; */
 
 #include "move_list.h"
 

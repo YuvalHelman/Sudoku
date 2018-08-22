@@ -305,7 +305,7 @@ int Solve(char* filepath) {
 *
 *   returns: EXIT_SUCCESS(0) on adding a new node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
+*/  
 int Edit(char* filepath) {
 	FILE* fd;
 	int block_rows, block_cols, num_of_filled_cells;
@@ -512,7 +512,18 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int validate() {
-	gurobi_initializer();
+
+	if (is_board_erronous() ) { 
+		printf("Error: board contains erroneous values\n");
+		return EXIT_SUCCESS;
+	}
+	if (is_solvable() == TRUE) {
+		printf("Validation passed: board is solvable\n");
+	}
+	else {
+		printf("Validation failed: board is unsolvable\n");
+	}
+
 	print_board_solution(); /* TODO: erase this before done */
 
 	return EXIT_SUCCESS;

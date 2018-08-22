@@ -112,3 +112,17 @@ void update_errors_block(int row_index, int col_index) {
 		}
 	}
 }
+
+bool is_board_erronous() {
+	int i, j;
+
+	for (i = 0; i < sudoku.block_row_length; i++) {
+		for (j = 0; j < sudoku.block_col_length; j++) {
+
+			if (sudoku.board[i][j].error) {
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}

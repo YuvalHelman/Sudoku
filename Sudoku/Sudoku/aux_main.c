@@ -6,7 +6,6 @@
 sudoku_t sudoku = { 0 }; /* All fields initialized to 0.
 						 game_mode is also 0 (which is init) */
 
-
 int initialize_new_board(int block_col_len, int block_row_len) {
 	int board_size, i;
 
