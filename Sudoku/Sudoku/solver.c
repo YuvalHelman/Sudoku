@@ -249,7 +249,7 @@ int gurobi_initializer() {
 *	Initiates upper bounds of 1 to any variable Xi,j,v that applies board[i][j] = v   in the current board.
 *	This makes restrictions for the values that exist on the board before initiating constraints.
 */
-void initiate_upper_bounds(int DIM, int *lb, int *vtype) {
+void initiate_upper_bounds(int DIM, double *lb, char *vtype) {
 	int i, v, j;
 
 	/* Fill the lower bound to 1 for any cell that already has a value (non-zero) */
@@ -276,7 +276,7 @@ void initiate_upper_bounds(int DIM, int *lb, int *vtype) {
 *   returns: EXIT_SUCCESS(0) on success.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int create_env_model(GRBenv *env, GRBmodel *model, int DIM, int *lb, int *vtype) {
+int create_env_model(GRBenv *env, GRBmodel *model, int DIM, double *lb, char *vtype) {
 	int error;
 
 
@@ -317,7 +317,7 @@ int create_env_model(GRBenv *env, GRBmodel *model, int DIM, int *lb, int *vtype)
 *   returns: EXIT_SUCCESS(0) on success.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, int *val, int b_row_l, int b_col_l) {
+int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, double *val, int b_row_l, int b_col_l) {
 	int error, i, j, v, ig, jg, count;
 
 
@@ -414,8 +414,8 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, int *v
 *   returns: EXIT_SUCCESS(0) on success.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-bool optimize_and_get_sol(GRBenv *env, GRBmodel *model, int DIM, int *sol) {
-	int error, i, j, v;
+bool optimize_and_get_sol(GRBenv *env, GRBmodel *model, int DIM, double *sol) {
+	int error;
 	int optimstatus;
 
 	/* Optimize model for a solution */
@@ -463,8 +463,8 @@ bool optimize_and_get_sol(GRBenv *env, GRBmodel *model, int DIM, int *sol) {
 *   returns: EXIT_SUCCESS(0) on success.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-void update_solution(int *sol) {
-	int i, j, v, DIM;
+void update_solution(double *sol, int DIM) {
+	int i, j, v;
 
 	/* Update the board.solution from the given solution array */
 	for (i = 0; i < DIM; i++) {
@@ -489,9 +489,6 @@ bool is_solvable() {
 	double	  *lb; /* Lower bounds for the values */
 	char      *vtype; /* Variable types : BINARY for all of them */
 	int		  DIM; /* The board dimensions */
-	int       i; /* rows */
-	int		  j; /* Columns */
-	int		  v, ig, jg, count;
 	int b_col_l, b_row_l;
 	bool is_there_a_solution;
 
@@ -526,7 +523,7 @@ bool is_solvable() {
 	}
 
 	if (optimize_and_get_sol(env, model, DIM, sol) == TRUE) {
-		update_solution(sol);
+		update_solution(sol, DIM);
 		is_there_a_solution = TRUE;
 	}
 	else {

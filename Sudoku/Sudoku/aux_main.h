@@ -3,14 +3,11 @@
 #define AUX_MAIN
 
 typedef enum {
-	FALSE = (0 != 0),
-	TRUE = ( 0 == 0)
+	FALSE = 0, TRUE = 1
 } bool;
 
 #define false 0
 #define true 1
-
-#include "move_list.h"
 
 typedef enum game_mode_t {
 	init, solve, edit

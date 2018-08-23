@@ -88,7 +88,7 @@ node_vals* undo_list(int* num_of_values, int reset_flag) {
 	move_list->current_Node_move = move_list->current_Node_move->prev;
 
 	(*num_of_values) = curr_node->num_of_values;
-	return curr_node->values;
+	return (node_vals*)curr_node->values;
 	
 }
 

@@ -73,7 +73,7 @@ void destroy()
 * @param col_index - the column of the cell we are checking
 * @return -true(0) if the sudoku is solvebale and store the solution in cell.solution matrix, false(1) otherwise and do nothing(not sure if it work).
 */
-int numberOfSolotions() {
+int numberOfSolutions() {
 	/* variables declarations */
 	int row_index, col_index, count, value, board_length;
 	board_length = sudoku.block_col_length * sudoku.block_row_length;
@@ -105,5 +105,5 @@ int numberOfSolotions() {
 		}
 	}
 
-	return count; /* Yuval added this. cause there was no 'return' at all*/
+	return count; /* Yuval added this. cause there was no 'return' at all */
 }

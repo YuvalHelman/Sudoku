@@ -688,6 +688,8 @@ int Save(char* filepath) {
 */
 int hint(int column, int row) {
 
+
+	return 0;
 }
 
 /*
@@ -702,6 +704,7 @@ int hint(int column, int row) {
 */
 int num_solutions() {
 
+	return 0;
 }
 
 /*
@@ -1031,7 +1034,6 @@ int get_command_and_parse() {
 	
 	int ret_command;
 	char command[MAX_COMMAND_SIZE];
-	unsigned int seed_arg;
 	char* fgets_ret; /* for EOF checking */
 
 
