@@ -49,6 +49,7 @@ int undo();
 int redo();
 void print_board_solution(); /* Helper function for testing the solution */
 void print_board();
+void print_board_values();
 
 /*
 *	The Function handles the user's input from stdin or files.

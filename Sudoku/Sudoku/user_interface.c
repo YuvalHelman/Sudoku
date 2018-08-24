@@ -182,6 +182,50 @@ int one_possible_value(int row_index, int col_index) {
 *			DEBUGGING functions. public for debugging usage.
 */
 
+
+void print_board_values() {
+	/* variables declarations */
+	int i, j, board_length;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
+
+	/* Print 4N+n+1 dashes for the start*/
+	separator_row();
+
+	/* Go over the columns */
+	for (i = 0; i < board_length; i++) {
+		printf("|"); /* Opening pipe */
+
+					 /* Go over Columns*/
+		for (j = 0; j < board_length; j++) {
+
+			if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
+
+				printf(" %2d.", sudoku.board[i][j].solution); /* DOT for fixed number*/
+			}
+			else if (!sudoku.board[i][j].is_fixed) { /* Non-fixed number that the user inputed */
+				printf(" %2d", sudoku.board[i][j].solution);
+				if (sudoku.board[i][j].error) /* check if we need to mark an error */
+					printf("*");
+				else printf(" ");
+			}
+
+			/* after every m numbers , print a pipe*/
+			if (j != board_length - 1) {
+				if (j % sudoku.block_col_length == sudoku.block_col_length - 1)
+					printf("|");
+			}
+			else printf("|");
+
+		}
+		printf("\n"); /*  Next line*/
+
+					  /*Print dashes every 3 lines*/
+		if (i % sudoku.block_row_length == sudoku.block_row_length - 1) {
+			separator_row();
+		}
+	}
+}
+
 /*
 *	The Function prints the solution board to the console.
 *
@@ -203,18 +247,14 @@ void print_board_solution() {
 
 					 /* Go over Columns*/
 		for (j = 0; j < board_length; j++) {
-			
-			if (sudoku.board[i][j].solution == 0) /* blank */
-			{
-				printf("    ");
-			}
-			else if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
+
+			if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
 
 				printf(" %2d.", sudoku.board[i][j].solution); /* DOT for fixed number*/
 			}
 			else if (!sudoku.board[i][j].is_fixed) { /* Non-fixed number that the user inputed */
 				printf(" %2d", sudoku.board[i][j].solution);
-				if ((sudoku.game_mode == edit || sudoku.mark_errors) && sudoku.board[i][j].error) /* check if we need to mark an error */
+				if ( sudoku.board[i][j].error) /* check if we need to mark an error */
 					printf("*");
 				else printf(" ");
 			}
@@ -335,6 +375,8 @@ int Edit(char* filepath) {
 		sudoku.block_row_length = block_rows;
 		sudoku.block_col_length = block_cols;
 		sudoku.num_of_filled_cells = num_of_filled_cells;
+
+		fclose(fd);
 	}
 	else {
 		if (initialize_new_board(DEFAULT_BLOCK_LEN, DEFAULT_BLOCK_LEN) == EXIT_FAILURE) {
@@ -351,7 +393,6 @@ int Edit(char* filepath) {
 
 	print_board();
 
-	fclose(fd);
 
 	return EXIT_SUCCESS;
 }
@@ -512,18 +553,11 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 */
 int validate() {
 
-	/* DEBUG */
-	printf("DEBUG 1\n");
-	/* DEBUG */
-
+	/*
 	if (is_board_erronous() ) { 
 		printf("Error: board contains erroneous values\n");
 		return EXIT_SUCCESS;
 	}
-
-	/* DEBUG */
-	printf("DEBUG 2\n");
-	/* DEBUG */
 
 	if (is_solvable() == true) {
 		printf("Validation passed: board is solvable\n");
@@ -531,7 +565,14 @@ int validate() {
 	else {
 		printf("Validation failed: board is unsolvable\n");
 	}
+	*/
 
+	is_solvable();
+	/* gurobi_initializer();*/
+
+	printf("------\n------Board values:\n");
+	print_board_values();
+	printf("------\n------Board Solution:\n");
 	print_board_solution(); /* TODO: erase this before done */
 
 	return EXIT_SUCCESS;

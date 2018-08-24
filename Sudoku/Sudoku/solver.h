@@ -3,7 +3,7 @@
 
 #include "aux_main.h"
 
-int gurobi_initializer();
+int gurobi_initializer(); /* todo: ERASE that later */
 
 /*
 *	The function checks if there is a solution to the current board.

@@ -66,10 +66,8 @@ int gurobi_initializer() {
 			}
 		}
 	}
-	/* DEBUG
-	fflush(stdin); fflush(stdout);
-	printf("error printing 1\n");
-	/* Debug */
+
+
 
 	/* Create environment */
 	error = GRBloadenv(&env, "sudokuGurobi.log"); /* TODO: change 2nd argument to NULL when no need for log anymore */
@@ -317,26 +315,34 @@ int create_env_model(GRBenv *env, GRBmodel *model, int DIM, double *lb, char *vt
 *   returns: EXIT_SUCCESS(0) on success.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM) {
-	int error, i, j, v, ig, jg, count, col, row;
+int initiate_constraints(GRBenv *env, GRBmodel *model) {
+	int error, i, j, v, ig, jg, count, col, row, DIM;
 	int *cind; /* refferencing the variables indices .*/
 	double    *cval; /* an Array of variable's ceoficients */
 	int b_col_l, b_row_l;
 
 	b_col_l = sudoku.block_col_length;
 	b_row_l = sudoku.block_row_length;
+	DIM = b_row_l * b_col_l;
 
+	cind = calloc(DIM, sizeof(int));
+	cval = calloc(DIM, sizeof(double));
 
-	cind = malloc(sizeof(int)*DIM);
-	cval = malloc(sizeof(double)*DIM);
 	if (!cind || !cval) {
-		printf("Error: malloc has failed on ILP solver\n");
+		printf("Error: calloc has failed on ILP solver\n");
 		exit(EXIT_FAILURE);
 	}
 
 
 	/* DEBUG */
-	printf("DEBUG 8\n");
+	for (i = 0; i < DIM; i++) {
+		printf("ind[%d] = %d\n", i, cind[i]);
+		printf("val[%d] = %f\n", i, cval[i]);
+	}
+	printf("sudoku.block_col_length: %d\n", sudoku.block_col_length);
+	printf("sudoku.block_row_length: %d\n", sudoku.block_row_length);
+	printf("b_col_l: %d , b_row_l: %d\n", b_col_l, b_row_l);
+	fflush(stdin); fflush(stdout);
 	/* DEBUG */
 
 	/* Each cell gets only one value.
@@ -345,31 +351,18 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM) {
 	for (i = 0; i < DIM; i++) {
 		for (j = 0; j < DIM; j++) {
 			for (v = 0; v < DIM; v++) {
-				/* DEBUG */
-				printf("DEBUG %d\n", (i * DIM*DIM) + (j * DIM) + v);
-				printf("i: %d , j: %d , v: %d\n", i, j, v);
-				/* DEBUG */
-
 				cind[v] = (i * DIM*DIM) + (j * DIM) + v;
 				cval[v] = 1.0;
 			}
-			/* DEBUG */
-			printf("DEBUG RAWR\n");
-			/* DEBUG */
+
 			error = GRBaddconstr(model, DIM, cind, cval, GRB_EQUAL, 1.0, NULL);
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
-				
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 	}
-
-	/* DEBUG */
-	printf("DEBUG 9\n");
-	/* DEBUG */
-
 
 	/* Each value must appear once in each row.
 	a constraint is conducted on each value to be valid in only one row.
@@ -385,10 +378,10 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM) {
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
-	}
+	}	
 
 
 	/* DEBUG */
@@ -409,7 +402,7 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM) {
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 		}
 	}
@@ -433,7 +426,7 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM) {
 				if (error) {
 					printf("Error: GRBaddconstr failed.\n");
 					printf("ERROR: %s\n", GRBgeterrormsg(env));
-					exit(EXIT_FAILURE);
+					return EXIT_FAILURE;
 				}
 			}
 		}
@@ -552,7 +545,7 @@ int is_solvable() {
 		exit(EXIT_FAILURE);
 	}
 
-	if (initiate_constraints(env, model, DIM) == EXIT_FAILURE) {
+	if (initiate_constraints(env, model) == EXIT_FAILURE) {
 		exit(EXIT_FAILURE);
 	}
 
