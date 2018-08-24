@@ -14,7 +14,7 @@ int gurobi_initializer();
 *   returns: true(1) when there is a solution to the current board.
 			 false(0) when there isn't a solution.
 */
-bool is_solvable();
+int is_solvable();
 
 
 

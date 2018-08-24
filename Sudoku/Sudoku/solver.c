@@ -249,7 +249,7 @@ int gurobi_initializer() {
 *	Initiates upper bounds of 1 to any variable Xi,j,v that applies board[i][j] = v   in the current board.
 *	This makes restrictions for the values that exist on the board before initiating constraints.
 */
-void initiate_upper_bounds(int DIM, double *lb, char *vtype) {
+void initiate_lower_bounds(int DIM, double *lb, char *vtype) {
 	int i, v, j;
 
 	/* Fill the lower bound to 1 for any cell that already has a value (non-zero) */
@@ -286,14 +286,14 @@ int create_env_model(GRBenv *env, GRBmodel *model, int DIM, double *lb, char *vt
 		printf("ERROR: %s\n", GRBgeterrormsg(env));
 		exit(EXIT_FAILURE);
 	}
-
+	
 	error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
 	if (error) {
 		printf("Error: gurobi removing output has failed.");
 		printf("ERROR: %s\n", GRBgeterrormsg(env));
 		exit(EXIT_FAILURE);
 	}
-
+	
 	/* Create an empty model */
 	error = GRBnewmodel(env, &model, "sudoku", DIM*DIM*DIM, NULL, lb, NULL,
 		vtype, NULL);
@@ -317,9 +317,27 @@ int create_env_model(GRBenv *env, GRBmodel *model, int DIM, double *lb, char *vt
 *   returns: EXIT_SUCCESS(0) on success.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, double *val, int b_row_l, int b_col_l) {
-	int error, i, j, v, ig, jg, count;
+int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM) {
+	int error, i, j, v, ig, jg, count, col, row;
+	int *cind; /* refferencing the variables indices .*/
+	double    *cval; /* an Array of variable's ceoficients */
+	int b_col_l, b_row_l;
 
+	b_col_l = sudoku.block_col_length;
+	b_row_l = sudoku.block_row_length;
+
+
+	cind = malloc(sizeof(int)*DIM);
+	cval = malloc(sizeof(double)*DIM);
+	if (!cind || !cval) {
+		printf("Error: malloc has failed on ILP solver\n");
+		exit(EXIT_FAILURE);
+	}
+
+
+	/* DEBUG */
+	printf("DEBUG 8\n");
+	/* DEBUG */
 
 	/* Each cell gets only one value.
 	a constraint is conducted on each cell to have only one value chosen.
@@ -327,18 +345,31 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, double
 	for (i = 0; i < DIM; i++) {
 		for (j = 0; j < DIM; j++) {
 			for (v = 0; v < DIM; v++) {
-				ind[v] = (i * DIM*DIM) + (j * DIM) + v;
-				val[v] = 1.0;
-			}
+				/* DEBUG */
+				printf("DEBUG %d\n", (i * DIM*DIM) + (j * DIM) + v);
+				printf("i: %d , j: %d , v: %d\n", i, j, v);
+				/* DEBUG */
 
-			error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
+				cind[v] = (i * DIM*DIM) + (j * DIM) + v;
+				cval[v] = 1.0;
+			}
+			/* DEBUG */
+			printf("DEBUG RAWR\n");
+			/* DEBUG */
+			error = GRBaddconstr(model, DIM, cind, cval, GRB_EQUAL, 1.0, NULL);
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
+				
 				exit(EXIT_FAILURE);
 			}
 		}
 	}
+
+	/* DEBUG */
+	printf("DEBUG 9\n");
+	/* DEBUG */
+
 
 	/* Each value must appear once in each row.
 	a constraint is conducted on each value to be valid in only one row.
@@ -346,11 +377,11 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, double
 	for (v = 0; v < DIM; v++) {
 		for (j = 0; j < DIM; j++) {
 			for (i = 0; i < DIM; i++) {
-				ind[i] = (i * DIM*DIM) + (j * DIM) + v;
-				val[i] = 1.0;
+				cind[i] = (i * DIM*DIM) + (j * DIM) + v;
+				cval[i] = 1.0;
 			}
 
-			error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
+			error = GRBaddconstr(model, DIM, cind, cval, GRB_EQUAL, 1.0, NULL);
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
@@ -359,17 +390,22 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, double
 		}
 	}
 
+
+	/* DEBUG */
+	printf("DEBUG 10\n");
+	/* DEBUG */
+
 	/* Each value must appear once in each column
 	a constraint is conducted on each value to be valid in only one column.
 	*/
 	for (v = 0; v < DIM; v++) {
 		for (i = 0; i < DIM; i++) {
 			for (j = 0; j < DIM; j++) {
-				ind[j] = (i * DIM*DIM) + (j * DIM) + v;
-				val[j] = 1.0;
+				cind[j] = (i * DIM*DIM) + (j * DIM) + v;
+				cval[j] = 1.0;
 			}
 
-			error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
+			error = GRBaddconstr(model, DIM, cind, cval, GRB_EQUAL, 1.0, NULL);
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
@@ -387,13 +423,13 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, double
 				/* Iterate the inside of the subgrid */
 				for (i = ig * b_col_l; i < (ig + 1)*b_col_l; i++) {
 					for (j = jg * b_row_l; j < (jg + 1)*b_row_l; j++) {
-						ind[count] = (i * DIM*DIM) + (j * DIM) + v;
-						val[count] = 1.0;
+						cind[count] = (i * DIM*DIM) + (j * DIM) + v;
+						cval[count] = 1.0;
 						count++;
 					}
 				}
 
-				error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
+				error = GRBaddconstr(model, DIM, cind, cval, GRB_EQUAL, 1.0, NULL);
 				if (error) {
 					printf("Error: GRBaddconstr failed.\n");
 					printf("ERROR: %s\n", GRBgeterrormsg(env));
@@ -402,6 +438,10 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, double
 			}
 		}
 	}
+
+
+	free(cind);
+	free(cval);
 
 	return EXIT_SUCCESS;
 }
@@ -414,7 +454,7 @@ int initiate_constraints(GRBenv *env, GRBmodel *model, int DIM, int *ind, double
 *   returns: EXIT_SUCCESS(0) on success.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-bool optimize_and_get_sol(GRBenv *env, GRBmodel *model, int DIM, double *sol) {
+int optimize_and_get_sol(GRBenv *env, GRBmodel *model, int DIM, double *sol) {
 	int error;
 	int optimstatus;
 
@@ -442,10 +482,10 @@ bool optimize_and_get_sol(GRBenv *env, GRBmodel *model, int DIM, double *sol) {
 			printf("ERROR: %s\n", GRBgeterrormsg(env));
 			exit(EXIT_FAILURE);
 		}
-		return TRUE;
+		return true;
 	}
 	else if (optimstatus == GRB_INF_OR_UNBD) { /* Model is infeasible or unbounded */
-		return FALSE;
+		return false;
 	}
 	else {
 		printf("Optimization has encountered an error. Program is terminating.\n");
@@ -478,61 +518,53 @@ void update_solution(double *sol, int DIM) {
 	}
 }
 
-bool is_solvable() {
+int is_solvable() {
 
 	GRBenv   *env;
 	GRBmodel *model;
 	int       error;
 	double    *sol; /* An array that holds the solution for (i,j,k) tuples */
-	int       *ind; /* used for refferencing the variables.*/
-	double    *val; /* an Array of possible value ceoficients */
 	double	  *lb; /* Lower bounds for the values */
 	char      *vtype; /* Variable types : BINARY for all of them */
 	int		  DIM; /* The board dimensions */
-	int b_col_l, b_row_l;
-	bool is_there_a_solution;
+	int is_there_a_solution;
+	int i, j, v, ig, jg, count, col, row;
 
-	b_col_l = sudoku.block_col_length;
-	b_row_l = sudoku.block_row_length;
 	DIM = sudoku.block_col_length * sudoku.block_row_length;
 	env = NULL;
 	model = NULL;
 	error = 0;
 
-	ind = malloc(sizeof(int)*DIM);
-	val = malloc(sizeof(double)*DIM);
 	lb = malloc(sizeof(double)*DIM*DIM*DIM);
 	vtype = malloc(sizeof(char)*DIM*DIM*DIM);
 	sol = malloc(sizeof(double)*DIM*DIM*DIM);
 
-	if (!ind || !val || !lb || !val || !vtype || !sol) {
+	if (!lb || !vtype || !sol) {
 		printf("Error: malloc has failed on ILP solver\n");
 		exit(EXIT_FAILURE);
 	}
 
 	/* Initiates upper bounds of 1 to any variable Xi,j,v that applies board[i][j] = v   in the current board */
-	initiate_upper_bounds(DIM, lb, vtype);
+	initiate_lower_bounds(DIM, lb, vtype);
 
 	/* Creates the gurobi's environment and a new model for solving the ILP problem */
 	if (create_env_model(env, model, DIM, lb, vtype) == EXIT_FAILURE) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (initiate_constraints(env, model, DIM, ind, val, b_row_l, b_col_l) == EXIT_FAILURE) {
+	if (initiate_constraints(env, model, DIM) == EXIT_FAILURE) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (optimize_and_get_sol(env, model, DIM, sol) == TRUE) {
+	if (optimize_and_get_sol(env, model, DIM, sol) == true) {
 		update_solution(sol, DIM);
-		is_there_a_solution = TRUE;
+		is_there_a_solution = true;
 	}
 	else {
-		is_there_a_solution = FALSE;
+		is_there_a_solution = false;
 	}
 
 	/* Free arrays */
-	free(ind);
-	free(val);
 	free(sol);
 	free(vtype);
 	free(lb);

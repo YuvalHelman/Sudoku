@@ -58,7 +58,7 @@ node_vals* redo_list(int* num_of_values) {
 	curr_node = (Node*)move_list->current_Node_move;
 
 	(*num_of_values) = curr_node->num_of_values;
-	return curr_node->values;
+	return (node_vals*)curr_node->values;
 }
 
 

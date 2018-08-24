@@ -153,7 +153,6 @@ int free_int_matrix(int** board, int block_col_len, int block_row_len) {
 	return EXIT_SUCCESS;
 }
 
-
 /*
 *	The Function checks if there is only one valid value for cell [row_index][col_index].
 *
@@ -513,11 +512,20 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 */
 int validate() {
 
+	/* DEBUG */
+	printf("DEBUG 1\n");
+	/* DEBUG */
+
 	if (is_board_erronous() ) { 
 		printf("Error: board contains erroneous values\n");
 		return EXIT_SUCCESS;
 	}
-	if (is_solvable() == TRUE) {
+
+	/* DEBUG */
+	printf("DEBUG 2\n");
+	/* DEBUG */
+
+	if (is_solvable() == true) {
 		printf("Validation passed: board is solvable\n");
 	}
 	else {

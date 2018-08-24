@@ -4,6 +4,8 @@
 
 #include "aux_main.h"
 
+/* TODO: document this one */
+
 /*
 * The Function checks if the value is a legal value for cell[x][y].
 * @param row_index - index x.
@@ -74,6 +76,6 @@ void update_errors_block(int row_index, int col_index);
 *   returns: true(1) when there is a solution to the current board.
 *			 false(0) when there isn't a solution.
 */
-bool is_board_erronous();
+int is_board_erronous();
 
 #endif /* GAME_LOGIC */
