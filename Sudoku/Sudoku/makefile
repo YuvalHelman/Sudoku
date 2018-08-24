@@ -1,7 +1,7 @@
 CC = gcc
 OBJS = main.o aux_main.o file_manipulation.o game_logic.o move_list.o solver.o user_interface.o
  
-EXEC = sudoku
+EXEC = sudoku-console
 COMP_FLAGS =
 GUROBI_COMP = -I/usr/local/lib/gurobi563/include
 GUROBI_LIB = -L/usr/local/lib/gurobi563/lib -lgurobi56

@@ -489,14 +489,9 @@ int optimize_and_get_sol(GRBenv *env, GRBmodel *model, int DIM, double *sol) {
 }
 
 /*
-*   This function initialize the sudoku.board
-*	The initialized board has all 0's in its cells.
-*	should be free'd with free_board() function when the board isn't needed anymore.
-*
-*   returns: EXIT_SUCCESS(0) on success.
-*			 on any error returns EXIT_FAILURE(1) and prints the error.
+*   This function initialize the sudoku.solution with the ILP solution.
 */
-void update_solution(double *sol, int DIM) {
+void update_board_solution(double *sol, int DIM) {
 	int i, j, v;
 
 	/* Update the board.solution from the given solution array */
@@ -511,7 +506,25 @@ void update_solution(double *sol, int DIM) {
 	}
 }
 
-int is_solvable() {
+/*
+*   This function initialize the matrice argument that was given with the ILP solution.
+*/
+void update_arg_matrice(int **matrice, double *sol, int DIM) {
+	int i, j, v;
+
+	/* Update the board.solution from the given solution array */
+	for (i = 0; i < DIM; i++) {
+		for (j = 0; j < DIM; j++) {
+			for (v = 0; v < DIM; v++) {
+				if (sol[i*DIM*DIM + j * DIM + v] == 1.0) {
+					matrice[i][j] = (v + 1);
+				}
+			}
+		}
+	}
+}
+
+int is_solvable(int **matrice) {
 
 	GRBenv   *env;
 	GRBmodel *model;
@@ -550,7 +563,12 @@ int is_solvable() {
 	}
 
 	if (optimize_and_get_sol(env, model, DIM, sol) == true) {
-		update_solution(sol, DIM);
+		if (!matrice) {
+			update_board_solution(sol, DIM);
+		}
+		else {
+			update_arg_matrice(matrice, sol, DIM);
+		}
 		is_there_a_solution = true;
 	}
 	else {

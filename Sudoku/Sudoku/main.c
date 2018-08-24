@@ -42,7 +42,7 @@ printf("Tests run: %d\n", tests_run);
 int main() {
 
 	initialize_list_parameters();
-
+	srand(time(NULL));
 	/* initialize_test_board(); /* test board for testing stuff ... add the function for different boards */
 
 	printf("Sudoku\n------\n");

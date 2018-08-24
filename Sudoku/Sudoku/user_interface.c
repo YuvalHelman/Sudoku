@@ -179,6 +179,73 @@ int one_possible_value(int row_index, int col_index) {
 }
 
 /*
+*	The function checks if the board is empty (all 0's) or not
+*
+*   returns: true(1) when the board is empty
+*			 false(0) otherwise.
+*/
+int is_board_empty() {
+	int i, j, board_size;
+
+	board_size = sudoku.block_col_length * sudoku.block_row_length;
+
+	for (i = 0; i < board_size; i++) {
+		for (j = 0; j < board_size; j++) {
+			if (sudoku.board[i][j].value) {
+				return false;
+			}
+
+		}
+	}
+	return false;
+}
+
+
+int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_clear) {
+
+	int **temp_matrice_values, i, j;
+	int rand_row, rand_col, rand_val, board_len, num_of_filled;
+
+	board_len = sudoku.block_col_length * sudoku.block_row_length;
+	num_of_filled = 0;
+
+	/* Initialize a temp matrix */
+	temp_matrice_values = initialize_integer_board(sudoku.block_col_length, sudoku.block_row_length);
+	if (!temp_matrice_values) {
+		return EXIT_FAILURE;
+	}
+
+	/* generate random cells untill 'num_of_cells_to_fill' cells has been filled */
+	while(num_of_filled < num_of_cells_to_fill) {
+		rand_row = ( rand() % (board_len) + 1 ); /* random numbers between 1 ~ board_len*/
+		rand_col = ( rand() % (board_len) + 1 ); /* random numbers between 1 ~ board_len*/
+		
+
+		/*
+		If one of the X randomly-chosen cells has no legal value available, or the
+		resulting board has no solution (the ILP solver fails), clear the board entirely
+		and repeat the previous step.
+
+		******* Should i check every value before moving to the next cell???
+		*/
+
+		/* if random cell hasn't been initialized yet */
+		if (temp_matrice_values[rand_row][rand_col] == 0) { 
+			rand_val = (rand() % (board_len) + 1 ); /* random numbers between 1 ~ board_len*/
+			if ( valid_value(rand_row, rand_col, rand_val) ) {
+				temp_matrice_values[rand_row][rand_col] = rand_val;
+				num_of_filled++;
+			}
+		}
+	}
+
+	is_solvable(temp_matrice_values);
+
+
+
+}
+
+/*
 *			DEBUGGING functions. public for debugging usage.
 */
 
@@ -592,7 +659,40 @@ int validate() {
 *	    	 on any error returns NULL and prints the error.
 */
 int generate(int num_of_cells_to_fill, int num_of_cells_to_clear) {
-	
+	int DIM, num_of_tries;
+
+	DIM = sudoku.block_col_length * sudoku.block_row_length;
+	num_of_tries = 1000;
+
+	if (num_of_cells_to_fill > DIM*DIM ||
+		num_of_cells_to_fill < 0 ||
+		num_of_cells_to_clear > DIM*DIM || 
+		num_of_cells_to_clear < 0) {
+		printf("Error: value not in range 0-%d\n", DIM*DIM); /* case d */
+		return EXIT_FAILURE;
+	}
+
+	if ( ! is_board_empty()) {
+		printf("Error: board is not empty\n");
+		return EXIT_SUCCESS;
+	}
+
+	while (num_of_tries > 0) {
+
+		if (generate_a_puzzle(num_of_cells_to_fill, num_of_cells_to_clear) == false) {
+			num_of_cells_to_clear--;
+		}
+		else {
+			num_of_tries = -1; /* Exit loop */
+		}
+	}
+	if (num_of_tries == 0) {
+		printf("Error: puzzle generator failed\n");
+		return EXIT_FAILURE;
+	}
+
+	print_board();
+	return EXIT_SUCCESS;
 	
 	return 0; 
 }
@@ -920,7 +1020,7 @@ int user_command(char* buffer) {
 	/* */
 	sudokuCommands sudoku_command;
 	char *xchar, *ychar, *zchar, *command;
-	int xchar_asInt, ychar_asInt, zchar_asInt;
+	int xchar_asInt, ychar_asInt, zchar_asInt, DIM;
 	command = strtok(buffer, " \t\r\n");
 	xchar = strtok(NULL, " \t\r\n");
 	ychar = strtok(NULL, " \t\r\n");
@@ -995,16 +1095,18 @@ int user_command(char* buffer) {
 		if (sudoku.game_mode != edit)
 			printf("ERROR: invalid command\n"); /* case b */
 		else {
+			DIM = sudoku.block_col_length * sudoku.block_row_length;
+
 			errno = 0;
 			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
 			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
+				printf("Error: value not in range 0-%d", DIM*DIM);
 				return EXIT_FAILURE;
 			}
 			errno = 0;
 			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
 			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
+				printf("Error: value not in range 0-%d", DIM*DIM);
 				return EXIT_FAILURE;
 			}
 			generate(xchar_asInt, ychar_asInt);
