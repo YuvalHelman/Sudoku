@@ -239,7 +239,7 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_clear) {
 		}
 	}
 
-	is_solvable(temp_matrice_values);
+	//is_solvable(temp_matrice_values);
 
 
 
@@ -393,7 +393,7 @@ int Solve(char* filepath) {
 	/* restart Sudoku's essential variables */
 	sudoku.mark_errors = 0;
 
-	print_board();
+	
 
 	fclose(fd);
 
@@ -458,7 +458,7 @@ int Edit(char* filepath) {
 	/* restart Sudoku's essential variables */
 	sudoku.mark_errors = 0;
 
-	print_board();
+	
 
 
 	return EXIT_SUCCESS;
@@ -634,7 +634,7 @@ int validate() {
 	}
 	*/
 
-	is_solvable();
+	//is_solvable();
 	/* gurobi_initializer();*/
 
 	printf("------\n------Board values:\n");
@@ -1032,10 +1032,14 @@ int user_command(char* buffer) {
 	switch (sudoku_command)
 	{
 	case solve_command:
-		return Solve(xchar);
+	    Solve(xchar);
+		update_board_errors();
+		print_board();
 		break;
 	case edit_command:
-		return Edit(xchar);
+	    Edit(xchar);
+		update_board_errors();
+		print_board();
 		break;
 	case mark_errors_command:
 		if (sudoku.game_mode != solve || (!xchar) ) {
