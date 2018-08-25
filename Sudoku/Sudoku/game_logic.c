@@ -126,3 +126,13 @@ int is_board_erronous() {
 	}
 	return false;
 }
+
+int update_board_errors() {
+	int i, j;
+
+	for (i = 0; i < sudoku.block_row_length; i++) {
+		for (j = 0; j < sudoku.block_col_length; j++) {
+			update_errors(i, j);
+		}
+	}
+}

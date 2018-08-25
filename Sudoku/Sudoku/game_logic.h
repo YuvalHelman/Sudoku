@@ -78,4 +78,5 @@ void update_errors_block(int row_index, int col_index);
 */
 int is_board_erronous();
 
+int update_board_errors();
 #endif /* GAME_LOGIC */
