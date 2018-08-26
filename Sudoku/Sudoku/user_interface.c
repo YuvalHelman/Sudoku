@@ -333,12 +333,14 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		}
 	}*/
 
-	/* Solve the matrice using ILP */
-	if (gurobi_initializer(temp_matrice_values) == EXIT_FAILURE) {
+	/* Solve the matrice using ILP 
+		if (gurobi_initializer(temp_matrice_values) == EXIT_FAILURE) {
 		free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
 		free(optional_values);
 		return NO_SOLUTION;
 	}
+	*/
+
 
 	/* remove all but "num_of_cells_to_keep" cells in the board */
 	num_of_cells_in_board = board_len * board_len;
@@ -767,7 +769,7 @@ int validate() {
 	}
 	*/
 
-	is_solvable(NULL);
+	//is_solvable(NULL);
 	/* gurobi_initializer();*/
 
 	printf("------\n------Board values:\n");

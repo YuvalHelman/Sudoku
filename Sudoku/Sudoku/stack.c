@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include "stack.h"
 #include "aux_main.h"
+#include "user_interface.h"
+#include "game_logic.h"
 
 
 /* to insert elements in stack*/
@@ -75,35 +77,74 @@ void destroy()
 */
 int numberOfSolutions() {
 	/* variables declarations */
-	int row_index, col_index, count, value, board_length;
+	int row_index, col_index, count, value, board_length, **temp_matrice_values;
+	int flag;
+	count = 0;
 	board_length = sudoku.block_col_length * sudoku.block_row_length;
 
-	for (row_index = 0; row_index < board_length; row_index++) {
-		for (col_index = 0; col_index < board_length; col_index++) {
+	if (is_board_erronous()) {
+		printf("Error: board contains erroneous values\n");
+		return 0;
+	}
+
+	temp_matrice_values = initialize_integer_board(sudoku.block_col_length, sudoku.block_row_length);
+
+	for (col_index = 0; col_index < board_length; col_index++) {
+		for (row_index = 0; row_index < board_length; row_index++) {
+			temp_matrice_values[row_index][col_index] = sudoku.board[row_index][col_index].value;
+		}
+	}
+	col_index = row_index = 0;
+	value = flag = 1;
+	for (; flag && row_index < board_length; row_index++) {
+		col_index = col_index == board_length ? 0 : col_index;
+		for (; flag && col_index < board_length; col_index++) {
 			if (sudoku.board[row_index][col_index].is_fixed == false) {
 				if (sudoku.board[row_index][col_index].value == 0) {
-					for (value = 1; value <= board_length; value++) {
+					for (; flag && value <= board_length; value++) {
 						if (valid_value(row_index, col_index, value)) {
 							push(row_index, col_index, value);
 							sudoku.board[row_index][col_index].value = value;
+							print_board();
+							value = 1;
 							break;
-						REC:;
 						}
 						else if (value == board_length) {
-							pop(&row_index, &col_index, &value);
-							goto REC;
+							if (!empty()) {
+								pop(&row_index, &col_index, &value);
+							}
+							else {
+								flag = 0;
+							}
 						}
 					}
 				}
 			}
-			if (row_index == board_length - 1 && col_index == board_length - 1) {
-				count++;
+		}
+		if (row_index == board_length - 1 && col_index == board_length) {
+			count++;
+			if (!empty()) {
 				pop(&row_index, &col_index, &value);
-				goto REC;
+				row_index--; col_index; value;
 			}
-
+			else {
+				flag = 0;
+			}
 		}
 	}
-
-	return count; /* Yuval added this. cause there was no 'return' at all */
+	for (col_index = 0; col_index < board_length; col_index++) {
+		for (row_index = 0; row_index < board_length; row_index++) {
+			sudoku.board[row_index][col_index].value = temp_matrice_values[row_index][col_index];
+		}
+	}
+	free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
+	if (count != 0) {
+		printf("Number of solutions: %d\n", count);
+		if (count == 1)
+			printf("This is a good board!\n");
+		else printf("The puzzle has more than 1 solution, try to edit it further\n");
+	}
+	else printf("The puzzle has 0 solutions.");
+	return count;
 }
+
