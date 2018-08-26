@@ -852,8 +852,7 @@ int hint(int column, int row) {
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int num_solutions() {
-
-	return 0;
+	return numberOfSolutions();
 }
 
 /*
