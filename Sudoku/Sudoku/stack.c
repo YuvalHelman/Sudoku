@@ -96,12 +96,12 @@ int numberOfSolutions() {
 	}
 	col_index = row_index = 0;
 	value = flag = 1;
-	for (; flag && row_index < board_length; row_index++) {
+	while(flag && row_index < board_length) {
 		col_index = col_index == board_length ? 0 : col_index;
-		for (; flag && col_index < board_length; col_index++) {
+		while (flag && col_index < board_length){
 			if (sudoku.board[row_index][col_index].is_fixed == false) {
 				if (sudoku.board[row_index][col_index].value == 0) {
-					for (; flag && value <= board_length; value++) {
+					while(flag && value <= board_length) {
 						if (valid_value(row_index, col_index, value)) {
 							push(row_index, col_index, value);
 							sudoku.board[row_index][col_index].value = value;
@@ -109,28 +109,37 @@ int numberOfSolutions() {
 							value = 1;
 							break;
 						}
-						else if (value == board_length) {
-							if (!empty()) {
-								pop(&row_index, &col_index, &value);
-							}
-							else {
-								flag = 0;
+						else {
+							while (flag && value == board_length) {
+								if (!empty()) {
+									sudoku.board[row_index][col_index].value = 0;
+									print_board();
+									pop(&row_index, &col_index, &value);
+								}
+								else {
+									flag = 0;
+								}
 							}
 						}
+						value++;
 					}
 				}
 			}
-		}
-		if (row_index == board_length - 1 && col_index == board_length) {
-			count++;
-			if (!empty()) {
-				pop(&row_index, &col_index, &value);
-				row_index--; col_index; value;
+			if (row_index == board_length - 1 && col_index == board_length - 1) {
+				count++;
+				if (!empty()) {
+					sudoku.board[row_index][col_index].value = 0;
+					print_board();
+					pop(&row_index, &col_index, &value);
+					row_index; col_index--; value++;
+				}
+				else {
+					flag = 0;
+				}
 			}
-			else {
-				flag = 0;
-			}
+			col_index++;
 		}
+		row_index++;
 	}
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
