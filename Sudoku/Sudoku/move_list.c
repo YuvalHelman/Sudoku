@@ -109,6 +109,8 @@ int delete_list_full()
 	}
 
 	move_list->head->next = NULL;
+	move_list->current_Node_move = move_list->head;
+	move_list->tail = move_list->head;
 
 	return EXIT_SUCCESS;
 }
