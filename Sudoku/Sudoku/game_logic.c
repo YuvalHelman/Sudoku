@@ -27,6 +27,7 @@ int valid_value(int row_index, int col_index, int value) {
 		check_block(row_index, col_index, value);
 }
 
+
 /* checks if the value can be place in the row */
 int check_col(int row_index, int col_index, int value) {
 	int i, board_length;
