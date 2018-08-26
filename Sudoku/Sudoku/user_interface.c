@@ -981,10 +981,37 @@ int Save(char* filepath) {
 *   returns: EXIT_SUCCESS(0) on adding a new node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int hint(int column, int row) {
+int hint(int col_index, int row_index) {
 
+	int board_len, row_index_board, col_index_board;
 
-	return 0;
+	board_len = sudoku.block_row_length * sudoku.block_col_length;
+
+	/* check if the values are legal */
+	if (row_index < 1 || row_index > board_len ||
+		col_index < 1 || col_index > board_len) {
+		printf("Error: value not in range 0-%d\n", board_len);
+		return ;
+	}
+	if (is_board_erronous()) {
+		printf("Error: board contains erroneous values\n");
+		return ;
+	}
+	row_index_board = row_index - 1;
+	col_index_board = col_index - 1;
+	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
+		printf("Error: cell is fixed\n");
+		return ;
+	}
+	if (sudoku.board[row_index_board][col_index_board].value != 0) { /* it has a value.*/
+		printf("Error: cell already contains a value\n");
+		return ;
+	}
+
+	validate(); /* may be double print of errors. needs to print if it is solvable and th hint */
+	printf("Hint: set cell to %d\n", sudoku.board[row_index_board][col_index_board].solution);
+
+	return;
 }
 
 /*
