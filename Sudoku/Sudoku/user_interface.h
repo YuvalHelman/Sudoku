@@ -6,7 +6,7 @@
 #include "move_list.h"
 
 #define DEFAULT_BLOCK_LEN 3
-#define MAX_COMMAND_SIZE 260
+#define MAX_COMMAND_SIZE 258
 #define BASE10 10
 #define ZERO 0
 #define NON_ZERO 1

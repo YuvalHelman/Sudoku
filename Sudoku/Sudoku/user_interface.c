@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define SEEN 1
 #define NO_SOLUTION 2
+#define UNUSABLE_CHAR 001
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -12,6 +13,7 @@
 #include "move_list.h"
 #include "file_manipulation.h"
 #include "solver.h"
+#include "stack.h"
 
 /*
  *					Private (Static) functions - not available outside this source file.
@@ -333,13 +335,13 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		}
 	}*/
 
-	/* Solve the matrice using ILP 
-		if (gurobi_initializer(temp_matrice_values) == EXIT_FAILURE) {
+	/*Solve the matrice using ILP */
+		if (is_there_a_solution(temp_matrice_values) == false) {
 		free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
 		free(optional_values);
 		return NO_SOLUTION;
 	}
-	*/
+	
 
 
 	/* remove all but "num_of_cells_to_keep" cells in the board */
@@ -438,13 +440,17 @@ void print_board_solution() {
 					 /* Go over Columns*/
 		for (j = 0; j < board_length; j++) {
 
-			if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
+			if (sudoku.board[i][j].solution == 0) /* blank */
+			{
+				printf("    ");
+			}
+			else if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
 
 				printf(" %2d.", sudoku.board[i][j].solution); /* DOT for fixed number*/
 			}
 			else if (!sudoku.board[i][j].is_fixed) { /* Non-fixed number that the user inputed */
 				printf(" %2d", sudoku.board[i][j].solution);
-				if ( sudoku.board[i][j].error) /* check if we need to mark an error */
+				if ((sudoku.game_mode == edit || sudoku.mark_errors) && sudoku.board[i][j].error) /* check if we need to mark an error */
 					printf("*");
 				else printf(" ");
 			}
@@ -513,9 +519,7 @@ int Solve(char* filepath) {
 	sudoku.block_col_length = block_cols;
 	sudoku.num_of_filled_cells = num_of_filled_cells;
 
-	/* restart Sudoku's essential variables */
-	sudoku.mark_errors = 0;
-
+	update_board_errors();
 	print_board();
 
 	fclose(fd);
@@ -590,9 +594,8 @@ int Edit(char* filepath) {
 		sudoku.num_of_filled_cells = 0;
 	}
 
-	/* restart Sudoku's essential variables */
-	sudoku.mark_errors = 0;
 
+	update_board_errors();
 	print_board();
 
 
@@ -755,29 +758,28 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 */
 int validate() {
 
-	/*
-	if (is_board_erronous() ) { 
+	if (is_board_erronous()) {
 		printf("Error: board contains erroneous values\n");
-		return EXIT_SUCCESS;
+		return false;
 	}
 
-	if (is_solvable() == true) {
+
+
+	if (is_there_a_solution(NULL) == true) {
 		printf("Validation passed: board is solvable\n");
+
+		/* TODO: erase this before done */
+		printf("------\n------Board Solution:\n");
+		print_board_solution(); 
+
+
+		return true;
 	}
 	else {
 		printf("Validation failed: board is unsolvable\n");
+		return false;
 	}
-	*/
 
-	//is_solvable(NULL);
-	/* gurobi_initializer();*/
-
-	printf("------\n------Board values:\n");
-	print_board_values();
-	printf("------\n------Board Solution:\n");
-	print_board_solution(); /* TODO: erase this before done */
-
-	return EXIT_SUCCESS;
 }
 
 /*
@@ -790,8 +792,8 @@ int validate() {
 *	num_of_cells_to_fill: number of cells to fill before solving with ILP
 *	num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
 *
-*	returns: a pointer to the new board on success.
-*	    	 on any error returns NULL and prints the error.
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int generate(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	int DIM, num_of_tries, ret_val, generate_success_flag;
@@ -978,8 +980,8 @@ int Save(char* filepath) {
 *	col_index: the cell's column for the hint (as the user inputted them. 1 <--> board_len )
 *	row_index: the cell's row for the hint (as the user inputted them. 1 <--> board_len )
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*   returns: EXIT_SUCCESS(0) on successfully finishing the function.
+			EXIT_FAILURE(1) when something goes wrong. printing the error terminating.
 */
 int hint(int col_index, int row_index) {
 
@@ -990,7 +992,7 @@ int hint(int col_index, int row_index) {
 	/* check if the values are legal */
 	if (row_index < 1 || row_index > board_len ||
 		col_index < 1 || col_index > board_len) {
-		printf("Error: value not in range 0-%d\n", board_len);
+		printf("Error: value not in range 1-%d\n", board_len);
 		return ;
 	}
 	if (is_board_erronous()) {
@@ -1007,11 +1009,16 @@ int hint(int col_index, int row_index) {
 		printf("Error: cell already contains a value\n");
 		return ;
 	}
+	if (is_there_a_solution(NULL) == true) {
+		printf("Hint: set cell to %d\n", sudoku.board[row_index_board][col_index_board].solution);
+		return true;
+	}
+	else {
+		printf("Error: board is unsolvable\n");
+		return false;
+	}
+	
 
-	validate(); /* may be double print of errors. needs to print if it is solvable and th hint */
-	printf("Hint: set cell to %d\n", sudoku.board[row_index_board][col_index_board].solution);
-
-	return;
 }
 
 /*
@@ -1025,7 +1032,7 @@ int hint(int col_index, int row_index) {
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int num_solutions() {
-	return numberOfSolutions();
+	/*return numberOfSolutions();*/
 }
 
 /*
@@ -1175,8 +1182,13 @@ int user_command(char* buffer) {
 	ychar = strtok(NULL, " \t\r\n");
 	zchar = strtok(NULL, " \t\r\n");
 	if (command == NULL) {
-		return 0;
+		return EXIT_SUCCESS; 	/* checks for empty line */
 	}
+	if (command[MAX_COMMAND_SIZE - 1] != UNUSABLE_CHAR) {
+		printf("ERROR: invalid command\n"); /* checks input longer then 256 characters */
+		return EXIT_SUCCESS;
+	}
+
 	sudoku_command = str2enum(command);
 	switch (sudoku_command)
 	{
@@ -1340,26 +1352,28 @@ int get_command_and_parse() {
 	/* Get Commands and Play*/
 	ret_command = 0;
 	
+	printf("Enter your command:\n");
 	do {
 		/* Get commands */
+
 		if (feof(stdin)) { /* EOF reached. exit. */
 			printf("Exiting...\n");
 			return EXIT_SUCCESS;
 		}
-
-		printf("Enter your command:\n");
+		command[MAX_COMMAND_SIZE - 1] = UNUSABLE_CHAR;
 		fgets_ret = fgets(command, MAX_COMMAND_SIZE, stdin);
-		ret_command = user_command(command);
+		
 
 		if (fgets_ret == NULL && ferror(stdin)) { /* fgets ancountered some error */
 			perror("Error: fgets has failed.");
 			return EXIT_FAILURE;
 		}
 
-		/*printf("board Solution:\n");*/
+		ret_command = user_command(command);
+
+		/* DEBUG: printf("board Solution:\n");*/
 		/* DEBUG: print_board_solution();*/
 
-		
 	} while (fgets_ret != NULL);
 
 	return EXIT_SUCCESS;

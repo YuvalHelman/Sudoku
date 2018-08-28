@@ -8,6 +8,12 @@
 /* TODO: */
 /*
  *	sudoku.num_of_filled_cells -> check that we update that like we should.
+ *	parser: check that input's with tabs\spaces\(\n) are accepted like they should be.
+ *  in Solve mode the user may only enter (or edit) values into cells that are not
+	fixed, i.e., they were not part of the original puzzle. In Edit mode, the user may enter values
+	into any cell.
+*
+*
  ***/
 
 void initialize_test_board();
@@ -41,8 +47,12 @@ printf("Tests run: %d\n", tests_run);
 
 int main() {
 
+	/* Initializing basic utilities for starting the game */
 	initialize_list_parameters();
+	sudoku.mark_errors = true; /* the default value is 1 */
 	srand(time(NULL));
+
+
 	/* initialize_test_board(); /* test board for testing stuff ... add the function for different boards */
 
 	printf("Sudoku\n------\n");

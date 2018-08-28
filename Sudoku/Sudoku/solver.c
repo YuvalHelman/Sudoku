@@ -370,6 +370,7 @@ int gurobi_initializer(int **matrice) {
 	GRBenv   *env;
 	GRBmodel *model;
 	int       error;
+	int is_solvable;
 	double    *sol; /* An array that holds the solution for (i,j,k) tuples */
 	int       *ind; /* used for refferencing the variables.*/
 	double    *val; /* an Array of possible value ceoficients */
@@ -424,14 +425,14 @@ int gurobi_initializer(int **matrice) {
 	if (error || env == NULL) {
 		printf("Error: could not create environment.\n");
 		printf("ERROR: %s\n", GRBgeterrormsg(env));
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
 	if (error) {
 		printf("Error: gurobi removing output has failed.");
 		printf("ERROR: %s\n", GRBgeterrormsg(env));
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	/* Create an empty model */
@@ -440,7 +441,7 @@ int gurobi_initializer(int **matrice) {
 	if (error) {
 		perror("Error: gurobi new model failed");
 		printf("ERROR: %s\n", GRBgeterrormsg(env));
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	/* Each cell gets only one value.
@@ -457,7 +458,7 @@ int gurobi_initializer(int **matrice) {
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
-				return EXIT_FAILURE;
+				exit(EXIT_FAILURE);
 			}
 		}
 	}
@@ -476,7 +477,7 @@ int gurobi_initializer(int **matrice) {
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
-				return EXIT_FAILURE;
+				exit(EXIT_FAILURE);
 			}
 		}
 	}
@@ -495,7 +496,7 @@ int gurobi_initializer(int **matrice) {
 			if (error) {
 				printf("Error: GRBaddconstr failed.\n");
 				printf("ERROR: %s\n", GRBgeterrormsg(env));
-				return EXIT_FAILURE;
+				exit(EXIT_FAILURE);
 			}
 		}
 	}
@@ -519,7 +520,7 @@ int gurobi_initializer(int **matrice) {
 				if (error) {
 					printf("Error: GRBaddconstr failed.\n");
 					printf("ERROR: %s\n", GRBgeterrormsg(env));
-					return EXIT_FAILURE;
+					exit(EXIT_FAILURE);
 				}
 			}
 		}
@@ -530,7 +531,7 @@ int gurobi_initializer(int **matrice) {
 	if (error) {
 		printf("Error: GRBoptimize failed.\n");
 		printf("ERROR: %s\n", GRBgeterrormsg(env));
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	/* Capture solution information */
@@ -538,7 +539,7 @@ int gurobi_initializer(int **matrice) {
 	if (error) {
 		printf("Error: GRBgetintattr failed.\n");
 		printf("ERROR: %s\n", GRBgeterrormsg(env));
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	if (optimstatus == GRB_OPTIMAL) {
@@ -547,7 +548,7 @@ int gurobi_initializer(int **matrice) {
 		if (error) {
 			printf("Error: GRBgetdblattrarray failed.\n");
 			printf("ERROR: %s\n", GRBgeterrormsg(env));
-			return EXIT_FAILURE;
+			exit(EXIT_FAILURE);
 		}
 		/* Update the board.solution from the given solution array */
 		if (!matrice) {
@@ -556,16 +557,17 @@ int gurobi_initializer(int **matrice) {
 		else {
 			update_arg_matrice(matrice, sol, DIM);
 		}
+
+		is_solvable = true;
 	}
 	else if (optimstatus == GRB_INF_OR_UNBD) {
 		printf("Model is infeasible or unbounded\n");
-		return EXIT_FAILURE;
+		is_solvable = false;
 	}
 	else {
 		printf("Optimization has encountered an error\n");
-		return EXIT_FAILURE;
+		is_solvable = false;
 	}
-
 
 	/* Free arrays */
 	free(ind);
@@ -578,6 +580,25 @@ int gurobi_initializer(int **matrice) {
 	/* Free environment */
 	GRBfreeenv(env);
 
-	return EXIT_SUCCESS;
+	return is_solvable;
 }
 
+/*
+*	The function checks if there is a solution to the current board.
+*	If there is a solution, it returns true. else it returns false.
+*	If the "matrice" argument is NULL, the solution is put in the sudoku.board_solution.
+*	otherwise, the solution is put in the "matrice" argument.
+*
+*	matrice: an optional integer matrice to put in the solution.
+*
+*   returns: true(1) when there is a solution to the current board.
+*			 false(0) when there isn't a solution.
+*/
+int is_there_a_solution(int **matrice) {
+
+	if (gurobi_initializer(matrice) == true) {
+		return true;
+	}
+
+	return false;
+}

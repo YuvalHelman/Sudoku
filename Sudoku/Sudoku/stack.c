@@ -1,6 +1,5 @@
 /*
-* C Program to Implement Stack Operations using Dynamic Memory
-* Allocation
+* The module implements stack operations.
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +7,8 @@
 #include "aux_main.h"
 #include "user_interface.h"
 #include "game_logic.h"
+
+struct node_stack *top_node = NULL;
 
 
 /* to insert elements in stack*/
@@ -67,14 +68,7 @@ void destroy()
 	printf("stack destroyed\n");
 }
 
-/*
-* The function uses a determenistic algorithem to solve the sudoku.
-* The function also updates the "solution matrice" to the new solution if there is one. (if there isn't , the previous solution is kept)
-* @param board - matrice with the cells inforamtion
-* @param row_index - the row of the cell we are checking
-* @param col_index - the column of the cell we are checking
-* @return -true(0) if the sudoku is solvebale and store the solution in cell.solution matrix, false(1) otherwise and do nothing(not sure if it work).
-*/
+
 int numberOfSolutions() {
 	/* variables declarations */
 	int row_index, col_index, count, value, board_length, **temp_matrice_values;
@@ -89,11 +83,13 @@ int numberOfSolutions() {
 
 	temp_matrice_values = initialize_integer_board(sudoku.block_col_length, sudoku.block_row_length);
 
+	/* Save the board's values in a temporary board */
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
 			temp_matrice_values[row_index][col_index] = sudoku.board[row_index][col_index].value;
 		}
 	}
+
 	col_index = row_index = 0;
 	value = flag = 1;
 	while(flag && row_index < board_length) {
@@ -141,12 +137,16 @@ int numberOfSolutions() {
 		}
 		row_index++;
 	}
+
+	/* Copy the original values back to the sudoku.board */
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
 			sudoku.board[row_index][col_index].value = temp_matrice_values[row_index][col_index];
 		}
 	}
+
 	free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
+
 	if (count != 0) {
 		printf("Number of solutions: %d\n", count);
 		if (count == 1)
@@ -154,6 +154,7 @@ int numberOfSolutions() {
 		else printf("The puzzle has more than 1 solution, try to edit it further\n");
 	}
 	else printf("The puzzle has 0 solutions.");
+
 	return count;
 }
 

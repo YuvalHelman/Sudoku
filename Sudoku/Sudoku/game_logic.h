@@ -73,8 +73,8 @@ void update_errors_block(int row_index, int col_index);
 /*
 *	The function checks if there are any errors on the current board.
 *
-*   returns: true(1) when there is a solution to the current board.
-*			 false(0) when there isn't a solution.
+*   returns: true(1) when there are errors on the current board.
+*			 false(0) when there aren't errors.
 */
 int is_board_erronous();
 

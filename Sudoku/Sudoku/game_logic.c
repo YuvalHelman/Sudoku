@@ -16,9 +16,6 @@ char *test_game_logic_module() {
 
 
 int valid_value(int row_index, int col_index, int value) {
-	if (value == 2) {
-		printf("");
-	}
 	if (value == 0) {
 		return true;
 	}

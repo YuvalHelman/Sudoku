@@ -18,6 +18,6 @@ int gurobi_initializer(int **matrice); /* todo: ERASE that later */
 */
 int is_solvable(int **matrice);
 
-
+int is_there_a_solution(int **matrice);
 
 #endif

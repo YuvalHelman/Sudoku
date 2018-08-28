@@ -63,8 +63,8 @@ int save_to_file(FILE* fd){
 					read_counter++;
 				}
 			}
-		}
 
+		}
 	}
 
 	return EXIT_SUCCESS;
@@ -109,7 +109,6 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 
 			sudoku.board[curr_row][curr_col].value = value;
 			
-
 			if (value != 0) { /* Count how many numbers are filled */
 				num_of_filled_cells++;
 			}
@@ -117,7 +116,10 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 			if ((strchr(token, '.')) != NULL) { /* Check for a '.' in the token */
 				sudoku.board[curr_row][curr_col].is_fixed = true;
 			}
-			else sudoku.board[curr_row][curr_col].is_fixed = false;
+			else {
+				sudoku.board[curr_row][curr_col].is_fixed = false;
+			}
+
 			/* Iterate the current column\row values */
 			if (curr_col == board_len - 1) {
 				if (curr_row == board_len - 1) {
