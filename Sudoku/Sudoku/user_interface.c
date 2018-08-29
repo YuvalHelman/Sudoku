@@ -282,10 +282,15 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		return EXIT_FAILURE;
 	}
 
+	/* DEBUG */
+	printf("before generating stuff\n");
+	/* DEBUG */
+
 	/* generate random cells untill 'num_of_cells_to_fill' cells has been filled */
 	while (num_of_filled < num_of_cells_to_fill) {
 		rand_row = (rand() % (board_len)); /* random numbers between 0 ~ board_len-1 */
 		rand_col = (rand() % (board_len)); /* random numbers between 0 ~ board_len-1 */
+
 
 		num_of_options = 0; /* num of values in the optional_values array */
 		if (temp_matrice_values[rand_row][rand_col] == 0) {  /* if random cell hasn't been initialized yet */
@@ -311,6 +316,10 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		}
 	}
 
+	/* DEBUG */
+	printf("before ILP\n");
+	print_board();
+	/* DEBUG */
 
 			/* SOLUTION number 2.*/
 		/*	while (num_of_options != board_len && valid_value_flag == false) {
@@ -339,8 +348,15 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		if (0){//is_there_a_solution(temp_matrice_values) == false) {
 		free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
 		free(optional_values);
+		/* DEBUG */ printf("no Solution! \n");
 		return NO_SOLUTION;
 	}
+
+
+		/* DEBUG */
+		printf("after ILP\n");
+		print_board_solution();
+		/* DEBUG */
 	
 
 
@@ -817,6 +833,10 @@ int generate(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	generate_success_flag = false;
 	while (num_of_tries > 0 && (!generate_success_flag) ) {
 
+		/* DEBUG */
+		printf("generate a puzzle\n");
+		/* DEBUG */
+
 		ret_val = generate_a_puzzle(num_of_cells_to_fill, num_of_cells_to_keep); /* helper function to generate a board */
 
 		if (ret_val = EXIT_SUCCESS) {
@@ -827,6 +847,7 @@ int generate(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		}
 		else if (ret_val = EXIT_FAILURE) {
 			printf("Error: Generate has failed. Exiting\n");
+			return EXIT_FAILURE;
 		}
 
 		if (num_of_tries == 0) {
@@ -1303,7 +1324,7 @@ int get_command_and_parse() {
 	/* Get Commands and Play*/
 	ret_command = 0;
 	
-	printf("Enter your command:\n");
+	
 	do {
 		/* Get commands */
 
@@ -1311,6 +1332,7 @@ int get_command_and_parse() {
 			printf("Exiting...\n");
 			return EXIT_SUCCESS;
 		}
+		printf("Enter your command:\n");
 		command[MAX_COMMAND_SIZE - 1] = UNUSABLE_CHAR;
 		fgets_ret = fgets(command, MAX_COMMAND_SIZE, stdin);
 		
