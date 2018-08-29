@@ -1,5 +1,5 @@
 CC = gcc
-OBJS = main.o aux_main.o file_manipulation.o game_logic.o move_list.o solver.o user_interface.o stack.h
+OBJS = main.o aux_main.o file_manipulation.o game_logic.o move_list.o solver.o user_interface.o stack.o
  
 EXEC = sudoku-console
 COMP_FLAGS =

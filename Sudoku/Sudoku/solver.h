@@ -3,7 +3,7 @@
 
 #include "aux_main.h"
 
-int gurobi_initializer(int **matrice); /* todo: ERASE that later */
+int gurobi_initializer(int **matrice, int fill_values_not_solution); /* todo: ERASE that later */
 
 /*
 *	The function checks if there is a solution to the current board.
@@ -18,6 +18,7 @@ int gurobi_initializer(int **matrice); /* todo: ERASE that later */
 */
 int is_solvable(int **matrice);
 
-int is_there_a_solution(int **matrice);
+
+int is_there_a_solution(int **matrice, int fill_values_not_solution);
 
 #endif

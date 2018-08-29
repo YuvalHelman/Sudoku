@@ -29,7 +29,27 @@ int initialize_new_board(int block_col_len, int block_row_len) {
 	return EXIT_SUCCESS;
 }
 
+int** initialize_integer_board(int block_col_len, int block_row_len) {
+	int board_size, i;
+	int **board;
 
+	board_size = block_col_len * block_row_len;
+
+	board = (int **)malloc(board_size * sizeof(int *));
+	if (!board) {
+		printf("Error: Malloc has failed allocating the board\n");
+		return NULL;
+	}
+	for (i = 0; i < board_size; i++) {
+		board[i] = (int *)calloc(board_size, sizeof(int));
+		if (!(board[i])) {
+			printf("Error: Malloc has failed allocating the board\n");
+			return NULL;
+		}
+	}
+
+	return board;
+}
 
 int free_board() {
 	int board_size, i;
@@ -62,18 +82,37 @@ void update_num_of_filled_cells(int prev_val, int updated_val) {
 	/* else, if changed to same value.. nothing changes regarding the num_of_filled_cells */
 }
 
-int str_to_num(const char* value) {
+int str_to_num(const char *value) {
 	int i, str_as_int;
+
 	if (value == NULL) {
-		return -1;
+		return FAILURE;
 	}
+
+	errno = 0;
 	str_as_int = (int)(strtol(value, NULL, 10));
-	if (strcmp(value, "0") != 0 && str_as_int == 0) {
-		return -1;
+
+	if (errno == ERANGE || errno == EINVAL || errno != 0) {
+		perror("strtol function failed. exiting\n");
+		exit(EXIT_FAILURE);
 	}
-	if (errno != 0) {
-		perror("strtol function failed.");
-		return -1;
+
+	if (str_as_int == 0 && strcmp(value, "0") != 0 ) {
+		return FAILURE;
 	}
+	
 	return str_as_int;
+}
+
+void reset_sudoku_board(int block_col_len, int block_row_len) {
+	int i, j, board_length;
+
+	board_length = block_col_len * block_row_len;
+
+	for (i = 0; i < board_length; i++) {
+		for (j = 0; j < board_length; j++) {
+			sudoku.board[i][j].value = 0;
+		}
+	}
+
 }

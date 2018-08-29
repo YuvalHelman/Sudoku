@@ -69,7 +69,7 @@ void destroy()
 }
 
 
-int numberOfSolutions() {
+int numberOfSolutions()  {
 	/* variables declarations */
 	int row_index, col_index, count, value, board_length, **temp_matrice_values;
 	int flag;

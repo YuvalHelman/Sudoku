@@ -2,6 +2,7 @@
 #ifndef AUX_MAIN
 #define AUX_MAIN
 
+#define FAILURE -1
 #define false 0
 #define true 1
 
@@ -44,6 +45,21 @@ extern sudoku_t sudoku;
 */
 int initialize_new_board(int block_col_len, int block_row_len);
 
+/*
+*   This function resets all the sudoku.board values to 0.
+*/
+void reset_sudoku_board(int block_col_len, int block_row_len);
+
+/*
+*	The Function initializes a new "values_only" board for working on temporary boards.
+*
+*	block_col_len: the board's block column length
+*	block_row_len: the board's block row length
+*
+*	returns: a pointer to the new board on success.
+*	    	 on any error returns NULL and prints the error.
+*/
+int** initialize_integer_board(int block_col_len, int block_row_len);
 
 /*
  *	This function free's the game board.
@@ -54,7 +70,6 @@ int initialize_new_board(int block_col_len, int block_row_len);
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int free_board();
-
 
 /*
 *	This function is called to update the sudoku.num_of_filled_cells value in the program.
@@ -67,7 +82,11 @@ void update_num_of_filled_cells(int prev_val, int updated_val);
 		Edit, Solve, generate, undo, redo, set, autofill.
 		** added:** Edit, Solve, set, autofill */
 
+/*
+* TODO: document
+*/
+int str_to_num(const char* value);
+
+
 
 #endif /* AUX_MAIN */
-
-int str_to_num(char* value);

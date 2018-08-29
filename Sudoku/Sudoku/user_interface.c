@@ -100,36 +100,7 @@ void separator_row() {
 	printf("\n");
 }
 
-/*
-*	The Function initializes a new "values_only" board for working on temporary boards.
-*
-*	block_col_len: the board's block column length
-*	block_row_len: the board's block row length
-*
-*	returns: a pointer to the new board on success.
-*	    	 on any error returns NULL and prints the error.
-*/
-int** initialize_integer_board(int block_col_len, int block_row_len) {
-	int board_size, i;
-	int **board;
 
-	board_size = block_col_len * block_row_len;
-
-	board = (int **)malloc(board_size * sizeof(int *));
-	if (!board) {
-		printf("Error: Malloc has failed allocating the board\n");
-		return NULL;
-	}
-	for (i = 0; i < board_size; i++) {
-		board[i] = (int *)calloc(board_size, sizeof(int));
-		if (!(board[i])) {
-			printf("Error: Malloc has failed allocating the board\n");
-			return NULL;
-		}
-	}
-
-	return board;
-}
 
 /*
 *	The function free's an integer matrice according to the board_size given.
@@ -206,15 +177,16 @@ int is_board_empty() {
 }
 
 /*
-*	The Function uses the "move_list" module's functions 'add_new_node' and 'add_val_to_current_node' to add a new node to the move_list.
-*	Should be used in "generate", "autofill"
-*	The functions receives a temporary matrice with the relavent changes. 
-*	It updates the sudoku.board and prints relevant info for the "autofill" command.
+*	The Function uses the "move_list" module's functions 'add_new_node' and 'add_val_to_current_node' to add 
+*	a new node to the move_list. Should be used in "generate", "autofill"
+*	If the functions receives a temporary matrice with the relavent changes, It updates the sudoku.board and prints
+*	relevant info for the "autofill" command.
+*	If the argument given is "NULL", the sudoku.board is already initialized and only a node is needed to be added to the list.
 *
-*	temp_matrice_values: a pointer to the temporary matrice with the values that has been changed. (every cell which has a value other then 0 has been changed)
-*	autofill_flag: a boolean indicator. should be sent with "true(1)" when called from the "autofill" function. and "false(0)" otherwise.
+*	temp_matrice_values: a pointer to the temporary matrice with the values that has been changed.
+*						 (every cell which has a value other then 0 has been changed).
 *
-*   returns: EXIT_SUCCESS(0) on successful load of the file and board.
+*   returns: EXIT_SUCCESS(0) on successfuly adding the node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int update_board_and_list(int **temp_matrice_values) {
@@ -223,30 +195,50 @@ int update_board_and_list(int **temp_matrice_values) {
 	board_length = sudoku.block_row_length * sudoku.block_col_length;
 
 	add_node_flag = true;
-	/* Copy value from the temp matrix to the board */
+	
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
-			if (temp_matrice_values[row_index][col_index] != 0) {
-				updated_val = temp_matrice_values[row_index][col_index];
-				if (add_node_flag == true) { /* In case this is the first value which is being changed in the board */
-					if (add_new_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
-						printf("adding new node to list failed. Exiting.\n");
-						return EXIT_FAILURE;
+			if (temp_matrice_values) { /* Autofill function. Copy value from the temp matrix to the board */
+				if (temp_matrice_values[row_index][col_index] != 0) {
+					updated_val = temp_matrice_values[row_index][col_index];
+					if (add_node_flag == true) { /* In case this is the first value which is being changed in the board */
+						if (add_new_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
+							printf("adding new node to list failed. Exiting.\n");
+							return EXIT_FAILURE;
+						}
+						add_node_flag = false;
 					}
-					add_node_flag = false;
-				}
-				else {
-					if (add_val_to_current_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
-						printf("add new value to existing node failed. Exiting.\n");
-						return EXIT_FAILURE;
+					else {
+						if (add_val_to_current_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
+							printf("add new value to existing node failed. Exiting.\n");
+							return EXIT_FAILURE;
+						}
 					}
+					/* Update the value in the board, and print a message regarding */
+					sudoku.board[row_index][col_index].value = updated_val;
 				}
-				/* Update the value in the board, and print a message regarding */
-				sudoku.board[row_index][col_index].value = updated_val;
-					printf("Cell <%d,%d> set to %d\n", col_index + 1, row_index + 1, updated_val);
-
-				update_num_of_filled_cells(ZERO, updated_val);
 			}
+			else { /* Generate function. the values are already filled on the board */
+				if (sudoku.board[row_index][col_index].value != 0) {
+					updated_val = temp_matrice_values[row_index][col_index];
+					if (add_node_flag == true) { /* In case this is the first value which is being changed in the board */
+						if (add_new_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
+							printf("adding new node to list failed. Exiting.\n");
+							return EXIT_FAILURE;
+						}
+						add_node_flag = false;
+					}
+					else {
+						if (add_val_to_current_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
+							printf("add new value to existing node failed. Exiting.\n");
+							return EXIT_FAILURE;
+						}
+					}
+				}
+			}
+
+			printf("Cell <%d,%d> set to %d\n", col_index + 1, row_index + 1, updated_val);
+			update_num_of_filled_cells(ZERO, updated_val);
 		}
 	}
 
@@ -266,25 +258,18 @@ int update_board_and_list(int **temp_matrice_values) {
 *			 when ILP fails or a cell has no valid values, return NO_SOLUTION(2).
 */
 int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
-
-	int **temp_matrice_values, i, j;
-	int rand_row, rand_col, rand_val, board_len, num_of_filled, rand_index;
-	int *optional_values, num_of_options, valid_value_flag, num_of_cells_in_board;
+	int i, j, rand_row, rand_col, rand_val, board_len, num_of_filled, rand_index;
+	int *optional_values, num_of_options, valid_value_flag, num_of_cells_in_board, fill_values_not_solution;
 
 	board_len = sudoku.block_col_length * sudoku.block_row_length;
 	num_of_filled = 0;
+	fill_values_not_solution = true;
 	optional_values = calloc(board_len, sizeof(int));
-
-	/* Initialize a temp matrix */
-	temp_matrice_values = initialize_integer_board(sudoku.block_col_length, sudoku.block_row_length);
-	if (!temp_matrice_values) {
-		free(optional_values);
-		return EXIT_FAILURE;
+	if (!optional_values) {
+		printf("calloc failed. Exiting.\n");
+		exit(EXIT_FAILURE);
 	}
 
-	/* DEBUG */
-	printf("before generating stuff\n");
-	/* DEBUG */
 
 	/* generate random cells untill 'num_of_cells_to_fill' cells has been filled */
 	while (num_of_filled < num_of_cells_to_fill) {
@@ -293,10 +278,10 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 
 
 		num_of_options = 0; /* num of values in the optional_values array */
-		if (temp_matrice_values[rand_row][rand_col] == 0) {  /* if random cell hasn't been initialized yet */
+		if (sudoku.board[rand_row][rand_col].value == 0) {  /* if random cell hasn't been initialized yet */
 
-			/* create an array with possible values for the cell. */
-			for (i = 0; i < board_len; i++) {
+			/* create an array with possible values for the cell. 1 ~ board_len */
+			for (i = 1; i <= board_len; i++) {
 				if (valid_value(rand_row, rand_col, i)) {
 					optional_values[num_of_options] = i;
 					num_of_options++;
@@ -305,59 +290,35 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 
 			if (num_of_options > 0) { /* cell has some valid values */
 				rand_index = (rand() % (num_of_options)); /* random numbers between 0 ~ num_of_options-1 */
-				temp_matrice_values[rand_row][rand_col] = optional_values[rand_index];
+				sudoku.board[rand_row][rand_col].value = optional_values[rand_index];
+				num_of_filled++;
 
 			}
 			else {
 				free(optional_values);
-				free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
+				reset_sudoku_board(sudoku.block_col_length, sudoku.block_row_length);
 				return NO_SOLUTION;
 			}
 		}
 	}
 
 	/* DEBUG */
-	printf("before ILP\n");
+	printf("before ILP. adding %d cells\n", num_of_cells_to_fill);
 	print_board();
 	/* DEBUG */
-
-			/* SOLUTION number 2.*/
-		/*	while (num_of_options != board_len && valid_value_flag == false) {
-				if (optional_values[rand_val - 1] != SEEN) {
-					if (valid_value(rand_row, rand_col, rand_val)) { /* Not seen. check if valid */
-	//					temp_matrice_values[rand_row][rand_col] = rand_val;
-	//					valid_value_flag = true;
-		//			}
-			//		else { /* Not seen yet, and not valid */
-				//		optional_values[rand_val - 1] == SEEN;
-					//	num_of_options++;
-//					}
-	//			}
-	//		}
-		//	if (num_of_options != board_len) {
-	//			num_of_filled++;
-		//	}
-	/*		else {
-				free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
-				return NO_SOLUTION;
-			}
-		}
-	}*/
-
+	
 	/*Solve the matrice using ILP */
-		if (0){//is_there_a_solution(temp_matrice_values) == false) {
-		free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
+		if (is_there_a_solution(NULL, fill_values_not_solution) == false) {
+		reset_sudoku_board(sudoku.block_col_length, sudoku.block_row_length);
 		free(optional_values);
 		/* DEBUG */ printf("no Solution! \n");
 		return NO_SOLUTION;
 	}
 
-
-		/* DEBUG */
-		printf("after ILP\n");
-		print_board_solution();
-		/* DEBUG */
-	
+	/* DEBUG */
+	printf("after ILP\n");
+	print_board();
+	/* DEBUG */
 
 
 	/* remove all but "num_of_cells_to_keep" cells in the board */
@@ -367,20 +328,25 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		rand_col = (rand() % (board_len)); /* random numbers between 0 ~ board_len-1 */
 	
 		/* if random cell hasn't been deleted yet */
-		if (temp_matrice_values[rand_row][rand_col] != 0) {
-			temp_matrice_values[rand_row][rand_col] == 0;
+		if (sudoku.board[rand_row][rand_col].value != 0) {
+			sudoku.board[rand_row][rand_col].value == 0;
 			num_of_cells_in_board--;
 		}
 	}
 
+	/* DEBUG */
+	num_of_cells_in_board = board_len * board_len;
+	printf("after removing %d cells\n", (board_len * board_len) - num_of_cells_to_keep);
+	print_board();
+	/* DEBUG */
+
 	/* Copy the temp_matrice to the sudoku.board and add a new node to the list */
-	if (update_board_and_list(temp_matrice_values) == EXIT_FAILURE) {
-		free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
+	if (update_board_and_list(NULL) == EXIT_FAILURE) {
+		reset_sudoku_board(sudoku.block_col_length, sudoku.block_row_length);
 		free(optional_values);
 		return EXIT_FAILURE;
 	}
 
-	free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
 	free(optional_values);
 	return EXIT_SUCCESS;
 
@@ -390,6 +356,48 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 *			DEBUGGING functions. public for debugging usage.
 */
 
+void print_matrice(int **matrice)  {
+	/* variables declarations */
+	int i, j, board_length;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
+
+	/* Print 4N+n+1 dashes for the start*/
+	separator_row();
+
+	/* Go over the columns */
+	for (i = 0; i < board_length; i++) {
+		printf("|"); /* Opening pipe */
+
+					 /* Go over Columns*/
+		for (j = 0; j < board_length; j++) {
+
+			if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
+
+				printf(" %2d.", matrice[i][j]); /* DOT for fixed number*/
+			}
+			else if (!sudoku.board[i][j].is_fixed) { /* Non-fixed number that the user inputed */
+				printf(" %2d", matrice[i][j]);
+				if (sudoku.board[i][j].error) /* check if we need to mark an error */
+					printf("*");
+				else printf(" ");
+			}
+
+			/* after every m numbers , print a pipe*/
+			if (j != board_length - 1) {
+				if (j % sudoku.block_col_length == sudoku.block_col_length - 1)
+					printf("|");
+			}
+			else printf("|");
+
+		}
+		printf("\n"); /*  Next line*/
+
+					  /*Print dashes every 3 lines*/
+		if (i % sudoku.block_row_length == sudoku.block_row_length - 1) {
+			separator_row();
+		}
+	}
+}
 
 void print_board_values() {
 	/* variables declarations */
@@ -773,6 +781,9 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int validate() {
+	int fill_values_not_solution;
+
+	fill_values_not_solution = false;
 
 	if (is_board_erronous()) {
 		printf("Error: board contains erroneous values\n");
@@ -781,7 +792,7 @@ int validate() {
 
 
 
-	if (0){//is_there_a_solution(NULL) == true 0) {
+	if (is_there_a_solution(NULL, fill_values_not_solution) == true) {
 		printf("Validation passed: board is solvable\n");
 
 		/* TODO: erase this before done */
@@ -1006,8 +1017,9 @@ int Save(char* filepath) {
 */
 int hint(int col_index, int row_index) {
 
-	int board_len, row_index_board, col_index_board;
+	int board_len, row_index_board, col_index_board, fill_values_not_solution;
 
+	fill_values_not_solution = false;
 	board_len = sudoku.block_row_length * sudoku.block_col_length;
 
 	/* check if the values are legal */
@@ -1030,7 +1042,7 @@ int hint(int col_index, int row_index) {
 		printf("Error: cell already contains a value\n");
 		return ;
 	}
-	if (0){//is_there_a_solution(NULL) == true) {
+	if (is_there_a_solution(NULL, fill_values_not_solution) == true) {
 		printf("Hint: set cell to %d\n", sudoku.board[row_index_board][col_index_board].solution);
 		return true;
 	}

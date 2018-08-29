@@ -281,6 +281,22 @@ void update_board_solution(double *sol, int DIM) {
 	}
 }
 
+void update_board_values(double *sol, int DIM) {
+	int i, j, v;
+
+	/* Update the board.solution from the given solution array */
+	for (i = 0; i < DIM; i++) {
+		for (j = 0; j < DIM; j++) {
+			for (v = 0; v < DIM; v++) {
+				if (sol[i*DIM*DIM + j * DIM + v] == 1.0) {
+					sudoku.board[i][j].value = (v + 1);
+				}
+			}
+		}
+	}
+}
+
+
 /*
 *   This function initialize the matrice argument that was given with the ILP solution.
 */
@@ -365,7 +381,7 @@ int is_solvable(int **matrice) {
 
 
 /* Delete this one if the other ones work. just copied it to different functions */
-int gurobi_initializer(int **matrice) {
+int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 
 	GRBenv   *env;
 	GRBmodel *model;
@@ -407,13 +423,22 @@ int gurobi_initializer(int **matrice) {
 		for (j = 0; j < DIM; j++) {
 			/*TODO: Added the below row v to (v+1). check if its ok */
 			for (v = 0; v < DIM; v++) { /* v = Fixed Value.*/
-				if (sudoku.board[i][j].value == (v + 1))
-					lb[i*DIM*DIM + j * DIM + v] = 1.0;
-				else
-					lb[i*DIM*DIM + j * DIM + v] = 0.0;
+				if (matrice) {
+					if (matrice[i][j] == (v + 1))
+						lb[i*DIM*DIM + j * DIM + v] = 1.0;
+					else
+						lb[i*DIM*DIM + j * DIM + v] = 0.0;
 
-				vtype[i*DIM*DIM + j * DIM + v] = GRB_BINARY;
+					vtype[i*DIM*DIM + j * DIM + v] = GRB_BINARY;
+				}
+				else {
+					if (sudoku.board[i][j].value == (v + 1))
+						lb[i*DIM*DIM + j * DIM + v] = 1.0;
+					else
+						lb[i*DIM*DIM + j * DIM + v] = 0.0;
 
+					vtype[i*DIM*DIM + j * DIM + v] = GRB_BINARY;
+				}
 			}
 		}
 	}
@@ -551,11 +576,16 @@ int gurobi_initializer(int **matrice) {
 			exit(EXIT_FAILURE);
 		}
 		/* Update the board.solution from the given solution array */
-		if (!matrice) {
-			update_board_solution(sol, DIM);
+		if (matrice) {
+			update_arg_matrice(matrice, sol, DIM);
 		}
 		else {
-			update_arg_matrice(matrice, sol, DIM);
+			if (fill_values_and_not_solution_flag == true) {
+				update_board_values(sol, DIM);
+			}
+			else {
+				update_board_solution(sol, DIM);
+			}
 		}
 
 		is_solvable = true;
@@ -590,13 +620,15 @@ int gurobi_initializer(int **matrice) {
 *	otherwise, the solution is put in the "matrice" argument.
 *
 *	matrice: an optional integer matrice to put in the solution.
+*	fill_values_and_not_solution_flag: indicates that the solution to the ILP should be added to the sudoku.board.values
+*										and not to the sudoku.board.solution (true = values, false = solution)
 *
 *   returns: true(1) when there is a solution to the current board.
 *			 false(0) when there isn't a solution.
 */
-int is_there_a_solution(int **matrice) {
+int is_there_a_solution(int **matrice, int fill_values_and_not_solution_flag) {
 
-	if (gurobi_initializer(matrice) == true) {
+	if (gurobi_initializer(matrice, fill_values_and_not_solution_flag) == true) {
 		return true;
 	}
 
