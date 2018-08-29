@@ -69,3 +69,5 @@ void update_num_of_filled_cells(int prev_val, int updated_val);
 
 
 #endif /* AUX_MAIN */
+
+int str_to_num(char* value);

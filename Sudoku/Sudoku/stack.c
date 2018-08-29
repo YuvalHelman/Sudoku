@@ -98,19 +98,23 @@ int numberOfSolutions() {
 			if (sudoku.board[row_index][col_index].is_fixed == false) {
 				if (sudoku.board[row_index][col_index].value == 0) {
 					while(flag && value <= board_length) {
-						if (valid_value(row_index, col_index, value)) {
-							push(row_index, col_index, value);
-							sudoku.board[row_index][col_index].value = value;
-							print_board();
-							value = 1;
-							break;
+						if (set_reset_save_the_value(&value, row_index, col_index)) {
+							if (row_index == board_length - 1 && col_index == board_length - 1) {
+								count++;
+								sudoku.board[row_index][col_index].value = 0;
+								pop(&row_index, &col_index, &value);
+								printf("POP: row_index = %d, col_index = %d, value = %d \n", row_index, col_index, value);
+								print_board();
+							}
+							else break;
 						}
 						else {
-							while (flag && value == board_length) {
+							while (flag && value >= board_length) {
 								if (!empty()) {
 									sudoku.board[row_index][col_index].value = 0;
-									print_board();
 									pop(&row_index, &col_index, &value);
+									printf("POP :row_index = %d, col_index = %d, value = %d \n", row_index, col_index, value);
+									print_board();
 								}
 								else {
 									flag = 0;
@@ -119,18 +123,6 @@ int numberOfSolutions() {
 						}
 						value++;
 					}
-				}
-			}
-			if (row_index == board_length - 1 && col_index == board_length - 1) {
-				count++;
-				if (!empty()) {
-					sudoku.board[row_index][col_index].value = 0;
-					print_board();
-					pop(&row_index, &col_index, &value);
-					row_index; col_index--; value++;
-				}
-				else {
-					flag = 0;
 				}
 			}
 			col_index++;
@@ -158,3 +150,13 @@ int numberOfSolutions() {
 	return count;
 }
 
+int set_reset_save_the_value(int *value, int row_index, int col_index) {
+	if (valid_value(row_index, col_index, *value)) {
+		push(row_index, col_index, *value);
+		sudoku.board[row_index][col_index].value = *value;
+		print_board();
+		*value = 1;
+		return true;
+	}
+	return false;
+}

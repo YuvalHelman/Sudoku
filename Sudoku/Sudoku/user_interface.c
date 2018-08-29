@@ -336,7 +336,7 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	}*/
 
 	/*Solve the matrice using ILP */
-		if (is_there_a_solution(temp_matrice_values) == false) {
+		if (0){//is_there_a_solution(temp_matrice_values) == false) {
 		free_int_matrix(temp_matrice_values, sudoku.block_col_length, sudoku.block_row_length);
 		free(optional_values);
 		return NO_SOLUTION;
@@ -608,7 +608,7 @@ int Edit(char* filepath) {
 *	 value: the integer which decides if errors should be marked or not
 *
 */
-void mark_errors(int value) {
+void mark_errors(char value) {
 	if (value != 0 && value != 1) {
 		printf("Error: the value should be 0 or 1\n");
 	}
@@ -765,7 +765,7 @@ int validate() {
 
 
 
-	if (is_there_a_solution(NULL) == true) {
+	if (0){//is_there_a_solution(NULL) == true 0) {
 		printf("Validation passed: board is solvable\n");
 
 		/* TODO: erase this before done */
@@ -1009,7 +1009,7 @@ int hint(int col_index, int row_index) {
 		printf("Error: cell already contains a value\n");
 		return ;
 	}
-	if (is_there_a_solution(NULL) == true) {
+	if (0){//is_there_a_solution(NULL) == true) {
 		printf("Hint: set cell to %d\n", sudoku.board[row_index_board][col_index_board].solution);
 		return true;
 	}
@@ -1032,7 +1032,7 @@ int hint(int col_index, int row_index) {
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int num_solutions() {
-	/*return numberOfSolutions();*/
+	return numberOfSolutions();
 }
 
 /*
@@ -1188,8 +1188,10 @@ int user_command(char* buffer) {
 		printf("ERROR: invalid command\n"); /* checks input longer then 256 characters */
 		return EXIT_SUCCESS;
 	}
-
 	sudoku_command = str2enum(command);
+	xchar_asInt = str_to_num(xchar);
+	ychar_asInt = str_to_num(ychar);
+	zchar_asInt = str_to_num(zchar);
 	switch (sudoku_command)
 	{
 	case solve_command:
@@ -1203,12 +1205,6 @@ int user_command(char* buffer) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
 		else {
-			errno = 0;
-			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
-			if (errno != 0) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
 			mark_errors(xchar_asInt);
 		}
 		break;
@@ -1225,25 +1221,6 @@ int user_command(char* buffer) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
 		else {
-			errno = 0;
-			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			errno = 0;
-			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
-			if (errno != 0) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			errno = 0;
-			zchar_asInt = (int)(strtol(zchar, NULL, BASE10));
-			if (errno != 0) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-
 			set(xchar_asInt, ychar_asInt, zchar_asInt);
 		}
 		break;
@@ -1256,20 +1233,6 @@ int user_command(char* buffer) {
 		if (sudoku.game_mode != edit || !xchar || !ychar)
 			printf("ERROR: invalid command\n"); /* case b */
 		else {
-			DIM = sudoku.block_col_length * sudoku.block_row_length;
-
-			errno = 0;
-			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				printf("Error: value not in range 0-%d", DIM*DIM);
-				return EXIT_FAILURE;
-			}
-			errno = 0;
-			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				printf("Error: value not in range 0-%d", DIM*DIM);
-				return EXIT_FAILURE;
-			}
 			generate(xchar_asInt, ychar_asInt);
 		}
 		break;
@@ -1290,18 +1253,6 @@ int user_command(char* buffer) {
 		if (sudoku.game_mode != solve)
 			printf("ERROR: invalid command\n"); /* case b */
 		else {
-			errno = 0;
-			xchar_asInt = (int)(strtol(xchar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
-			errno = 0;
-			ychar_asInt = (int)(strtol(ychar, NULL, BASE10));
-			if (errno == ERANGE || errno == EINVAL) {
-				perror("strtol function failed.");
-				return EXIT_FAILURE;
-			}
 			hint(xchar_asInt, ychar_asInt);
 		}
 		break;

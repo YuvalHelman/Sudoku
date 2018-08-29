@@ -3,7 +3,7 @@
 #include "aux_main.h"
 #include "user_interface.h"
 #include "minunit.h" /* a simple testing header. */
-
+#include <errno.h>
 
 /* TODO: */
 /*
@@ -47,6 +47,7 @@ printf("Tests run: %d\n", tests_run);
 
 int main() {
 
+
 	/* Initializing basic utilities for starting the game */
 	initialize_list_parameters();
 	sudoku.mark_errors = true; /* the default value is 1 */
@@ -58,15 +59,15 @@ int main() {
 	printf("Sudoku\n------\n");
 
 	get_command_and_parse();
-	
-	
+
+
 
 	/* free stuff before exiting when get_command_and_parse might fail. */
 	delete_list_on_exit();
 	free_board();
 
 	return 0;
-	
+
 }
 
 

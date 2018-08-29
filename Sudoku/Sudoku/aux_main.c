@@ -1,6 +1,8 @@
 #include "aux_main.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
 /* Global Variables: */
 sudoku_t sudoku = { 0 }; /* All fields initialized to 0.
@@ -26,6 +28,7 @@ int initialize_new_board(int block_col_len, int block_row_len) {
 
 	return EXIT_SUCCESS;
 }
+
 
 
 int free_board() {
@@ -59,3 +62,18 @@ void update_num_of_filled_cells(int prev_val, int updated_val) {
 	/* else, if changed to same value.. nothing changes regarding the num_of_filled_cells */
 }
 
+int str_to_num(const char* value) {
+	int i, str_as_int;
+	if (value == NULL) {
+		return -1;
+	}
+	str_as_int = (int)(strtol(value, NULL, 10));
+	if (strcmp(value, "0") != 0 && str_as_int == 0) {
+		return -1;
+	}
+	if (errno != 0) {
+		perror("strtol function failed.");
+		return -1;
+	}
+	return str_as_int;
+}
