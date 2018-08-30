@@ -126,10 +126,12 @@ int is_board_erronous() {
 }
 
 int update_board_errors() {
-	int i, j;
+	int i, j, board_len;
 
-	for (i = 0; i < sudoku.block_row_length; i++) {
-		for (j = 0; j < sudoku.block_col_length; j++) {
+	board_len = sudoku.block_row_length * sudoku.block_col_length;
+
+	for (i = 0; i < board_len; i++) {
+		for (j = 0; j < board_len; j++) {
 			update_errors(i, j);
 		}
 	}

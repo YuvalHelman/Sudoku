@@ -193,9 +193,8 @@ int update_board_and_list(int **temp_matrice_values) {
 	board_length = sudoku.block_row_length * sudoku.block_col_length;
 	add_node_flag = true;
 	
-	for (col_index = 0; col_index < board_length; col_index++) {
-		for (row_index = 0; row_index < board_length; row_index++) {
-
+	for (row_index = 0; row_index < board_length; row_index++) {
+		for (col_index = 0; col_index < board_length; col_index++) {
 			if (temp_matrice_values) { /* Autofill function. Copy value from the temp matrix to the board */
 				if (temp_matrice_values[row_index][col_index] != 0) {
 					updated_val = temp_matrice_values[row_index][col_index];
@@ -617,11 +616,20 @@ int Edit(char* filepath) {
 *	 value: the integer which decides if errors should be marked or not
 *
 */
-void mark_errors(int value) {
-	if (value != 0 && value != 1) {
+void mark_errors(char* value) {
+	int val_integer;
+
+	if(  strcmp(value, "1") != 0 
+		&& strcmp(value, "0") != 0  ) {
 		printf("Error: the value should be 0 or 1\n");
 	}
-	else sudoku.mark_errors = value;
+	else {
+		val_integer = str_to_num(value);
+
+		if (val_integer != FAILURE) {
+			sudoku.mark_errors = val_integer;
+		}
+	}
 }
 
 /*
@@ -980,7 +988,7 @@ int Save(char* filepath) {
 		return EXIT_FAILURE;
 	}
 
-	printf("Saved to %s\n", filepath);
+	printf("Saved to: %s\n", filepath);
 	fclose(fd);
 	return EXIT_SUCCESS;
 }
@@ -1213,10 +1221,12 @@ int user_command(char* buffer) {
 	switch (sudoku_command)
 	{
 	case solve_command:
-		if (xchar == NULL) {
+		if (!xchar) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
-		return Solve(xchar);
+		else {
+			return Solve(xchar);
+		}
 		break;
 	case edit_command:
 		return Edit(xchar);
@@ -1226,7 +1236,7 @@ int user_command(char* buffer) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
 		else {
-			mark_errors(xchar_asInt);
+			mark_errors(xchar);
 		}
 		break;
 	case print_board_command:
@@ -1238,7 +1248,7 @@ int user_command(char* buffer) {
 		}
 		break;
 	case set_command:
-		if (sudoku.game_mode == init) {
+		if (sudoku.game_mode == init || !xchar || !ychar || !zchar) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
 		else {
@@ -1248,7 +1258,9 @@ int user_command(char* buffer) {
 	case validate_command:
 		if (sudoku.game_mode == init)
 			printf("ERROR: invalid command\n"); /* case b */
-		else validate();
+		else {
+			validate();
+		}
 		break;
 	case generate_command:
 		if (sudoku.game_mode != edit || !xchar || !ychar)
@@ -1260,18 +1272,24 @@ int user_command(char* buffer) {
 	case undo_command:
 		if (sudoku.game_mode == init)
 			printf("ERROR: invalid command\n"); /* case b */
-		else undo();
+		else {
+			undo();
+		}
 		break;
 	case redo_command:
 		if (sudoku.game_mode == init)
 			printf("ERROR: invalid command\n"); /* case b */
-		else redo();
+		else {
+			redo();
+		}
 		break;
 	case save_command:
-		if (!xchar) {
+		if (sudoku.game_mode == init || !xchar) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
-		Save(xchar);
+		else {
+			Save(xchar);
+		}
 		break;
 	case hint_command:
 		if (sudoku.game_mode != solve || !xchar || !ychar)
@@ -1283,7 +1301,9 @@ int user_command(char* buffer) {
 	case num_solutions_command:
 		if (sudoku.game_mode == init)
 			printf("ERROR: invalid command\n"); /* case b */
-		else num_solutions();
+		else {
+			num_solutions();
+		}
 		break;
 	case autofill_command:
 		if (sudoku.game_mode != solve)
@@ -1355,13 +1375,6 @@ int get_command_and_parse() {
 	return EXIT_SUCCESS;
 	
 }
-
-
-
-
-
-
-
 
 
 

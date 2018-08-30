@@ -113,7 +113,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 				num_of_filled_cells++;
 			}
 
-			if ((strchr(token, '.')) != NULL) { /* Check for a '.' in the token */
+			if ((strchr(token, '.')) != NULL && sudoku.game_mode != edit) { /* Check for a '.' in the token */
 				sudoku.board[curr_row][curr_col].is_fixed = true;
 			}
 			else {
