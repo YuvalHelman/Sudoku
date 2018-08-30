@@ -48,7 +48,7 @@ node_vals* redo_list(int* num_of_values) {
 		return NULL;
 	}
 	if (move_list->current_Node_move == move_list->tail) { /* case d */
-		printf("ERROR: no moves to redo\n");
+		printf("Error: no moves to redo\n");
 		return NULL;
 	}
 

@@ -1,0 +1,32 @@
+solve
+solve load1
+redo
+redo 77
+set 4 80
+set 4 80 1
+undo
+generate 3 4
+edit load1
+generate 3 4
+generate 3 90
+edit
+generate 3 90
+generate 100 1
+undo
+undo
+redo
+validate
+autofill
+save m3
+reset
+autofill
+hint 1 2 3
+solve load1
+hint 5 6 7
+set 4 5 5
+mark_errors 0
+set 4 5 8
+redo
+undo
+reset
+exit

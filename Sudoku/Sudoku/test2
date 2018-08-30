@@ -1,0 +1,110 @@
+mark_errors 0
+mark_errors
+mark_errors 90
+mark_errors 01
+print_board
+set 1 2 3
+set
+set 1 2
+set 4 90 3
+set 60 1 2
+set 88 
+set 1
+validate sdfs 5 fgh
+validate 
+sdsdfsd validate 
+sdfdsfsfdf
+generate 2 3
+generate 5 6
+generate y y dgsd
+generate 3
+generate 
+undo dfsdfdsfsd 
+redo 2 3
+redo
+save m1
+hint 1 4 5
+hint 1
+hint
+hint t t
+num_sol dsfsf dsfsdf
+autofill sdada
+autofill 33
+autofill 
+reset
+reset 4 3 7 jkhsdf
+validate
+validate sdfs 5 fgh
+edit 
+mark_errors 0
+mark_errors
+mark_errors 90
+mark_errors 01
+print_board
+set 1 2 3
+set
+set 1 2
+set 4 90 3
+set 60 1 2
+set 88 
+set 1
+validate sdfs 5 fgh
+validate 
+sdsdfsd validate 
+sdfdsfsfdf
+generate 2 3
+generate 5 6
+generate y y dgsd
+generate 3
+generate 
+undo dfsdfdsfsd 
+redo 2 3
+redo
+save mm1
+hint 1 4 5
+hint 1
+hint
+hint t t
+num_sol dsfsf dsfsdf
+autofill sdada
+autofill 33
+autofill 
+reset
+reset 4 3 7 jkhsdf
+solve tt
+mark_errors 0
+mark_errors
+mark_errors 90
+mark_errors 01
+print_board
+set 1 2 3
+set
+set 1 2
+set 4 90 3
+set 60 1 2
+set 88 
+set 1
+validate sdfs 5 fgh
+validate 
+sdsdfsd validate 
+sdfdsfsfdf
+generate 2 3
+generate 5 6
+generate y y dgsd
+generate 3
+generate 
+undo dfsdfdsfsd 
+redo 2 3
+redo
+save mmm1
+hint 1 4 5
+hint 1
+hint
+hint t t
+num_sol dsfsf dsfsdf
+autofill sdada
+autofill 33
+autofill 
+reset
+reset 4 3 7 jkhsdf
+exit
