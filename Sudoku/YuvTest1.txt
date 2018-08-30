@@ -1,0 +1,10 @@
+edit
+generate 3 85 /* Should be Error: value not in range 0-E\n
+solve bbb
+autofill /* Should end the game ?
+solve 2sol3x3
+set 1 1 1
+autofill
+autofill
+autofill
+set 1 1 9

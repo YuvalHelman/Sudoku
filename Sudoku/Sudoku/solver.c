@@ -529,7 +529,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 	/* Each value must appear once in each subgrid */
 	for (v = 0; v < DIM; v++) {
 		/* Iterate Subgrids */
-		for (ig = 0; ig < b_row_l; ig++) {
+		for (ig = 0; ig < b_row_l; ig++) { /* TODO: doesn't work on boards that arent 3x3... fix this */
 			for (jg = 0; jg < b_col_l; jg++) {
 				count = 0;
 				/* Iterate the inside of the subgrid */
@@ -590,8 +590,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 
 		is_solvable = true;
 	}
-	else if (optimstatus == GRB_INF_OR_UNBD) {
-		printf("Model is infeasible or unbounded\n");
+	else if (optimstatus == GRB_INF_OR_UNBD || optimstatus == GRB_INFEASIBLE) {
 		is_solvable = false;
 	}
 	else {

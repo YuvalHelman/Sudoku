@@ -709,7 +709,6 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 
 	board_len = sudoku.block_row_length * sudoku.block_col_length;
 	num_of_cells = board_len * board_len;
-
 	updated_val = value;
 
 	/* check if the values are legal */
@@ -738,7 +737,7 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 	sudoku.board[row_index_board][col_index_board].value = value;
 	update_num_of_filled_cells(prev_val, updated_val);
 
-	/* Update the move_list. (Case f,  */
+	/* Update the move_list. (case f) */
 	if (add_new_node(row_index_board, col_index_board, prev_val, updated_val) == EXIT_FAILURE) {
 		return EXIT_FAILURE;
 	}
@@ -749,17 +748,14 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 	print_board();
 
 	/* Validate the board, and print this if it's not valid: (case c)*/
-	/* TODO TODO */
 	if (sudoku.game_mode == solve && sudoku.num_of_filled_cells == num_of_cells) {
-		/*
-		if( validate() == EXIT_SUCCESS ) {
-		printf("Puzzle solved successfully\n");
-		sudoku.game_mode = init;
+		if (is_board_erronous() ) {
+			printf("Puzzle solution erroneous\n");
 		}
 		else {
-		printf("Puzzle solution erroneous\n");
+			printf("Puzzle solved successfully\n");
+			sudoku.game_mode = init;
 		}
-		*/
 	}
 
 	return EXIT_SUCCESS;
@@ -857,6 +853,7 @@ int generate(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		}
 	}
 
+	update_board_errors();
 	print_board();
 	return EXIT_SUCCESS;
 	
@@ -888,6 +885,7 @@ int undo() {
 			prev = values_array[i].prev_val;
 			updated = values_array[i].updated_val;
 
+			update_num_of_filled_cells(updated, prev);
 			sudoku.board[row][col].value = prev;
 		}
 
@@ -928,6 +926,7 @@ int redo() {
 			prev = values_array[i].prev_val;
 			updated = values_array[i].updated_val;
 
+			update_num_of_filled_cells(prev, updated);
 			sudoku.board[row][col].value = updated;
 		}
 
@@ -966,7 +965,7 @@ int Save(char* filepath) {
 	FILE* fd;
 
 	if (sudoku.game_mode == edit) {
-		if (is_board_erronous()) {
+		if ( is_board_erronous() ) {
 			printf("Error: board contains erroneous values\n");
 			return false;
 		}
@@ -1070,9 +1069,10 @@ int num_solutions() {
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int autofill() {
-	int updated_val, add_node_flag;
+	int updated_val, add_node_flag, num_of_cells;
 	int row_index, col_index, board_length, value, **temp_matrice_values;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
+	num_of_cells = board_length * board_length;
 
 	temp_matrice_values = NULL;
 
@@ -1109,6 +1109,17 @@ int autofill() {
 
 	print_board(); /* case g */
 
+	/* Validate the board, and print this if it's not valid: (case c)*/
+	if (sudoku.game_mode == solve && sudoku.num_of_filled_cells == num_of_cells) {
+		if (is_board_erronous()) {
+			printf("Puzzle solution erroneous\n");
+		}
+		else {
+			printf("Puzzle solved successfully\n");
+			sudoku.game_mode = init;
+		}
+	}
+
 	return EXIT_SUCCESS;
 }
 
@@ -1123,9 +1134,11 @@ int autofill() {
 */
 int reset() {
 
-	int num_of_values, i, row, col, prev, updated;
+	int num_of_values, i, j, row, col, prev, updated, board_len;
 	node_vals* values_array;
 	int reset_flag;
+
+	board_len = sudoku.block_col_length * sudoku.block_row_length ;
 
 	reset_flag = true;
 	do { /* Initiate undo on the list until the head */
@@ -1144,6 +1157,15 @@ int reset() {
 		}
 	} while (values_array);
 
+	/* Update the sudoku.num_of_filled_cells variable */
+	sudoku.num_of_filled_cells = ZERO;
+	for (i = 0; i < board_len; i++) {
+		for (j = 0; j < num_of_values; j++) {
+			if (sudoku.board[i][j].value != 0) {
+				(sudoku.num_of_filled_cells)++;
+			}
+		}
+	}
 	/* Delete the list except the head */
 	delete_list_from_the_current_node();
 
@@ -1202,7 +1224,7 @@ int user_command(char* buffer) {
 	sudokuCommands sudoku_command;
 	char *xchar, *ychar, *zchar, *command, character;
 	int xchar_asInt, ychar_asInt, zchar_asInt, DIM;
-	command = strtok(buffer, " \t\r\n");
+	command = strtok(buffer, " \t\r\n"); /* TODO: TAB before the command doesn't work.*/
 	xchar = strtok(NULL, " \t\r\n");
 	ychar = strtok(NULL, " \t\r\n");
 	zchar = strtok(NULL, " \t\r\n");
@@ -1351,14 +1373,16 @@ int get_command_and_parse() {
 	do {
 		/* Get commands */
 
+		
+		printf("Enter your command:\n");
+		command[0] = '\0';
+		command[MAX_COMMAND_SIZE - 1] = UNUSABLE_CHAR;
+		fgets_ret = fgets(command, MAX_COMMAND_SIZE, stdin);
+		
 		if (feof(stdin)) { /* EOF reached. exit. */
 			printf("Exiting...\n");
 			return EXIT_SUCCESS;
 		}
-		printf("Enter your command:\n");
-		command[MAX_COMMAND_SIZE - 1] = UNUSABLE_CHAR;
-		fgets_ret = fgets(command, MAX_COMMAND_SIZE, stdin);
-		
 
 		if (fgets_ret == NULL && ferror(stdin)) { /* fgets ancountered some error */
 			perror("Error: fgets has failed.");

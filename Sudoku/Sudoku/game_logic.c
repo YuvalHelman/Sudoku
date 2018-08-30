@@ -29,6 +29,7 @@ int valid_value(int row_index, int col_index, int value) {
 int check_col(int row_index, int col_index, int value) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
+
 	for (i = 0;i < board_length;i++) {
 		if (sudoku.board[i][col_index].value == value && i != row_index) {
 			return false;
@@ -41,6 +42,7 @@ int check_col(int row_index, int col_index, int value) {
 int check_row(int row_index, int col_index, int value) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
+
 	for (i = 0;i < board_length;i++) {
 		if (sudoku.board[row_index][i].value == value && i!=col_index) {
 			return false;
@@ -54,6 +56,7 @@ int check_block(int row_index, int col_index, int value) {
 	int first_block_index_row, first_block_index_col, i, j;
 	first_block_index_row = (row_index / sudoku.block_row_length) * sudoku.block_row_length; /* this is the number of the block reletive to the rows */
 	first_block_index_col = (col_index / sudoku.block_col_length) * sudoku.block_col_length; /* this is the number of the block reletive to the rows */
+	
 	/* Check the block with the boundaries we have set */
 	for (i = 0; i < sudoku.block_row_length; i++) {
 		for (j = 0; j < sudoku.block_col_length; j++) {
@@ -76,6 +79,7 @@ void update_errors(int row_index, int col_index) {
 void update_errors_col(int row_index, int col_index) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
+
 	for (i = 0;i < board_length;i++) {
 		if (valid_value(i, col_index, sudoku.board[i][col_index].value)) 
 			sudoku.board[i][col_index].error = false;
@@ -87,6 +91,7 @@ void update_errors_col(int row_index, int col_index) {
 void update_errors_row(int row_index, int col_index) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
+
 	for (i = 0;i < board_length;i++) {
 		if (valid_value(row_index, i, sudoku.board[row_index][i].value)) 
 			 sudoku.board[row_index][i].error = false;
@@ -112,10 +117,12 @@ void update_errors_block(int row_index, int col_index) {
 }
 
 int is_board_erronous() {
-	int i, j;
+	int i, j, board_len;
 
-	for (i = 0; i < sudoku.block_row_length; i++) {
-		for (j = 0; j < sudoku.block_col_length; j++) {
+	board_len = sudoku.block_row_length *  sudoku.block_col_length;
+
+	for (i = 0; i < board_len; i++) {
+		for (j = 0; j < board_len; j++) {
 
 			if (sudoku.board[i][j].error) {
 				return true;

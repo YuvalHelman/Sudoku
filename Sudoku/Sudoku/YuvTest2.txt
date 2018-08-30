@@ -1,0 +1,9 @@
+edit
+solve bbb
+autofill /* Should end the game ?
+solve 2sol3x3
+set 1 1 1
+autofill
+autofill
+autofill
+set 1 1 9
