@@ -198,6 +198,7 @@ int update_board_and_list(int **temp_matrice_values) {
 	
 	for (col_index = 0; col_index < board_length; col_index++) {
 		for (row_index = 0; row_index < board_length; row_index++) {
+
 			if (temp_matrice_values) { /* Autofill function. Copy value from the temp matrix to the board */
 				if (temp_matrice_values[row_index][col_index] != 0) {
 					updated_val = temp_matrice_values[row_index][col_index];
@@ -216,11 +217,16 @@ int update_board_and_list(int **temp_matrice_values) {
 					}
 					/* Update the value in the board, and print a message regarding */
 					sudoku.board[row_index][col_index].value = updated_val;
+					printf("Cell <%d,%d> set to %d\n", col_index + 1, row_index + 1, updated_val);
+					update_num_of_filled_cells(ZERO, updated_val);
 				}
 			}
 			else { /* Generate function. the values are already filled on the board */
 				if (sudoku.board[row_index][col_index].value != 0) {
-					updated_val = temp_matrice_values[row_index][col_index];
+					updated_val = sudoku.board[row_index][col_index].value;
+					/* DEBUG */
+					printf("adding node %d,%d  value %d\n", col_index+1, row_index+1, updated_val);
+					/* DEBUG */
 					if (add_node_flag == true) { /* In case this is the first value which is being changed in the board */
 						if (add_new_node(row_index, col_index, ZERO, updated_val) == EXIT_FAILURE) {
 							printf("adding new node to list failed. Exiting.\n");
@@ -234,11 +240,14 @@ int update_board_and_list(int **temp_matrice_values) {
 							return EXIT_FAILURE;
 						}
 					}
+
+					printf("Cell <%d,%d> set to %d\n", col_index + 1, row_index + 1, updated_val);
+					update_num_of_filled_cells(ZERO, updated_val);
+
 				}
 			}
 
-			printf("Cell <%d,%d> set to %d\n", col_index + 1, row_index + 1, updated_val);
-			update_num_of_filled_cells(ZERO, updated_val);
+			
 		}
 	}
 
@@ -297,6 +306,7 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 			else {
 				free(optional_values);
 				reset_sudoku_board(sudoku.block_col_length, sudoku.block_row_length);
+				/*Debug*/printf("No solution trying to fill %d cells\n", num_of_cells_to_fill);
 				return NO_SOLUTION;
 			}
 		}
@@ -311,7 +321,7 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 		if (is_there_a_solution(NULL, fill_values_not_solution) == false) {
 		reset_sudoku_board(sudoku.block_col_length, sudoku.block_row_length);
 		free(optional_values);
-		/* DEBUG */ printf("no Solution! \n");
+		/* DEBUG */ printf("no Solution trying to use ILP \n");
 		return NO_SOLUTION;
 	}
 
@@ -329,19 +339,22 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	
 		/* if random cell hasn't been deleted yet */
 		if (sudoku.board[rand_row][rand_col].value != 0) {
-			sudoku.board[rand_row][rand_col].value == 0;
+			sudoku.board[rand_row][rand_col].value = 0;
 			num_of_cells_in_board--;
 		}
 	}
 
 	/* DEBUG */
 	num_of_cells_in_board = board_len * board_len;
-	printf("after removing %d cells\n", (board_len * board_len) - num_of_cells_to_keep);
+	printf("after keeping only %d cells\n", num_of_cells_to_keep);
 	print_board();
 	/* DEBUG */
 
 	/* Copy the temp_matrice to the sudoku.board and add a new node to the list */
 	if (update_board_and_list(NULL) == EXIT_FAILURE) {
+		/* DEBUG */
+		printf("adding to the list failed\n");
+		/* DEBUG */
 		reset_sudoku_board(sudoku.block_col_length, sudoku.block_row_length);
 		free(optional_values);
 		return EXIT_FAILURE;
@@ -844,19 +857,21 @@ int generate(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	generate_success_flag = false;
 	while (num_of_tries > 0 && (!generate_success_flag) ) {
 
+		/* helper function to generate a board */
+		ret_val = generate_a_puzzle(num_of_cells_to_fill, num_of_cells_to_keep); 
+
 		/* DEBUG */
-		printf("generate a puzzle\n");
+		printf("After generating for the %d times.\n", 1000- num_of_tries+1);
+		printf("ret_val of generate is: %d\n", ret_val);
 		/* DEBUG */
 
-		ret_val = generate_a_puzzle(num_of_cells_to_fill, num_of_cells_to_keep); /* helper function to generate a board */
-
-		if (ret_val = EXIT_SUCCESS) {
+		if (ret_val == EXIT_SUCCESS) {
 			generate_success_flag = true;
 		}
 		else if (ret_val == NO_SOLUTION) {
 			num_of_tries--;
 		}
-		else if (ret_val = EXIT_FAILURE) {
+		else if (ret_val == EXIT_FAILURE) {
 			printf("Error: Generate has failed. Exiting\n");
 			return EXIT_FAILURE;
 		}
