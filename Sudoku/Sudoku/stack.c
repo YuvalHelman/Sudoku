@@ -89,46 +89,7 @@ int numberOfSolutions()  {
 			temp_matrice_values[row_index][col_index] = sudoku.board[row_index][col_index].value;
 		}
 	}
-
-	col_index = row_index = 0;
-	value = flag = 1;
-	while(flag && row_index < board_length) {
-		col_index = col_index == board_length ? 0 : col_index;
-		while (flag && col_index < board_length){
-			if (sudoku.board[row_index][col_index].is_fixed == false) {
-				if (sudoku.board[row_index][col_index].value == 0) {
-					while(flag && value <= board_length) {
-						if (set_reset_save_the_value(&value, row_index, col_index)) {
-							if (row_index == board_length - 1 && col_index == board_length - 1) {
-								count++;
-								sudoku.board[row_index][col_index].value = 0;
-								pop(&row_index, &col_index, &value);
-								printf("POP: row_index = %d, col_index = %d, value = %d \n", row_index, col_index, value);
-								print_board();
-							}
-							else break;
-						}
-						else {
-							while (flag && value >= board_length) {
-								if (!empty()) {
-									sudoku.board[row_index][col_index].value = 0;
-									pop(&row_index, &col_index, &value);
-									printf("POP :row_index = %d, col_index = %d, value = %d \n", row_index, col_index, value);
-									print_board();
-								}
-								else {
-									flag = 0;
-								}
-							}
-						}
-						value++;
-					}
-				}
-			}
-			col_index++;
-		}
-		row_index++;
-	}
+	count = number_of_solutions();
 
 	/* Copy the original values back to the sudoku.board */
 	for (col_index = 0; col_index < board_length; col_index++) {
@@ -154,9 +115,81 @@ int set_reset_save_the_value(int *value, int row_index, int col_index) {
 	if (valid_value(row_index, col_index, *value)) {
 		push(row_index, col_index, *value);
 		sudoku.board[row_index][col_index].value = *value;
+		printf("INSERT: row_index = %d, col_index = %d, value = %d \n", row_index, col_index, *value);
 		print_board();
 		*value = 1;
 		return true;
 	}
 	return false;
+}
+
+int set_reset_save_the_value2(int value, int row_index, int col_index) {
+	if (valid_value(row_index, col_index, value)) {
+		push(row_index, col_index, value);
+		sudoku.board[row_index][col_index].value = value;
+		printf("INSERT: row_index = %d, col_index = %d, value = %d \n", row_index, col_index, value);
+		print_board();
+		return true;
+	}
+	return false;
+}
+
+int number_of_solutions() {
+	/* variables declarations */
+	int row_index, col_index, count, value, board_length, last_input_row, last_input_col;
+	count = row_index = col_index = 0;
+	value = 1;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
+	if (last_input_index(&last_input_row, &last_input_col)) {
+		return count;
+	}
+	while (row_index < board_length) {
+		col_index = col_index == board_length ? 0 : col_index;
+		while (col_index < board_length) {
+			if (sudoku.board[row_index][col_index].value == 0) {
+				while (value <= board_length) {
+					if (set_reset_save_the_value2(value, row_index, col_index)) {
+						value = 1;
+						if (row_index == last_input_row && col_index == last_input_col) {
+							pop(&row_index, &col_index, &value);
+							sudoku.board[row_index][col_index].value = 0;
+							count++;
+							col_index--;
+							value++;
+						}
+						break;
+					}
+					value++;
+				}
+				if (value == board_length + 1) {
+					if (!empty()) {
+						sudoku.board[row_index][col_index].value = 0;
+						pop(&row_index, &col_index, &value);
+						value++;
+						sudoku.board[row_index][col_index].value = 0;
+						col_index--;
+					}
+					else return count;
+				}
+			}
+			col_index++;
+		}
+		row_index++;
+	}
+}
+
+int last_input_index(int *last_input_row, int *last_input_col) {
+	/* variables declarations */
+	int row_index, col_index, board_length;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
+	for (row_index = board_length - 1; row_index >= 0; row_index--) {
+		for (col_index = board_length - 1; col_index >= 0; col_index--) {
+			if (sudoku.board[row_index][col_index].value == 0) {
+				*last_input_row = row_index;
+				*last_input_col = col_index;
+				return 0;
+			}
+		}
+	}
+	return 1;
 }

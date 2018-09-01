@@ -148,7 +148,6 @@
     <ClCompile Include="game_logic.h" />
     <ClCompile Include="move_list.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="solver.c" />
     <ClCompile Include="stack.c" />
     <ClCompile Include="user_interface.c" />
   </ItemGroup>
@@ -158,7 +157,6 @@
     <ClInclude Include="gurobi_c.h" />
     <ClInclude Include="minunit.h" />
     <ClInclude Include="move_list.h" />
-    <ClInclude Include="solver.h" />
     <ClInclude Include="stack.h" />
     <ClInclude Include="user_interface.h" />
   </ItemGroup>
