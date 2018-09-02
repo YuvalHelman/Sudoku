@@ -3,6 +3,8 @@
 
 #include "aux_main.h"
 
+#define positionGur(row, col, val, dim)((row*dim*dim) + (col*dim) + (val))
+
 int gurobi_initializer(int **matrice, int fill_values_not_solution); /* todo: ERASE that later */
 
 /*

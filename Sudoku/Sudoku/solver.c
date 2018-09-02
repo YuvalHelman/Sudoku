@@ -28,7 +28,6 @@ void initiate_lower_bounds(int DIM, double *lb, char *vtype) {
 	/* Fill the lower bound to 1 for any cell that already has a value (non-zero) */
 	for (i = 0; i < DIM; i++) {
 		for (j = 0; j < DIM; j++) {
-			/*TODO: Added the below row v to (v+1). check if its ok */
 			for (v = 0; v < DIM; v++) { /* v = Fixed Value.*/
 				if (sudoku.board[i][j].value == (v + 1))
 					lb[i*DIM*DIM + j * DIM + v] = 1.0;
@@ -185,18 +184,32 @@ int initiate_constraints(GRBenv *env, GRBmodel *model) {
 	/* Each value must appear once in each subgrid */
 	for (v = 0; v < DIM; v++) {
 		/* Iterate Subgrids */
-		for (ig = 0; ig < b_row_l; ig++) {
-			for (jg = 0; jg < b_col_l; jg++) {
+		for (ig = 0; ig < b_col_l; ig++) {
+			for (jg = 0; jg < b_row_l; jg++) {
 				count = 0;
 				/* Iterate the inside of the subgrid */
-				for (i = ig * b_col_l; i < (ig + 1)*b_col_l; i++) {
-					for (j = jg * b_row_l; j < (jg + 1)*b_row_l; j++) {
+				for (i = ig * b_row_l; i < (ig + 1)*b_row_l; i++) {
+					for (j = jg * b_col_l; j < (jg + 1)*b_col_l; j++) {
 						cind[count] = (i * DIM*DIM) + (j * DIM) + v;
 						cval[count] = 1.0;
 						count++;
 					}
 				}
 
+				/*
+				for (v = 0; v < DIM; v++) {
+					for (ig = 0; ig < b_row_l; ig++) { //p
+						for (jg = 0; jg < b_col_l; jg++) { //q
+							count = 0;
+							for (i = ig * b_col_l; i < (ig + 1)*b_col_l; i++) {
+								for (j = jg * b_row_l; j < (jg + 1)*b_row_l; j++) {
+									cind[count] = (i * DIM*DIM) + (j * DIM) + v;
+									cval[count] = 1.0;
+									count++;
+								}
+							}
+
+				*/
 				error = GRBaddconstr(model, DIM, cind, cval, GRB_EQUAL, 1.0, NULL);
 				if (error) {
 					printf("Error: GRBaddconstr failed.\n");
@@ -396,7 +409,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 	int		  DIM; /* The board dimensions */
 	int       i; /* rows */
 	int		  j; /* Columns */
-	int		  v, ig, jg, count;
+	int		  v, ig, jg, count, k;
 	int b_col_l, b_row_l;
 
 	b_col_l = sudoku.block_col_length;
@@ -425,19 +438,19 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 			for (v = 0; v < DIM; v++) { /* v = Fixed Value.*/
 				if (matrice) {
 					if (matrice[i][j] == (v + 1))
-						lb[i*DIM*DIM + j * DIM + v] = 1.0;
+						lb[positionGur(i, j, v, DIM)] = 1.0;
 					else
-						lb[i*DIM*DIM + j * DIM + v] = 0.0;
+						lb[positionGur(i, j, v, DIM)] = 0.0;
 
-					vtype[i*DIM*DIM + j * DIM + v] = GRB_BINARY;
+					vtype[positionGur(i, j, v, DIM)] = GRB_BINARY;
 				}
 				else {
 					if (sudoku.board[i][j].value == (v + 1))
-						lb[i*DIM*DIM + j * DIM + v] = 1.0;
+						lb[positionGur(i, j, v, DIM)] = 1.0;
 					else
-						lb[i*DIM*DIM + j * DIM + v] = 0.0;
+						lb[positionGur(i, j, v, DIM)] = 0.0;
 
-					vtype[i*DIM*DIM + j * DIM + v] = GRB_BINARY;
+					vtype[positionGur(i, j, v, DIM)] = GRB_BINARY;
 				}
 			}
 		}
@@ -453,7 +466,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 		exit(EXIT_FAILURE);
 	}
 
-	error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
+	//error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
 	if (error) {
 		printf("Error: gurobi removing output has failed.");
 		printf("ERROR: %s\n", GRBgeterrormsg(env));
@@ -475,7 +488,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 	for (i = 0; i < DIM; i++) {
 		for (j = 0; j < DIM; j++) {
 			for (v = 0; v < DIM; v++) {
-				ind[v] = (i * DIM*DIM) + (j * DIM) + v;
+				ind[v] = positionGur(i, j, v, DIM);
 				val[v] = 1.0;
 			}
 
@@ -494,7 +507,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 	for (v = 0; v < DIM; v++) {
 		for (j = 0; j < DIM; j++) {
 			for (i = 0; i < DIM; i++) {
-				ind[i] = (i * DIM*DIM) + (j * DIM) + v;
+				ind[i] = positionGur(i, j, v, DIM);
 				val[i] = 1.0;
 			}
 
@@ -513,9 +526,10 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 	for (v = 0; v < DIM; v++) {
 		for (i = 0; i < DIM; i++) {
 			for (j = 0; j < DIM; j++) {
-				ind[j] = (i * DIM*DIM) + (j * DIM) + v;
+				ind[j] = positionGur(i, j, v, DIM);
 				val[j] = 1.0;
 			}
+
 
 			error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
 			if (error) {
@@ -533,14 +547,13 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 			for (jg = 0; jg < b_col_l; jg++) {
 				count = 0;
 				/* Iterate the inside of the subgrid */
-				for (i = ig * b_col_l; i < (ig + 1)*b_col_l; i++) {
-					for (j = jg * b_row_l; j < (jg + 1)*b_row_l; j++) {
-						ind[count] = (i * DIM*DIM) + (j * DIM) + v;
+				for (i = jg * b_row_l; i < (jg + 1)*b_row_l; i++) {
+					for (j = ig * b_col_l; j < (ig + 1)*b_col_l ; j++) {
+						ind[count] = positionGur(i, j, v, DIM);
 						val[count] = 1.0;
 						count++;
 					}
 				}
-
 				error = GRBaddconstr(model, DIM, ind, val, GRB_EQUAL, 1.0, NULL);
 				if (error) {
 					printf("Error: GRBaddconstr failed.\n");
