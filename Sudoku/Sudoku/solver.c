@@ -466,7 +466,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 		exit(EXIT_FAILURE);
 	}
 
-	//error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
+	error = GRBsetintparam(env, GRB_INT_PAR_LOGTOCONSOLE, 0);
 	if (error) {
 		printf("Error: gurobi removing output has failed.");
 		printf("ERROR: %s\n", GRBgeterrormsg(env));

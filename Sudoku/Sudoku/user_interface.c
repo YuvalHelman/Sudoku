@@ -522,6 +522,7 @@ int Solve(char* filepath) {
 		return EXIT_FAILURE;
 	}
 
+	
 	/* Set basic sudoku utilities */
 	sudoku.block_row_length = block_rows;
 	sudoku.block_col_length = block_cols;
@@ -758,7 +759,26 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 		}
 	}
 
+	if_board_finished();
+
 	return EXIT_SUCCESS;
+}
+
+void if_board_finished() {
+	if (sudoku.num_of_filled_cells == pow(sudoku.block_col_length * sudoku.block_row_length, 2)) {
+		if (validate()) {
+			printf("Puzzle solved successfully\n");
+			/* Change the game mode */
+			sudoku.game_mode = init;
+			sudoku.num_of_filled_cells = 0;
+			/* Reset basic game utilities */
+			delete_list_full();
+			free_board();
+			sudoku.board = NULL;
+			printf("Sudoku\n------\n");
+			get_command_and_parse();
+		}
+	}
 }
 
 /*	
@@ -782,11 +802,6 @@ int validate() {
 
 	if (is_there_a_solution(NULL, fill_values_not_solution) == true) {
 		printf("Validation passed: board is solvable\n");
-
-		/* TODO: erase this before done */
-		printf("------\n------Board Solution:\n");
-		print_board_solution(); 
-
 
 		return true;
 	}
@@ -887,6 +902,7 @@ int undo() {
 
 			update_num_of_filled_cells(updated, prev);
 			sudoku.board[row][col].value = prev;
+			update_errors(row, col);
 		}
 
 		/* Print the board and then the changed cells (case e) */
@@ -928,6 +944,7 @@ int redo() {
 
 			update_num_of_filled_cells(prev, updated);
 			sudoku.board[row][col].value = updated;
+			update_errors(row, col);
 		}
 
 		print_board();
@@ -1350,7 +1367,7 @@ int user_command(char* buffer) {
 		printf("ERROR: invalid command\n");
 		break;
 	}
-
+	printf("%d filled cells\n", sudoku.num_of_filled_cells);
 	return EXIT_SUCCESS;
 }
 
