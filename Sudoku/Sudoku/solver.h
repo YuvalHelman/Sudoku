@@ -13,9 +13,9 @@ int gurobi_initializer(int **matrice, int fill_values_not_solution); /* todo: ER
 *	If the "matrice" argument is NULL, the solution is put in the sudoku.board_solution.
 *	otherwise, the solution is put in the "matrice" argument.
 *
-*	matrice: an optional integer matrice to put in the solution.
+*	@matrice: an optional integer matrice to put in the solution.
 *
-*   returns: true(1) when there is a solution to the current board.
+*   @returns: true(1) when there is a solution to the current board.
 *			 false(0) when there isn't a solution.
 */
 int is_solvable(int **matrice);

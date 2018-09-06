@@ -5,7 +5,7 @@
 #include <errno.h>
 
 /* Global Variables: */
-sudoku_t sudoku = { 0 }; /* All fields initialized to 0.
+sudoku_t sudoku = { 0 }; /* All fields initialized to 0. TODO: check if possible in ansi c
 						 game_mode is also 0 (which is init) */
 
 int initialize_new_board(int block_col_len, int block_row_len) {
@@ -29,11 +29,11 @@ int initialize_new_board(int block_col_len, int block_row_len) {
 	return EXIT_SUCCESS;
 }
 
-int** initialize_integer_board(int block_col_len, int block_row_len) {
+int** initialize_integer_board() {
 	int board_size, i;
 	int **board;
 
-	board_size = block_col_len * block_row_len;
+	board_size = sudoku.block_col_length * sudoku.block_row_length;
 
 	board = (int **)malloc(board_size * sizeof(int *));
 	if (!board) {
@@ -104,10 +104,10 @@ int str_to_num(const char *value) {
 	return str_as_int;
 }
 
-void reset_sudoku_board(int block_col_len, int block_row_len) {
+void reset_sudoku_board_values() {
 	int i, j, board_length;
 
-	board_length = block_col_len * block_row_len;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
 
 	for (i = 0; i < board_length; i++) {
 		for (j = 0; j < board_length; j++) {

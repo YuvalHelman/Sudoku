@@ -59,9 +59,6 @@
     <ClInclude Include="minunit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gurobi_c.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>

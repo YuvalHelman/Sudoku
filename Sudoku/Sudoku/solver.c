@@ -625,19 +625,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 	return is_solvable;
 }
 
-/*
-*	The function checks if there is a solution to the current board.
-*	If there is a solution, it returns true. else it returns false.
-*	If the "matrice" argument is NULL, the solution is put in the sudoku.board_solution.
-*	otherwise, the solution is put in the "matrice" argument.
-*
-*	matrice: an optional integer matrice to put in the solution.
-*	fill_values_and_not_solution_flag: indicates that the solution to the ILP should be added to the sudoku.board.values
-*										and not to the sudoku.board.solution (true = values, false = solution)
-*
-*   returns: true(1) when there is a solution to the current board.
-*			 false(0) when there isn't a solution.
-*/
+
 int is_there_a_solution(int **matrice, int fill_values_and_not_solution_flag) {
 
 	if (gurobi_initializer(matrice, fill_values_and_not_solution_flag) == true) {

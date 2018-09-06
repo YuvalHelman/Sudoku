@@ -111,7 +111,6 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 			
 			if (value != 0) { /* Count how many numbers are filled */
 				num_of_filled_cells++;
-				printf("im in file manip, counting the cells %d\n", num_of_filled_cells);//todo: delete that
 			}
 
 			if ((strchr(token, '.')) != NULL && sudoku.game_mode != edit) { /* Check for a '.' in the token */
@@ -124,7 +123,6 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 			/* Iterate the current column\row values */
 			if (curr_col == board_len - 1) {
 				if (curr_row == board_len - 1) {
-					printf("im in file manip, FINAL cells %d\n", num_of_filled_cells);//todo: delete that
 					(*pNumOfCellsFilled) = num_of_filled_cells;
 					return EXIT_SUCCESS;
 				}
@@ -140,7 +138,6 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 			token = strtok(NULL, " \t\r\n");
 		}
 		if (feof(fd)) {
-			printf("im in file manip, FINAL cells %d\n", num_of_filled_cells);//todo: delete that
 			(*pNumOfCellsFilled) = num_of_filled_cells;
 			return EXIT_SUCCESS;
 		}
@@ -149,7 +146,6 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 			return EXIT_FAILURE;
 		}
 	}
-	printf("im in file manip, FINAL cells %d\n", num_of_filled_cells);//todo: delete that
 	(*pNumOfCellsFilled) = num_of_filled_cells;
 
 	return EXIT_SUCCESS;

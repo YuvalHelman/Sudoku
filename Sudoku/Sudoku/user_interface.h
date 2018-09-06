@@ -42,16 +42,6 @@ static struct abc_t{
 };
 
 
-/* TODO: erase those declarations before done:
-They are here just for debugging */
-int set(int row_index, int col_index, int value);
-int undo();
-int redo();
-void print_board_solution(); /* Helper function for testing the solution */
-void print_board();
-void print_board_values();
-void if_board_finished();
-
 /*
 *	The Function handles the user's input from stdin or files.
 *	This command is looped until the program terminates (using the exit command or ctrl+C).

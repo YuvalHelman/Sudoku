@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include "stack.h"
 #include "aux_main.h"
-#include "user_interface.h"
 #include "game_logic.h"
+#include "user_interface.h"
+
 
 struct node_stack *top_node = NULL;
 
@@ -81,7 +82,7 @@ int numberOfSolutions()  {
 		return 0;
 	}
 
-	temp_matrice_values = initialize_integer_board(sudoku.block_col_length, sudoku.block_row_length);
+	temp_matrice_values = initialize_integer_board();
 
 	/* Save the board's values in a temporary board */
 	for (col_index = 0; col_index < board_length; col_index++) {

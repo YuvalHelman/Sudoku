@@ -39,34 +39,36 @@ extern sudoku_t sudoku;
 *   This function initialize the sudoku.board
 *	The initialized board has all 0's in its cells.
 *	should be free'd with free_board() function when the board isn't needed anymore.
+
+*	@block_col_len: the board's block column length
+*	@block_row_len: the board's block row length
 *
-*   returns: EXIT_SUCCESS(0) on success.
+*   @returns: EXIT_SUCCESS(0) on success.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int initialize_new_board(int block_col_len, int block_row_len);
 
 /*
-*   This function resets all the sudoku.board values to 0.
+*   This function changes the sudoku.board values to 0.	
 */
-void reset_sudoku_board(int block_col_len, int block_row_len);
+void reset_sudoku_board_values();
 
 /*
 *	The Function initializes a new "values_only" board for working on temporary boards.
 *
-*	block_col_len: the board's block column length
-*	block_row_len: the board's block row length
+
 *
-*	returns: a pointer to the new board on success.
+*	@returns: a pointer to the new board on success.
 *	    	 on any error returns NULL and prints the error.
 */
-int** initialize_integer_board(int block_col_len, int block_row_len);
+int** initialize_integer_board();
 
 /*
  *	This function free's the game board.
  *	Any unsaved data is lost. any other refference to the sudoku.board after that should be only after
  *	initialize_new_board function is called.
  *
- *   returns: EXIT_SUCCESS(0) on success.
+ *  @returns: EXIT_SUCCESS(0) on success.
  *			 on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int free_board();
@@ -74,8 +76,8 @@ int free_board();
 /*
 *	This function is called to update the sudoku.num_of_filled_cells value in the program.
 *	
-*	prev_val: the value that was previously in the cell that has been updated
-*	updated_val: the value that is being updated to.
+*	@prev_val: the value that was previously in the cell that has been updated
+*	@updated_val: the value that is being updated to.
 */
 void update_num_of_filled_cells(int prev_val, int updated_val);
 /* TODO: add this function to :
@@ -83,7 +85,12 @@ void update_num_of_filled_cells(int prev_val, int updated_val);
 		** added:** Edit, Solve, set, autofill */
 
 /*
-* TODO: document
+*	This function convert string to an integer
+*	
+*	@value - a represanting string of the number.
+
+
+*	@return: the interger value of the string.
 */
 int str_to_num(const char* value);
 

@@ -5,15 +5,23 @@
 
 
 
-char *test_game_logic_module() {
-	
 
 
+int is_board_erronous() {
+	int i, j, board_len;
 
-	return (char*)0;
+	board_len = sudoku.block_row_length *  sudoku.block_col_length;
+
+	for (i = 0; i < board_len; i++) {
+		for (j = 0; j < board_len; j++) {
+
+			if (sudoku.board[i][j].error) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
-
-
 
 int valid_value(int row_index, int col_index, int value) {
 	if (value == 0) {
@@ -116,23 +124,9 @@ void update_errors_block(int row_index, int col_index) {
 	}
 }
 
-int is_board_erronous() {
-	int i, j, board_len;
 
-	board_len = sudoku.block_row_length *  sudoku.block_col_length;
 
-	for (i = 0; i < board_len; i++) {
-		for (j = 0; j < board_len; j++) {
-
-			if (sudoku.board[i][j].error) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-int update_board_errors() {
+void update_board_errors() {
 	int i, j, board_len;
 
 	board_len = sudoku.block_row_length * sudoku.block_col_length;

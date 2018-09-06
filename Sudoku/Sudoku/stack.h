@@ -25,12 +25,9 @@ void destroy();
 
 
 /*
-* The function uses a determenistic algorithm to solve the sudoku.
-* The function also updates the "solution matrice" to the new solution if there is one. (if there isn't , the previous solution is kept)
+* The function uses a exhaustive backtracking algorithm to solve the sudoku, and checks how many solutions there is.
 * @param board - matrice with the cells inforamtion
-* @param row_index - the row of the cell we are checking
-* @param col_index - the column of the cell we are checking
-* @return -true(0) if the sudoku is solvebale and store the solution in cell.solution matrix, false(1) otherwise and do nothing(not sure if it work).
+* @return - the number of possible solutions.
 */
 int numberOfSolutions();
 

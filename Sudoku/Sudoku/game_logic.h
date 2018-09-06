@@ -6,6 +6,16 @@
 
 /* TODO: document this one */
 
+
+/*
+*	The function checks if there are any errors on the current board.
+*
+*   @returns: true(1) when there are errors on the current board.
+*			 false(0) when there aren't errors.
+*/
+int is_board_erronous();
+
+
 /*
 * The Function checks if the value is a legal value for cell[x][y].
 * @param row_index - index x.
@@ -42,12 +52,7 @@ int check_col(int row_index, int col_index, int value);
 */
 int check_block(int row_index, int col_index, int value);
 
-/*
-* The Function update the mark_error for all the cells that have a connection(row,cell,block) with cell[x][y].
-* @param row_index - index x.
-* @param col_index - index y.
-*/
-void update_errors(int row_index, int col_index);
+
 
 /*
 * The Function update the mark_error for all the cells that have a *ROW* connection with cell[x][y].
@@ -71,12 +76,15 @@ void update_errors_col(int row_index, int col_index);
 void update_errors_block(int row_index, int col_index);
 
 /*
-*	The function checks if there are any errors on the current board.
-*
-*   returns: true(1) when there are errors on the current board.
-*			 false(0) when there aren't errors.
+* The Function update the mark_error for all the cells that have a connection(row,cell,block) with cell[x][y].
+* @param row_index - index x.
+* @param col_index - index y.
 */
-int is_board_erronous();
+void update_errors(int row_index, int col_index);
 
-int update_board_errors();
+
+/*
+* The Function update the mark_error for all the cells.
+*/
+void update_board_errors();
 #endif /* GAME_LOGIC */

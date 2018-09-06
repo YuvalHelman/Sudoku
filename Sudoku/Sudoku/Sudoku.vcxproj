@@ -92,6 +92,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>C:\gurobi702\win64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -155,7 +156,6 @@
   <ItemGroup>
     <ClInclude Include="aux_main.h" />
     <ClInclude Include="file_manipulation.h" />
-    <ClInclude Include="gurobi_c.h" />
     <ClInclude Include="minunit.h" />
     <ClInclude Include="move_list.h" />
     <ClInclude Include="solver.h" />
