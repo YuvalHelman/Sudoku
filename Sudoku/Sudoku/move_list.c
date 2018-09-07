@@ -36,7 +36,7 @@ int node_delete(Node *node) {
 *			Public functions: used outside this source file
 */
 
-/* TODO:  use the func updateerrors (in the user_interface.c)*/
+
 node_vals* redo_list(int* num_of_values) {
 	Node* curr_node;
 	int  board_size;

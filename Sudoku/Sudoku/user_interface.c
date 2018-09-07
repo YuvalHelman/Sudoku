@@ -382,51 +382,9 @@ void print_matrice(int **matrice)  {
 	}
 }
 
-void print_board_values() {
-	/* variables declarations */
-	int i, j, board_length;
-	board_length = sudoku.block_col_length * sudoku.block_row_length;
-
-	/* Print 4N+n+1 dashes for the start*/
-	separator_row();
-
-	/* Go over the columns */
-	for (i = 0; i < board_length; i++) {
-		printf("|"); /* Opening pipe */
-
-					 /* Go over Columns*/
-		for (j = 0; j < board_length; j++) {
-
-			if (sudoku.board[i][j].is_fixed) {				/* If fixed number */
-
-				printf(" %2d.", sudoku.board[i][j].solution); /* DOT for fixed number*/
-			}
-			else if (!sudoku.board[i][j].is_fixed) { /* Non-fixed number that the user inputed */
-				printf(" %2d", sudoku.board[i][j].solution);
-				if (sudoku.board[i][j].error) /* check if we need to mark an error */
-					printf("*");
-				else printf(" ");
-			}
-
-			/* after every m numbers , print a pipe*/
-			if (j != board_length - 1) {
-				if (j % sudoku.block_col_length == sudoku.block_col_length - 1)
-					printf("|");
-			}
-			else printf("|");
-
-		}
-		printf("\n"); /*  Next line*/
-
-					  /*Print dashes every 3 lines*/
-		if (i % sudoku.block_row_length == sudoku.block_row_length - 1) {
-			separator_row();
-		}
-	}
-}
-
 /*
 *	The Function prints the solution board to the console.
+*	Used solely for debugging the program and not used anywhere on user commands.
 *
 *	Copied from print_board, but draws the solution board, and not the game board.
 *
@@ -600,7 +558,7 @@ int Edit(char* filepath) {
 
 		sudoku.block_row_length = DEFAULT_BLOCK_LEN;
 		sudoku.block_col_length = DEFAULT_BLOCK_LEN;
-		sudoku.num_of_filled_cells = 0;
+		sudoku.num_of_filled_cells = num_of_filled_cells;
 	}
 
 
@@ -700,10 +658,10 @@ void print_board() {
 *	row_index: the cell's row where the change is made (as the user inputted them. 1 <--> board_len )
 *	value: the value that that will be put in the cell.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node. ////// TODO: check if this is the right returning method 
+*   returns: EXIT_SUCCESS(0) on succeeding in the right output.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int set(int col_index, int row_index, int value) { /* TODO: check if return values could be changed to EXIT_SUCCESS \ EXIT_FAILURE. */
+int set(int col_index, int row_index, int value) { 
 
 	int prev_val, updated_val, board_len;
 	int row_index_board, col_index_board;
@@ -717,7 +675,7 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 		row_index < 1 || row_index > board_len ||
 		col_index < 1 || col_index > board_len) {
 		printf("Error: value not in range 0-%d\n", board_len);
-		return false;
+		return EXIT_SUCCESS;
 	}
 
 	row_index_board = row_index - 1;
@@ -727,7 +685,7 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 	/* check if (i,j) is a fixed cell (case e) */
 	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
-		return false;
+		return EXIT_SUCCESS;
 	}
 
 	prev_val = sudoku.board[row_index_board][col_index_board].value;
@@ -747,27 +705,34 @@ int set(int col_index, int row_index, int value) { /* TODO: check if return valu
 
 	print_board();
 
+	board_finished_check();
 
 	return EXIT_SUCCESS;
 }
 
 
+/* TODO: document */
+void board_finished_check() {
+	int num_of_cells_in_board, board_len;
 
-void if_board_finished() {
-	if (sudoku.num_of_filled_cells == pow(sudoku.block_col_length * sudoku.block_row_length, 2) && sudoku.game_mode == solve) {
+	board_len = sudoku.block_col_length * sudoku.block_row_length;
+	num_of_cells_in_board = board_len * board_len;
+
+	if (sudoku.num_of_filled_cells == num_of_cells_in_board && sudoku.game_mode == solve) {
 		if (is_board_erronous()) {
 			printf("Puzzle solution erroneous\n");
 		}
 		else {
 			printf("Puzzle solved successfully\n");
+
 			/* Change the game mode */
 			sudoku.game_mode = init;
 			sudoku.num_of_filled_cells = 0;
+
 			/* Reset basic game utilities */
 			delete_list_full();
 			free_board();
 			sudoku.board = NULL;
-			printf("Sudoku\n------\n");
 		}
 	}
 }
@@ -778,8 +743,8 @@ void if_board_finished() {
 *	
 *	the function uses the Gurobi ILP solver in the solver.c function in order to validate and get a solution.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node. ////// TODO: check if this is the right returning method
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*   returns: true(1) when there is a valid solution to the board
+*	        when board is erronous or there isn't a valid solution, returns false(0)
 */
 int validate() {
 	int fill_values_not_solution;
@@ -893,7 +858,7 @@ int undo() {
 
 			update_num_of_filled_cells(updated, prev);
 			sudoku.board[row][col].value = prev;
-			update_errors(row, col);
+			update_errors(row, col);  /* update board's errors in that cell's neighbors */
 		}
 
 		/* Print the board and then the changed cells (case e) */
@@ -935,7 +900,7 @@ int redo() {
 
 			update_num_of_filled_cells(prev, updated);
 			sudoku.board[row][col].value = updated;
-			update_errors(row, col);
+			update_errors(row, col); /* update board's errors in that cell's neighbors */
 		}
 
 		print_board();
@@ -1061,7 +1026,7 @@ int hint(int col_index, int row_index) {
 *	The function uses an exhaustive backtracking implemented in stack.h
 *	the cell in the solution given.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*   returns: EXIT_SUCCESS(0) on success.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int num_solutions() {
@@ -1085,13 +1050,11 @@ int autofill() {
 
 	temp_matrice_values = NULL;
 
-	/* Validate the board, and print this if it's not valid: (case c)*/
-	/* TODO TODO
-	if( validate() == EXIT_SUCCESS ) {
-	printf("Error: board contains erroneous values\n");
-	return EXIT_SUCCESS;
+	/* Validate the board's errors, and print this if it's not valid: (case c)*/
+	if (is_board_erronous()) {
+		printf("Error: board contains erroneous values\n");
+		return EXIT_SUCCESS;
 	}
-	*/
 
 	/* Initialize a temp matrix */
 	temp_matrice_values = initialize_integer_board();
@@ -1118,6 +1081,8 @@ int autofill() {
 
 	print_board(); /* case g */
 
+	board_finished_check(); /* set command (case i) */
+
 	return EXIT_SUCCESS;
 }
 
@@ -1127,7 +1092,7 @@ int autofill() {
 *
 *	The function goes over the entire move_list - undo's all moves and deletes all nodes.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*   returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int reset() {
@@ -1209,13 +1174,13 @@ sudokuCommands str2enum(const char *str)
 	return error_command;
 }
 
-/* TODO: document
+/*
 * The Function recives the command from the user and interprets it to a function that handles the command.
-************************* TODO: The function should check if the buffer is even valid, or to accept only valid ones*****
+*
 * @param buffer - the user's command. (its contents may be erased after calling this function)
-* @return true(1) when no errors. 0 otherwise
-false(0) if some error occured.
-* buffer is destroyed after this function.
+*
+*   returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int user_command(char* buffer) {
 	/* */
@@ -1382,9 +1347,8 @@ int get_command_and_parse() {
 
 		ret_command = user_command(command);
 
-		/* DEBUG: printf("board Solution:\n");*/
-		/* DEBUG: print_board_solution();*/
-		if_board_finished();
+		
+
 	} while (fgets_ret != NULL);
 
 	return EXIT_SUCCESS;
