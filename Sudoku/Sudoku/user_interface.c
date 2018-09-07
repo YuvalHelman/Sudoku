@@ -16,6 +16,12 @@
 
 
 /*
+*			functions declarations for dependancies.
+*/
+void print_board();
+
+
+/*
  *					Private (Static) functions - not available outside this source file.
  */
 
@@ -334,6 +340,34 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	return EXIT_SUCCESS;
 
 }
+
+
+/* TODO: document */
+void board_finished_check() {
+	int num_of_cells_in_board, board_len;
+
+	board_len = sudoku.block_col_length * sudoku.block_row_length;
+	num_of_cells_in_board = board_len * board_len;
+
+	if (sudoku.num_of_filled_cells == num_of_cells_in_board && sudoku.game_mode == solve) {
+		if (is_board_erronous()) {
+			printf("Puzzle solution erroneous\n");
+		}
+		else {
+			printf("Puzzle solved successfully\n");
+
+			/* Change the game mode */
+			sudoku.game_mode = init;
+			sudoku.num_of_filled_cells = 0;
+
+			/* Reset basic game utilities */
+			delete_list_full();
+			free_board();
+			sudoku.board = NULL;
+		}
+	}
+}
+
 
 /*
 *			DEBUGGING functions. public for debugging usage.
@@ -710,32 +744,6 @@ int set(int col_index, int row_index, int value) {
 	return EXIT_SUCCESS;
 }
 
-
-/* TODO: document */
-void board_finished_check() {
-	int num_of_cells_in_board, board_len;
-
-	board_len = sudoku.block_col_length * sudoku.block_row_length;
-	num_of_cells_in_board = board_len * board_len;
-
-	if (sudoku.num_of_filled_cells == num_of_cells_in_board && sudoku.game_mode == solve) {
-		if (is_board_erronous()) {
-			printf("Puzzle solution erroneous\n");
-		}
-		else {
-			printf("Puzzle solved successfully\n");
-
-			/* Change the game mode */
-			sudoku.game_mode = init;
-			sudoku.num_of_filled_cells = 0;
-
-			/* Reset basic game utilities */
-			delete_list_full();
-			free_board();
-			sudoku.board = NULL;
-		}
-	}
-}
 
 /*	
 *	Validates the current board using ILP, ensuring it is solvable.

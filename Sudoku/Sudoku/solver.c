@@ -18,6 +18,59 @@
 *					Private (Static) functions - not available outside this source file.
 */
 
+/*
+*   This function initialize the sudoku.solution with the ILP solution.
+*/
+void update_board_solution(double *sol, int DIM) {
+	int i, j, v;
+
+	/* Update the board.solution from the given solution array */
+	for (i = 0; i < DIM; i++) {
+		for (j = 0; j < DIM; j++) {
+			for (v = 0; v < DIM; v++) {
+				if (sol[i*DIM*DIM + j * DIM + v] == 1.0) {
+					sudoku.board[i][j].solution = (v + 1);
+				}
+			}
+		}
+	}
+}
+
+/*
+*   This function initialize the sudoku.board with the ILP solution.
+*/
+void update_board_values(double *sol, int DIM) {
+	int i, j, v;
+
+	/* Update the board.solution from the given solution array */
+	for (i = 0; i < DIM; i++) {
+		for (j = 0; j < DIM; j++) {
+			for (v = 0; v < DIM; v++) {
+				if (sol[i*DIM*DIM + j * DIM + v] == 1.0) {
+					sudoku.board[i][j].value = (v + 1);
+				}
+			}
+		}
+	}
+}
+
+/*
+*   This function initialize the matrice argument that was given with the ILP solution.
+*/
+void update_arg_matrice(int **matrice, double *sol, int DIM) {
+	int i, j, v;
+
+	/* Update the board.solution from the given solution array */
+	for (i = 0; i < DIM; i++) {
+		for (j = 0; j < DIM; j++) {
+			for (v = 0; v < DIM; v++) {
+				if (sol[i*DIM*DIM + j * DIM + v] == 1.0) {
+					matrice[i][j] = (v + 1);
+				}
+			}
+		}
+	}
+}
 
 /* TODO: document 
 	TODO: break to little functions 
