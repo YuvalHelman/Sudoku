@@ -23,14 +23,7 @@ int is_board_erronous() {
 	return false;
 }
 
-int valid_value(int row_index, int col_index, int value) {
-	if (value == 0) {
-		return true;
-	}
-	return check_row(row_index, col_index, value) &&
-		check_col(row_index, col_index, value) &&
-		check_block(row_index, col_index, value);
-}
+
 
 
 /* checks if the value can be place in the row */
@@ -76,11 +69,15 @@ int check_block(int row_index, int col_index, int value) {
 	return true;
 }
 
-void update_errors(int row_index, int col_index) {
-	update_errors_row(row_index, col_index);
-	update_errors_col(row_index, col_index);
-	update_errors_block(row_index, col_index);
+int valid_value(int row_index, int col_index, int value) {
+	if (value == 0) {
+		return true;
+	}
+	return check_row(row_index, col_index, value) &&
+		check_col(row_index, col_index, value) &&
+		check_block(row_index, col_index, value);
 }
+
 
 
 /* checks if the value can be place in the row */
@@ -125,6 +122,11 @@ void update_errors_block(int row_index, int col_index) {
 }
 
 
+void update_errors(int row_index, int col_index) {
+	update_errors_row(row_index, col_index);
+	update_errors_col(row_index, col_index);
+	update_errors_block(row_index, col_index);
+}
 
 void update_board_errors() {
 	int i, j, board_len;

@@ -51,7 +51,7 @@ int main() {
 	/* Initializing basic utilities for starting the game */
 	initialize_list_parameters();
 	sudoku.mark_errors = true; /* the default value is 1 */
-	srand(time(NULL));
+	srand(4);//todo: change to null
 
 
 	/* initialize_test_board(); /* test board for testing stuff ... add the function for different boards */

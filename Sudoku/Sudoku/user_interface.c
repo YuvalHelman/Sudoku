@@ -23,6 +23,9 @@
  *			Private Helper functions:
  */
 
+
+void print_board();
+
 /*
 *	The Function prints a message accordingly to its arguments regarding a recent redo change in the board.
 *	The row\column arguments are the board locations (not the ones we want to print)
@@ -32,6 +35,7 @@
 *	prev_val: the value that was previously in the cell that has been updated
 *	updated_val: the value that is being updated to.
 */
+
 void redo_print(int row, int column, int prev_val, int updated_val) {
 	if (updated_val == 0) {
 		if (prev_val == 0) {
@@ -641,8 +645,7 @@ void mark_errors(char* value) {
 *	fixed cells are printed with a dot before the number.
 *
 */
-void print_board() {
-
+void print_board(){
 	/* variables declarations */
 	int i, j, board_length;
 	board_length = sudoku.block_col_length * sudoku.block_row_length;
@@ -1041,8 +1044,7 @@ int hint(int col_index, int row_index) {
 		printf("Error: cell already contains a value\n");
 		return ;
 	}
-	if (
-		is_there_a_solution(NULL, fill_values_not_solution) == true) {
+	if (is_there_a_solution(NULL, fill_values_not_solution) == true) {
 		printf("Hint: set cell to %d\n", sudoku.board[row_index_board][col_index_board].solution);
 		return true;
 	}
