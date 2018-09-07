@@ -4,8 +4,6 @@
 
 #include "aux_main.h"
 
-/* TODO: document this one */
-
 
 /*
 *	The function checks if there are any errors on the current board.

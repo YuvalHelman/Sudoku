@@ -11,7 +11,7 @@
  *	parser: check that input's with tabs\spaces\(\n) are accepted like they should be.
  *  in Solve mode the user may only enter (or edit) values into cells that are not
 	fixed, i.e., they were not part of the original puzzle. In Edit mode, the user may enter values
-	into any cell.
+	into any cell. IDO, please check that it works that way.
 *
 *
  ***/
