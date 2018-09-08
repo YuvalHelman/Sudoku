@@ -4,6 +4,8 @@
 #include <string.h>
 #include <errno.h>
 
+#define DEFAULT_BASE 10
+
 /* Global Variables: */
 sudoku_t sudoku = { 0 }; /* All fields initialized to 0.
 						 game_mode is also 0 (which is init) */
@@ -82,26 +84,35 @@ void update_num_of_filled_cells(int prev_val, int updated_val) {
 	/* else, if changed to same value.. nothing changes regarding the num_of_filled_cells */
 }
 
-int str_to_num(const char *value) {
+int str_to_num(const char *value, int* returned_integer) {
 	int i, str_as_int;
+	char* endptr;
 
 	if (value == NULL) {
-		return FAILURE;
+		return false;
 	}
 
 	errno = 0;
-	str_as_int = (int)(strtol(value, NULL, 10));
+	str_as_int = (int)(strtol(value, &endptr, DEFAULT_BASE));
 
-	if (errno == ERANGE || errno == EINVAL || errno != 0) {
-		perror("strtol function failed. exiting\n");
+	if ((errno == ERANGE && (str_as_int == LONG_MAX || str_as_int == LONG_MIN))
+		|| (errno != 0 && str_as_int == 0)) {
+		perror("Error in converting input to a valid number.");
 		exit(EXIT_FAILURE);
 	}
 
-	if (str_as_int == 0 && strcmp(value, "0") != 0 ) {
-		return FAILURE;
+	if (endptr == value) {
+		perror("Error in converting input to a valid number - No digits were found.");
+		exit(EXIT_FAILURE);
 	}
-	
-	return str_as_int;
+
+	if (*endptr != '\0') {      /* non integer numbers */
+		printf("ERROR: invalid command\n"); /* case b */
+		return false;
+	}
+
+	(*returned_integer) = str_as_int;
+	return true;
 }
 
 void reset_sudoku_board_values() {

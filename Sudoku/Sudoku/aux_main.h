@@ -83,13 +83,16 @@ void update_num_of_filled_cells(int prev_val, int updated_val);
 
 
 /*
-*	This function convert string to an integer
-*	
-*	@value - a represanting string of the number.
+*	This function convert a string to an integer using the strtol function.
 *
-*	@return: the interger value of the string.
+*	@value - a represanting string of the number.
+*	@returned_integer - a pointer to an integer that will be the returned value if the function suceeded.
+*
+*	@return: true(1) when the function succeeded.
+*			 false(0) otherwise.
 */
-int str_to_num(const char* value);
+int str_to_num(const char* value, int* returned_integer);
+
 
 
 
