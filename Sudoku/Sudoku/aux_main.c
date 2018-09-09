@@ -102,12 +102,7 @@ int str_to_num(const char *value, int* returned_integer) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (endptr == value) {
-		perror("Error in converting input to a valid number - No digits were found.");
-		exit(EXIT_FAILURE);
-	}
-
-	if (*endptr != '\0') {      /* non integer numbers */
+	if (*endptr != '\0' || endptr == value) {
 		printf("ERROR: invalid command\n"); /* case b */
 		return false;
 	}
