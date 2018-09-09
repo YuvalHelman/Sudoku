@@ -612,16 +612,16 @@ int Edit(char* filepath) {
 *
 */
 void mark_errors(char* value) {
-	int val_integer;
+	int val_integer, ret_val;
 
 	if(  strcmp(value, "1") != 0 
 		&& strcmp(value, "0") != 0  ) {
 		printf("Error: the value should be 0 or 1\n");
 	}
 	else {
-		val_integer = str_to_num(value);
+		ret_val = str_to_num(value, &val_integer);
 
-		if (val_integer != FAILURE) {
+		if (ret_val != false) {
 			sudoku.mark_errors = val_integer;
 		}
 	}
@@ -1194,7 +1194,7 @@ int user_command(char* buffer) {
 	/* */
 	sudokuCommands sudoku_command;
 	char *xchar, *ychar, *zchar, *command, character;
-	int xchar_asInt, ychar_asInt, zchar_asInt, DIM;
+	int xchar_asInt, ychar_asInt, zchar_asInt, DIM, ret;
 	command = strtok(buffer, " \t\r\n");
 	xchar = strtok(NULL, " \t\r\n");
 	ychar = strtok(NULL, " \t\r\n");
@@ -1203,9 +1203,6 @@ int user_command(char* buffer) {
 		return EXIT_SUCCESS; 	/* checks for empty line */
 	}
 	sudoku_command = str2enum(command);
-	xchar_asInt = str_to_num(xchar);
-	ychar_asInt = str_to_num(ychar);
-	zchar_asInt = str_to_num(zchar);
 	switch (sudoku_command)
 	{
 	case solve_command:
@@ -1220,7 +1217,7 @@ int user_command(char* buffer) {
 		return Edit(xchar);
 		break;
 	case mark_errors_command:
-		if (sudoku.game_mode != solve || (!xchar) ) {
+		if (sudoku.game_mode != solve || (!xchar)) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
 		else {
@@ -1239,7 +1236,9 @@ int user_command(char* buffer) {
 		if (sudoku.game_mode == init || !xchar || !ychar || !zchar) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
-		else {
+		else if (str_to_num(xchar, &xchar_asInt) != false &&
+			str_to_num(ychar, &ychar_asInt) != false &&
+			str_to_num(zchar, &zchar_asInt) != false) {
 			set(xchar_asInt, ychar_asInt, zchar_asInt);
 		}
 		break;
@@ -1253,7 +1252,8 @@ int user_command(char* buffer) {
 	case generate_command:
 		if (sudoku.game_mode != edit || !xchar || !ychar)
 			printf("ERROR: invalid command\n"); /* case b */
-		else {
+		else if (str_to_num(xchar, &xchar_asInt) != false &&
+			str_to_num(ychar, &ychar_asInt) != false) {
 			generate(xchar_asInt, ychar_asInt);
 		}
 		break;
@@ -1282,7 +1282,8 @@ int user_command(char* buffer) {
 	case hint_command:
 		if (sudoku.game_mode != solve || !xchar || !ychar)
 			printf("ERROR: invalid command\n"); /* case b */
-		else {
+		else if (str_to_num(xchar, &xchar_asInt) != false &&
+			str_to_num(ychar, &ychar_asInt) != false) {
 			hint(xchar_asInt, ychar_asInt);
 		}
 		break;
