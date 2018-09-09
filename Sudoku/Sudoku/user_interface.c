@@ -15,10 +15,6 @@
 #include "stack.h"
 
 
-/*
-*			functions declarations for dependancies.
-*/
-void print_board();
 
 
 /*
@@ -36,10 +32,10 @@ void print_board();
 *	The Function prints a message accordingly to its arguments regarding a recent redo change in the board.
 *	The row\column arguments are the board locations (not the ones we want to print)
 *
-*	row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
-*	column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
-*	prev_val: the value that was previously in the cell that has been updated
-*	updated_val: the value that is being updated to.
+*	@row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
+*	@column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
+*	@prev_val: the value that was previously in the cell that has been updated
+*	@updated_val: the value that is being updated to.
 */
 
 void redo_print(int row, int column, int prev_val, int updated_val) {
@@ -69,10 +65,10 @@ void redo_print(int row, int column, int prev_val, int updated_val) {
 *	The Function prints a message accordingly to its arguments regarding a recent undo change in the board.
 *	The row\column arguments are the board locations (not the ones we want to print)
 *
-*	row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
-*	column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
-*	prev_val: the value that was previously in the cell that has been updated
-*	updated_val: the value that is being updated to.
+*	@row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
+*	@column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
+*	@prev_val: the value that was previously in the cell that has been updated
+*	@updated_val: the value that is being updated to.
 */
 void undo_print(int row, int column, int prev_val, int updated_val) {
 	if (updated_val == 0) {
@@ -114,9 +110,9 @@ void separator_row() {
 /*
 *	The function free's an integer matrice according to the board_size given.
 *
-*	board: the matrice that should be free'd by the function.
-*	block_col_len: the board's block column length
-*	block_row_len: the board's block row length
+*	@board: the matrice that should be free'd by the function.
+*	@block_col_len: the board's block column length
+*	@block_row_len: the board's block row length
 *
 *	returns: EXIT_SUCCESS(0) on success.
 */
@@ -140,10 +136,10 @@ int free_int_matrix(int** board, int block_col_len, int block_row_len) {
 /*
 *	The Function checks if there is only one valid value for cell [row_index][col_index].
 *
-*	row_index: the board's row of the cell
-*	col_index: the board's column of the cell
+*	@row_index: the board's row of the cell
+*	@col_index: the board's column of the cell
 *
-*	returns: the only one valid value (if exists) or 0 , if no value exists, or more then one value exists for this cell.
+*	@returns: the only one valid value (if exists) or 0 , if no value exists, or more then one value exists for this cell.
 */
 int one_possible_value(int row_index, int col_index) {
 	int i, count, board_length, value;
@@ -165,7 +161,7 @@ int one_possible_value(int row_index, int col_index) {
 /*
 *	The function checks if the board is empty (all 0's) or not
 *
-*   returns: true(1) when the board is empty
+*   @returns: true(1) when the board is empty
 *			 false(0) otherwise.
 */
 int is_board_empty() {
@@ -191,10 +187,10 @@ int is_board_empty() {
 *	relevant info for the "autofill" command.
 *	If the argument given is "NULL", the sudoku.board is already initialized and only a node is needed to be added to the list.
 *
-*	temp_matrice_values: a pointer to the temporary matrice with the values that has been changed.
+*	@temp_matrice_values: a pointer to the temporary matrice with the values that has been changed.
 *						 (every cell which has a value other then 0 has been changed).
 *
-*   returns: EXIT_SUCCESS(0) on successfuly adding the node.
+*   @returns:@ EXIT_SUCCESS(0) on successfuly adding the node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int update_board_and_list(int **temp_matrice_values) {
@@ -260,10 +256,10 @@ int update_board_and_list(int **temp_matrice_values) {
 *	then uses ILP to solve the board, and then removes all but 'num_of_cells_to_keep' cells in the board.
 *	adds a new Node to the move_list when successful.
 *
-*	num_of_cells_to_fill: number of cells to fill before solving with ILP
-*	num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
+*	@num_of_cells_to_fill: number of cells to fill before solving with ILP
+*	@num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
 *
-*	returns: a pointer to the new board on success.
+*	@returns: a pointer to the new board on success.
 *	    	 on any error returns EXIT_FAILURE(1) and prints the error.
 *			 when ILP fails or a cell has no valid values, return NO_SOLUTION(2).
 */
@@ -346,7 +342,9 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 }
 
 
-/* TODO: document */
+/*
+*	The function checks if the game board is finished and correct, and if it is, the sudoku parameters initilaized
+*/
 void board_finished_check() {
 	int num_of_cells_in_board, board_len;
 

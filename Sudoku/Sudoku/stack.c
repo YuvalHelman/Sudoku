@@ -128,8 +128,6 @@ int set_reset_save_the_value2(int value, int row_index, int col_index) {
 	if (valid_value(row_index, col_index, value)) {
 		push(row_index, col_index, value);
 		sudoku.board[row_index][col_index].value = value;
-		printf("INSERT: row_index = %d, col_index = %d, value = %d \n", row_index, col_index, value);
-		print_board();
 		return true;
 	}
 	return false;
