@@ -90,7 +90,7 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 	int		  DIM; /* The board dimensions */
 	int       i; /* rows */
 	int		  j; /* Columns */
-	int		  v, ig, jg, count, k;
+	int		  v, ig, jg, count;
 	int b_col_l, b_row_l;
 
 	b_col_l = sudoku.block_col_length;

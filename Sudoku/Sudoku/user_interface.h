@@ -19,28 +19,10 @@ typedef enum sudokucomm {solve_command, edit_command, mark_errors_command,
 
 
 
-static struct abc_t{
+struct abc_t{
 	sudokuCommands val;
 	const char *str;
-} conversion[] = {
-	{ 0, "solve" },
-	{ 1, "edit" },
-	{ 2, "mark_errors" },
-	{ 3, "print_board" },
-	{ 4, "set" },
-	{ 5, "validate" },
-	{ 6, "generate" },
-	{ 7, "undo" },
-	{ 8, "redo" },
-	{ 9, "save" },
-	{ 10, "hint" },
-	{ 11, "num_solutions" },
-	{ 12, "autofill" },
-	{ 13, "reset" },
-	{ 14, "exit" },
-	{ 15, "error_command" }
 };
-
 
 /*
 *	The Function handles the user's input from stdin or files.

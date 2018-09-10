@@ -85,30 +85,23 @@ void update_num_of_filled_cells(int prev_val, int updated_val) {
 	/* else, if changed to same value.. nothing changes regarding the num_of_filled_cells */
 }
 
-int str_to_num(const char *value, int* returned_integer) {
-	int i, str_as_int;
-	char* endptr;
-
-	if (value == NULL) {
-		return false;
-	}
-
+int str_to_num(const char* value) {
+	int str_as_int;
 	errno = 0;
-	str_as_int = (int)(strtol(value, &endptr, DEFAULT_BASE));
-
-	if ((errno == ERANGE && (str_as_int == LONG_MAX || str_as_int == LONG_MIN))
-		|| (errno != 0 && str_as_int == 0)) {
-		perror("Error in converting input to a valid number.");
-		exit(EXIT_FAILURE);
+	if (value == NULL) {
+		return FAILURE;
 	}
-
-	if (*endptr != '\0' || endptr == value) {
-		printf("ERROR: invalid command\n"); /* case b */
-		return false;
+	str_as_int = (int)(strtol(value, NULL, 10));
+	if (errno == ERANGE) {
+		printf("strtol range error");
+		errno = 0;
+		return FAILURE;
 	}
-
-	(*returned_integer) = str_as_int;
-	return true;
+	if (strcmp(value, "0") != 0 && str_as_int == 0) {
+		return FAILURE;
+	}
+	
+	return str_as_int;
 }
 
 void reset_sudoku_board_values() {
@@ -122,4 +115,21 @@ void reset_sudoku_board_values() {
 		}
 	}
 
+}
+
+int free_int_matrix(int** board, int block_col_len, int block_row_len) {
+	int board_size, i;
+
+	if (board == NULL) {
+		return EXIT_SUCCESS;
+	}
+
+	board_size = block_col_len * block_row_len;
+
+	for (i = 0; i < board_size; i++) {
+		free(board[i]);
+	}
+	free(board);
+
+	return EXIT_SUCCESS;
 }

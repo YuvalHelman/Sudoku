@@ -81,7 +81,7 @@ int valid_value(int row_index, int col_index, int value) {
 
 
 /* checks if the value can be place in the row */
-void update_errors_col(int row_index, int col_index) {
+void update_errors_col(int col_index) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 
@@ -93,7 +93,7 @@ void update_errors_col(int row_index, int col_index) {
 }
 
 /* checks if the value can be place in the col */
-void update_errors_row(int row_index, int col_index) {
+void update_errors_row(int row_index) {
 	int i, board_length;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 
@@ -123,8 +123,8 @@ void update_errors_block(int row_index, int col_index) {
 
 
 void update_errors(int row_index, int col_index) {
-	update_errors_row(row_index, col_index);
-	update_errors_col(row_index, col_index);
+	update_errors_row(row_index);
+	update_errors_col(col_index);
 	update_errors_block(row_index, col_index);
 }
 

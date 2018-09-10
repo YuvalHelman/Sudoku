@@ -1,8 +1,11 @@
+
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "file_manipulation.h"
 #include "aux_main.h"
+
 
 
 int save_to_file(FILE* fd){

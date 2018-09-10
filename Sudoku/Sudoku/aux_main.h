@@ -86,14 +86,21 @@ void update_num_of_filled_cells(int prev_val, int updated_val);
 *	This function convert a string to an integer using the strtol function.
 *
 *	@value - a represanting string of the number.
-*	@returned_integer - a pointer to an integer that will be the returned value if the function suceeded.
 *
-*	@return: true(1) when the function succeeded.
-*			 false(0) otherwise.
+*	@return: the value if everything worked fine, otherwise -1.
 */
-int str_to_num(const char* value, int* returned_integer);
+int str_to_num(const char* value);
 
-
+/*
+*	The function free's an integer matrice according to the board_size given.
+*
+*	@board: the matrice that should be free'd by the function.
+*	@block_col_len: the board's block column length
+*	@block_row_len: the board's block row length
+*
+*	returns: EXIT_SUCCESS(0) on success.
+*/
+int free_int_matrix(int** board, int block_col_len, int block_row_len);
 
 
 #endif /* AUX_MAIN */

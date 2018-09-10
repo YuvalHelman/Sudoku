@@ -57,14 +57,14 @@ int check_block(int row_index, int col_index, int value);
 * @param row_index - index x.
 * @param col_index - index y.
 */
-void update_errors_row(int row_index, int col_index);
+void update_errors_row(int row_index);
 
 /*
 * The Function update the mark_error for all the cells that have a *COL* connection with cell[x][y].
 * @param row_index - index x.
 * @param col_index - index y.
 */
-void update_errors_col(int row_index, int col_index);
+void update_errors_col(int col_index);
 
 /*
 * The Function update the mark_error for all the cells that have a *BLOCK* connection with cell[x][y].

@@ -42,6 +42,9 @@
     <ClCompile Include="solver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ILP.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user_interface.h">
@@ -56,10 +59,13 @@
     <ClInclude Include="move_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="minunit.h">
+    <ClInclude Include="stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stack.h">
+    <ClInclude Include="gurobi_c.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="solver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

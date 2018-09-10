@@ -3,15 +3,15 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "stack.h"
 #include "aux_main.h"
 #include "game_logic.h"
 #include "user_interface.h"
+#include "stack.h"
 
 
 struct node_stack *top_node = NULL;
 
-
+int number_of_solutions();
 /* to insert elements in stack*/
 void push(int row_index, int col_index, int value)
 {
@@ -60,6 +60,7 @@ void destroy()
 {
 	struct node_stack *temp;
 	int *row_index, *col_index, *value;
+	value = col_index = row_index = 0;
 	temp = top_node;
 	while (temp!= NULL)
 	{
@@ -69,11 +70,25 @@ void destroy()
 	printf("stack destroyed\n");
 }
 
+int last_input_index(int *last_input_row, int *last_input_col) {
+	/* variables declarations */
+	int row_index, col_index, board_length;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
+	for (row_index = board_length - 1; row_index >= 0; row_index--) {
+		for (col_index = board_length - 1; col_index >= 0; col_index--) {
+			if (sudoku.board[row_index][col_index].value == 0) {
+				*last_input_row = row_index;
+				*last_input_col = col_index;
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
 
 int numberOfSolutions()  {
 	/* variables declarations */
-	int row_index, col_index, count, value, board_length, **temp_matrice_values;
-	int flag;
+	int row_index, col_index, count, board_length, **temp_matrice_values;
 	count = 0;
 	board_length = sudoku.block_col_length * sudoku.block_row_length;
 
@@ -112,19 +127,7 @@ int numberOfSolutions()  {
 	return count;
 }
 
-int set_reset_save_the_value(int *value, int row_index, int col_index) {
-	if (valid_value(row_index, col_index, *value)) {
-		push(row_index, col_index, *value);
-		sudoku.board[row_index][col_index].value = *value;
-		printf("INSERT: row_index = %d, col_index = %d, value = %d \n", row_index, col_index, *value);
-		print_board();
-		*value = 1;
-		return true;
-	}
-	return false;
-}
-
-int set_reset_save_the_value2(int value, int row_index, int col_index) {
+int set_reset_save_the_value(int value, int row_index, int col_index) {
 	if (valid_value(row_index, col_index, value)) {
 		push(row_index, col_index, value);
 		sudoku.board[row_index][col_index].value = value;
@@ -147,7 +150,7 @@ int number_of_solutions() {
 		while (col_index < board_length) {
 			if (sudoku.board[row_index][col_index].value == 0) {
 				while (value <= board_length) {
-					if (set_reset_save_the_value2(value, row_index, col_index)) {
+					if (set_reset_save_the_value(value, row_index, col_index)) {
 						value = 1;
 						if (row_index == last_input_row && col_index == last_input_col) {
 							pop(&row_index, &col_index, &value);
@@ -175,20 +178,6 @@ int number_of_solutions() {
 		}
 		row_index++;
 	}
+	return count;
 }
 
-int last_input_index(int *last_input_row, int *last_input_col) {
-	/* variables declarations */
-	int row_index, col_index, board_length;
-	board_length = sudoku.block_col_length * sudoku.block_row_length;
-	for (row_index = board_length - 1; row_index >= 0; row_index--) {
-		for (col_index = board_length - 1; col_index >= 0; col_index--) {
-			if (sudoku.board[row_index][col_index].value == 0) {
-				*last_input_row = row_index;
-				*last_input_col = col_index;
-				return 0;
-			}
-		}
-	}
-	return 1;
-}

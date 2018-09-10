@@ -15,7 +15,24 @@
 #include "stack.h"
 
 
-
+struct abc_t conversion[] = {
+	{ 0, "solve" },
+{ 1, "edit" },
+{ 2, "mark_errors" },
+{ 3, "print_board" },
+{ 4, "set" },
+{ 5, "validate" },
+{ 6, "generate" },
+{ 7, "undo" },
+{ 8, "redo" },
+{ 9, "save" },
+{ 10, "hint" },
+{ 11, "num_solutions" },
+{ 12, "autofill" },
+{ 13, "reset" },
+{ 14, "exit" },
+{ 15, "error_command" }
+};
 
 /*
  *					Private (Static) functions - not available outside this source file.
@@ -107,31 +124,6 @@ void separator_row() {
 }
 
 
-/*
-*	The function free's an integer matrice according to the board_size given.
-*
-*	@board: the matrice that should be free'd by the function.
-*	@block_col_len: the board's block column length
-*	@block_row_len: the board's block row length
-*
-*	returns: EXIT_SUCCESS(0) on success.
-*/
-int free_int_matrix(int** board, int block_col_len, int block_row_len) {
-	int board_size, i;
-
-	if (board == NULL) {
-		return EXIT_SUCCESS;
-	}
-
-	board_size = block_col_len * block_row_len;
-
-	for (i = 0; i < board_size; i++) {
-		free(board[i]);
-	}
-	free(board);
-
-	return EXIT_SUCCESS;
-}
 
 /*
 *	The Function checks if there is only one valid value for cell [row_index][col_index].
@@ -264,8 +256,8 @@ int update_board_and_list(int **temp_matrice_values) {
 *			 when ILP fails or a cell has no valid values, return NO_SOLUTION(2).
 */
 int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
-	int i, j, rand_row, rand_col, rand_val, board_len, num_of_filled, rand_index;
-	int *optional_values, num_of_options, valid_value_flag, num_of_cells_in_board, fill_values_not_solution;
+	int i, rand_row, rand_col, board_len, num_of_filled, rand_index;
+	int *optional_values, num_of_options, num_of_cells_in_board, fill_values_not_solution;
 
 	board_len = sudoku.block_col_length * sudoku.block_row_length;
 	num_of_filled = 0;
@@ -611,19 +603,12 @@ int Edit(char* filepath) {
 *	 value: the integer which decides if errors should be marked or not
 *
 */
-void mark_errors(char* value) {
-	int val_integer, ret_val;
-
-	if(  strcmp(value, "1") != 0 
-		&& strcmp(value, "0") != 0  ) {
+void mark_errors(int value) {
+	if (value != 0 && value != 1) {
 		printf("Error: the value should be 0 or 1\n");
 	}
 	else {
-		ret_val = str_to_num(value, &val_integer);
-
-		if (ret_val != false) {
-			sudoku.mark_errors = val_integer;
-		}
+		sudoku.mark_errors = value;
 	}
 }
 
@@ -999,21 +984,21 @@ int hint(int col_index, int row_index) {
 		row_index < 1 || row_index > board_len ||
 		col_index < 1 || col_index > board_len) {
 		printf("Error: value not in range 1-%d\n", board_len);
-		return ;
+		return false;
 	}
 	if (is_board_erronous()) {
 		printf("Error: board contains erroneous values\n");
-		return ;
+		return false;
 	}
 	row_index_board = row_index - 1;
 	col_index_board = col_index - 1;
 	if (sudoku.board[row_index_board][col_index_board].is_fixed) { /* it is fixed.*/
 		printf("Error: cell is fixed\n");
-		return ;
+		return false;
 	}
 	if (sudoku.board[row_index_board][col_index_board].value != 0) { /* it has a value.*/
 		printf("Error: cell already contains a value\n");
-		return ;
+		return false;
 	}
 	if (is_there_a_solution(NULL, fill_values_not_solution) == true) {
 		printf("Hint: set cell to %d\n", sudoku.board[row_index_board][col_index_board].solution);
@@ -1051,7 +1036,7 @@ int num_solutions() {
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int autofill() {
-	int updated_val, add_node_flag, num_of_cells;
+	int num_of_cells;
 	int row_index, col_index, board_length, value, **temp_matrice_values;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
 	num_of_cells = board_length * board_length;
@@ -1193,8 +1178,8 @@ sudokuCommands str2enum(const char *str)
 int user_command(char* buffer) {
 	/* */
 	sudokuCommands sudoku_command;
-	char *xchar, *ychar, *zchar, *command, character;
-	int xchar_asInt, ychar_asInt, zchar_asInt, DIM, ret;
+	char *xchar, *ychar, *zchar, *command;
+	int xchar_asInt, ychar_asInt, zchar_asInt;
 	command = strtok(buffer, " \t\r\n");
 	xchar = strtok(NULL, " \t\r\n");
 	ychar = strtok(NULL, " \t\r\n");
@@ -1203,6 +1188,9 @@ int user_command(char* buffer) {
 		return EXIT_SUCCESS; 	/* checks for empty line */
 	}
 	sudoku_command = str2enum(command);
+	xchar_asInt = str_to_num(xchar);
+	ychar_asInt = str_to_num(ychar);
+	zchar_asInt = str_to_num(zchar);
 	switch (sudoku_command)
 	{
 	case solve_command:
@@ -1221,7 +1209,7 @@ int user_command(char* buffer) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
 		else {
-			mark_errors(xchar);
+			mark_errors(xchar_asInt);
 		}
 		break;
 	case print_board_command:
@@ -1236,9 +1224,7 @@ int user_command(char* buffer) {
 		if (sudoku.game_mode == init || !xchar || !ychar || !zchar) {
 			printf("ERROR: invalid command\n"); /* case b */
 		}
-		else if (str_to_num(xchar, &xchar_asInt) != false &&
-			str_to_num(ychar, &ychar_asInt) != false &&
-			str_to_num(zchar, &zchar_asInt) != false) {
+		else{
 			set(xchar_asInt, ychar_asInt, zchar_asInt);
 		}
 		break;
@@ -1252,8 +1238,7 @@ int user_command(char* buffer) {
 	case generate_command:
 		if (sudoku.game_mode != edit || !xchar || !ychar)
 			printf("ERROR: invalid command\n"); /* case b */
-		else if (str_to_num(xchar, &xchar_asInt) != false &&
-			str_to_num(ychar, &ychar_asInt) != false) {
+		else {
 			generate(xchar_asInt, ychar_asInt);
 		}
 		break;
@@ -1282,8 +1267,7 @@ int user_command(char* buffer) {
 	case hint_command:
 		if (sudoku.game_mode != solve || !xchar || !ychar)
 			printf("ERROR: invalid command\n"); /* case b */
-		else if (str_to_num(xchar, &xchar_asInt) != false &&
-			str_to_num(ychar, &ychar_asInt) != false) {
+		else {
 			hint(xchar_asInt, ychar_asInt);
 		}
 		break;
