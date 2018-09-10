@@ -29,44 +29,44 @@ Error: no moves to undo
 Enter your command:
 Error: no moves to redo
 Enter your command:
-Cell <1,1> set to 7
-Cell <2,1> set to 3
-Cell <7,1> set to 1
-Cell <8,1> set to 4
-Cell <2,2> set to 1
-Cell <6,2> set to 4
-Cell <7,2> set to 5
-Cell <1,3> set to 5
-Cell <3,3> set to 7
-Cell <4,3> set to 4
-Cell <6,3> set to 1
-Cell <1,4> set to 4
-Cell <4,4> set to 5
-Cell <5,4> set to 6
-Cell <1,5> set to 1
-Cell <3,5> set to 6
-Cell <5,5> set to 2
-Cell <6,5> set to 3
-Cell <7,5> set to 4
-Cell <2,6> set to 7
+Cell <3,1> set to 4
+Cell <6,1> set to 6
+Cell <1,2> set to 1
+Cell <3,2> set to 8
+Cell <5,2> set to 3
+Cell <8,2> set to 7
+Cell <2,3> set to 2
+Cell <3,3> set to 6
+Cell <5,3> set to 7
+Cell <7,3> set to 8
+Cell <1,4> set to 7
+Cell <2,4> set to 1
+Cell <3,4> set to 3
+Cell <4,4> set to 8
+Cell <2,5> set to 7
+Cell <6,5> set to 8
+Cell <7,5> set to 2
 Cell <3,6> set to 2
-Cell <5,6> set to 4
+Cell <5,6> set to 1
+Cell <6,6> set to 3
+Cell <7,6> set to 7
 Cell <8,6> set to 5
-Cell <5,7> set to 7
-Cell <6,7> set to 5
-Cell <8,7> set to 1
-Cell <2,8> set to 4
-Cell <3,8> set to 5
+Cell <3,7> set to 1
+Cell <5,7> set to 4
+Cell <6,7> set to 7
+Cell <1,8> set to 8
+Cell <6,8> set to 2
+Cell <8,8> set to 1
 -------------------------------------
-|  7   3 |        |        |  1   4 |
-|      1 |        |      4 |  5     |
-|  5     |  7   4 |      1 |        |
-|  4     |      5 |  6     |        |
+|        |  4     |      6 |        |
+|  1*    |  8*    |  3     |      7 |
+|      2 |  6     |  7     |  8     |
+|  7   1*|  3   8*|        |        |
 -------------------------------------
-|  1     |  6     |  2   3 |  4     |
-|      7 |  2     |  4     |      5 |
-|        |        |  7   5 |      1 |
-|      4 |  5     |        |        |
+|      7 |        |      8 |  2     |
+|        |  2     |  1   3 |  7   5 |
+|        |  1     |  4   7 |        |
+|  8     |        |      2 |      1 |
 -------------------------------------
 Enter your command:
 Enter your command:
@@ -74,31 +74,18 @@ ERROR: invalid command
 Enter your command:
 ERROR: invalid command
 Enter your command:
-Validation passed: board is solvable
-------
-------Board Solution:
--------------------------------------
-|  7   3 |  8   6 |  5   2 |  1   4 |
-|  6   1 |  3   2 |  8   4 |  5   7 |
-|  5   8 |  7   4 |  3   1 |  2   6 |
-|  4   2 |  1   5 |  6   7 |  8   3 |
--------------------------------------
-|  1   5 |  6   7 |  2   3 |  4   8 |
-|  3   7 |  2   1 |  4   8 |  6   5 |
-|  2   6 |  4   8 |  7   5 |  3   1 |
-|  8   4 |  5   3 |  1   6 |  7   2 |
--------------------------------------
+Error: board contains erroneous values
 Enter your command:
 -------------------------------------
-|  7   3 |        |        |  1   4 |
-|      1 |        |      4 |  5     |
-|  5     |  7   4 |      1 |        |
-|  4     |      5 |  6     |        |
+|        |  4     |      6 |        |
+|  1*    |  8*    |  3     |      7 |
+|      2 |  6     |  7     |  8     |
+|  7   1*|  3   8*|        |        |
 -------------------------------------
-|  1     |  6*  6*|  2   3 |  4     |
-|      7 |  2     |  4     |      5 |
-|        |        |  7   5 |      1 |
-|      4 |  5     |        |        |
+|      7 |      6 |      8 |  2     |
+|        |  2     |  1   3 |  7   5 |
+|        |  1     |  4   7 |        |
+|  8     |        |      2 |      1 |
 -------------------------------------
 Enter your command:
 Error: value not in range 0-8
@@ -106,53 +93,51 @@ Enter your command:
 Error: board contains erroneous values
 Enter your command:
 -------------------------------------
-|  7   3 |        |        |  1   4 |
-|      1 |        |      4 |  5     |
-|  5     |  7   4 |      1 |        |
-|  4     |      5 |  6     |        |
+|        |  4     |      6 |        |
+|  1*    |  8*    |  3     |      7 |
+|      2 |  6     |  7     |  8     |
+|  7   1*|  3   8*|        |        |
 -------------------------------------
-|  1     |  6*    |  2   3 |  4     |
-|      7 |  2     |  4     |      5 |
-|        |        |  7   5 |      1 |
-|      4 |  5     |        |        |
+|      7 |        |      8 |  2     |
+|        |  2     |  1   3 |  7   5 |
+|        |  1     |  4   7 |        |
+|  8     |        |      2 |      1 |
 -------------------------------------
 Undo 4,5: from 6 to _
 Enter your command:
 ERROR: invalid command
 Enter your command:
 -------------------------------------
-|  5.  3.|  7.  6.|  8.  2.|  4.  1.|
-|  7.  4.|  1.  5.|  3.  6.|  2.  8.|
-|  1.  2.|  8.  4.|  7.  5.|  6.  3.|
-|  8.  6.|  3.  2.|  1.  4.|  5.  7.|
+|  6.  3.|  7.  1.|  8.  5.|  2.  4.|
+|  5.  8.|  2.  4.|  7.  6.|  3.  1.|
+|  7.  6.|  1.  3.|  2.  4.|  8.  5.|
+|  8.  5.|  4.  2.|  1.  3.|  7.  6.|
 -------------------------------------
-|  6.  1.|  2.  8.|  5.  7.|  3.  4.|
-|  2.  7.|      3.|  4.  8.|  1.  5.|
-|  3.  5.|  4.  7.|  2.  1.|      6.|
-|  4.  8.|  5.  1.|  6.  3.|  7.  2.|
+|      2.|  5.  7.|  6.  8.|  1.  3.|
+|  3.  1.|  6.  8.|  4.  7.|  5.  2.|
+|  2.  7.|  3.  6.|  5.  1.|  4.  8.|
+|  1.  4.|  8.    |  3.  2.|  6.  7.|
 -------------------------------------
 Enter your command:
-Error: cell is fixed
-Enter your command:
-Board reset
-Enter your command:
-Cell <3,6> set to 6
-Cell <7,7> set to 8
--------------------------------------
-|  5.  3.|  7.  6.|  8.  2.|  4.  1.|
-|  7.  4.|  1.  5.|  3.  6.|  2.  8.|
-|  1.  2.|  8.  4.|  7.  5.|  6.  3.|
-|  8.  6.|  3.  2.|  1.  4.|  5.  7.|
--------------------------------------
-|  6.  1.|  2.  8.|  5.  7.|  3.  4.|
-|  2.  7.|  6   3.|  4.  8.|  1.  5.|
-|  3.  5.|  4.  7.|  2.  1.|  8   6.|
-|  4.  8.|  5.  1.|  6.  3.|  7.  2.|
--------------------------------------
+Error: board contains erroneous values
 Enter your command:
 Board reset
 Enter your command:
 -------------------------------------
+|  6.  3.|  7.  1.|  8.  5.|  2.  4.|
+|  5.  8.|  2.  4.|  7.  6.|  3.  1.|
+|  7.  6.|  1.  3.|  2.  4.|  8.  5.|
+|  8.  5.|  4.  2.|  1.  3.|  7.  6.|
+-------------------------------------
+|      2.|  5.  7.|  6.  8.|  1.  3.|
+|  3.  1.|  6.  8.|  4.  7.|  5.  2.|
+|  2.  7.|  3.  6.|  5.  1.|  4.  8.|
+|  1.  4.|  8.    |  3.  2.|  6.  7.|
+-------------------------------------
+Enter your command:
+Board reset
+Enter your command:
+-------------------------------------
 |        |        |        |        |
 |        |        |        |        |
 |        |        |        |        |
@@ -164,108 +149,106 @@ Enter your command:
 |        |        |        |        |
 -------------------------------------
 Enter your command:
-Cell <1,1> set to 4
-Cell <2,1> set to 8
-Cell <3,1> set to 5
-Cell <4,1> set to 7
-Cell <5,1> set to 6
-Cell <6,1> set to 2
-Cell <7,1> set to 3
-Cell <8,1> set to 1
-Cell <1,2> set to 1
-Cell <2,2> set to 7
-Cell <3,2> set to 3
-Cell <4,2> set to 6
+Cell <1,1> set to 8
+Cell <2,1> set to 1
+Cell <3,1> set to 4
+Cell <4,1> set to 5
+Cell <5,1> set to 7
+Cell <6,1> set to 3
+Cell <7,1> set to 2
+Cell <8,1> set to 6
+Cell <1,2> set to 3
+Cell <2,2> set to 6
+Cell <3,2> set to 2
+Cell <4,2> set to 7
 Cell <5,2> set to 8
-Cell <6,2> set to 5
-Cell <7,2> set to 2
-Cell <8,2> set to 4
-Cell <1,3> set to 5
+Cell <6,2> set to 4
+Cell <7,2> set to 5
+Cell <8,2> set to 1
 Cell <2,3> set to 2
-Cell <3,3> set to 1
+Cell <3,3> set to 3
 Cell <4,3> set to 8
-Cell <5,3> set to 4
-Cell <6,3> set to 3
-Cell <7,3> set to 6
-Cell <8,3> set to 7
-Cell <1,4> set to 3
-Cell <2,4> set to 6
-Cell <3,4> set to 2
-Cell <4,4> set to 4
-Cell <5,4> set to 1
-Cell <6,4> set to 7
+Cell <5,3> set to 6
+Cell <6,3> set to 1
+Cell <7,3> set to 7
+Cell <8,3> set to 4
+Cell <1,4> set to 1
+Cell <2,4> set to 4
+Cell <3,4> set to 7
+Cell <4,4> set to 6
+Cell <5,4> set to 3
+Cell <6,4> set to 5
 Cell <7,4> set to 8
-Cell <8,4> set to 5
-Cell <1,5> set to 6
-Cell <3,5> set to 7
-Cell <4,5> set to 1
-Cell <5,5> set to 2
-Cell <6,5> set to 4
-Cell <7,5> set to 5
-Cell <8,5> set to 8
-Cell <2,6> set to 1
-Cell <3,6> set to 6
-Cell <4,6> set to 5
-Cell <5,6> set to 3
+Cell <8,4> set to 2
+Cell <1,5> set to 4
+Cell <2,5> set to 8
+Cell <3,5> set to 5
+Cell <4,5> set to 3
+Cell <5,5> set to 1
+Cell <6,5> set to 2
+Cell <7,5> set to 6
+Cell <8,5> set to 7
+Cell <1,6> set to 2
+Cell <2,6> set to 7
+Cell <4,6> set to 1
+Cell <5,6> set to 4
 Cell <6,6> set to 8
-Cell <7,6> set to 4
-Cell <8,6> set to 2
-Cell <1,7> set to 2
-Cell <2,7> set to 4
-Cell <3,7> set to 8
-Cell <4,7> set to 3
+Cell <7,6> set to 3
+Cell <8,6> set to 5
+Cell <1,7> set to 7
+Cell <2,7> set to 3
+Cell <3,7> set to 1
+Cell <4,7> set to 2
 Cell <5,7> set to 5
-Cell <6,7> set to 1
-Cell <7,7> set to 7
-Cell <8,7> set to 6
-Cell <1,8> set to 8
+Cell <6,7> set to 6
+Cell <7,7> set to 4
+Cell <8,7> set to 8
+Cell <1,8> set to 6
 Cell <2,8> set to 5
-Cell <3,8> set to 4
-Cell <4,8> set to 2
-Cell <5,8> set to 7
-Cell <6,8> set to 6
+Cell <3,8> set to 8
+Cell <4,8> set to 4
+Cell <5,8> set to 2
+Cell <6,8> set to 7
 Cell <7,8> set to 1
 Cell <8,8> set to 3
 -------------------------------------
-|  4   8 |  5   7 |  6   2 |  3   1 |
-|  1   7 |  3   6 |  8   5 |  2   4 |
-|  5   2 |  1   8 |  4   3 |  6   7 |
-|  3   6 |  2   4 |  1   7 |  8   5 |
+|  8   1*|  4   5 |  7   3*|  2*  6 |
+|  3   6 |  2   7*|  8   4 |  5   1 |
+|      2 |  3   8 |  6   1 |  7   4 |
+|  1*  4 |  7*  6 |  3*  5 |  8   2*|
 -------------------------------------
-|  6     |  7   1 |  2   4 |  5   8 |
-|      1 |  6   5 |  3   8 |  4   2 |
-|  2   4 |  8   3 |  5   1 |  7   6 |
-|  8   5 |  4   2 |  7   6 |  1   3 |
+|  4   8 |  5   3 |  1   2*|  6   7 |
+|  2   7*|      1*|  4   8 |  3*  5 |
+|  7*  3 |  1*  2 |  5   6 |  4   8 |
+|  6   5 |  8   4 |  2*  7 |  1   3*|
 -------------------------------------
 Enter your command:
-Saved to: m1
+Error: board contains erroneous values
 Enter your command:
 -------------------------------------
-|  4.  8.|  5.  7.|  6.  2.|  3.  1.|
-|  1.  7.|  3.  6.|  8.  5.|  2.  4.|
-|  5.  2.|  1.  8.|  4.  3.|  6.  7.|
-|  3.  6.|  2.  4.|  1.  7.|  8.  5.|
+|  6.  3.|  7.  1.|  8.  5.|  2.  4.|
+|  5.  8.|  2.  4.|  7.  6.|  3.  1.|
+|  7.  6.|  1.  3.|  2.  4.|  8.  5.|
+|  8.  5.|  4.  2.|  1.  3.|  7.  6.|
 -------------------------------------
-|  6.    |  7.  1.|  2.  4.|  5.  8.|
-|      1.|  6.  5.|  3.  8.|  4.  2.|
-|  2.  4.|  8.  3.|  5.  1.|  7.  6.|
-|  8.  5.|  4.  2.|  7.  6.|  1.  3.|
+|      2.|  5.  7.|  6.  8.|  1.  3.|
+|  3.  1.|  6.  8.|  4.  7.|  5.  2.|
+|  2.  7.|  3.  6.|  5.  1.|  4.  8.|
+|  1.  4.|  8.    |  3.  2.|  6.  7.|
 -------------------------------------
 Enter your command:
 Error: cell is fixed
 Enter your command:
-Cell <2,5> set to 3
-Cell <1,6> set to 7
 -------------------------------------
-|  4.  8.|  5.  7.|  6.  2.|  3.  1.|
-|  1.  7.|  3.  6.|  8.  5.|  2.  4.|
-|  5.  2.|  1.  8.|  4.  3.|  6.  7.|
-|  3.  6.|  2.  4.|  1.  7.|  8.  5.|
+|  6.  3.|  7.  1.|  8.  5.|  2.  4.|
+|  5.  8.|  2.  4.|  7.  6.|  3.  1.|
+|  7.  6.|  1.  3.|  2.  4.|  8.  5.|
+|  8.  5.|  4.  2.|  1.  3.|  7.  6.|
 -------------------------------------
-|  6.  3 |  7.  1.|  2.  4.|  5.  8.|
-|  7   1.|  6.  5.|  3.  8.|  4.  2.|
-|  2.  4.|  8.  3.|  5.  1.|  7.  6.|
-|  8.  5.|  4.  2.|  7.  6.|  1.  3.|
+|      2.|  5.  7.|  6.  8.|  1.  3.|
+|  3.  1.|  6.  8.|  4.  7.|  5.  2.|
+|  2.  7.|  3.  6.|  5.  1.|  4.  8.|
+|  1.  4.|  8.    |  3.  2.|  6.  7.|
 -------------------------------------
 Enter your command:
 Enter your command:

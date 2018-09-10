@@ -6,7 +6,7 @@ GUROBI_COMP = -I/usr/local/lib/gurobi563/include
 GUROBI_LIB = -L/usr/local/lib/gurobi563/lib -lgurobi56
 
 all: $(OBJS) 
-	$(CC) $(OBJS) $(GUROBI_LIB) -o $@ -lm
+	$(CC) $(OBJS) $(GUROBI_LIB) -o $(EXEC) -lm
 	
 $(EXEC): $(OBJS)
 	$(CC) $(OBJS) $(GUROBI_LIB) -o $@ -lm
@@ -22,6 +22,8 @@ move_list.o: move_list.c move_list.h aux_main.h
 	$(CC) $(COMP_FLAGS) -c $*.c
 solver.o: solver.c solver.h gurobi_c.h aux_main.h game_logic.h
 	$(CC) $(COMP_FLAGS) $(GUROBI_COMP) -c $*.c
+stack.o: stack.c stack.h aux_main.h game_logic.h user_interface.h
+	$(CC) $(COMP_FLAGS) -c $*.c
 user_interface.o: user_interface.c user_interface.h game_logic.h move_list.h file_manipulation.h solver.h aux_main.h stack.h
 	$(CC) $(COMP_FLAGS) -c $*.c
 clean:
