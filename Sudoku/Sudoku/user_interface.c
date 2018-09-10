@@ -1036,10 +1036,8 @@ int num_solutions() {
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int autofill() {
-	int num_of_cells;
 	int row_index, col_index, board_length, value, **temp_matrice_values;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
-	num_of_cells = board_length * board_length;
 
 	temp_matrice_values = NULL;
 
@@ -1090,7 +1088,7 @@ int autofill() {
 */
 int reset() {
 
-	int num_of_values, i, j, row, col, prev, updated, board_len;
+	int num_of_values, i, j, row, col, prev, board_len;
 	node_vals* values_array;
 	int reset_flag;
 
@@ -1106,7 +1104,7 @@ int reset() {
 				row = values_array[i].row;
 				col = values_array[i].column;
 				prev = values_array[i].prev_val;
-				updated = values_array[i].updated_val;
+				/*updated = values_array[i].updated_val;*/
 
 				sudoku.board[row][col].value = prev; /* Update the board accordingly */
 			}
@@ -1160,7 +1158,7 @@ int Exit() {
 */
 sudokuCommands str2enum(const char *str)
 {
-	int j;
+	unsigned int j;
 	for (j = 0; j < sizeof(conversion) / sizeof(conversion[0]); ++j)
 		if (!strcmp(str, conversion[j].str))
 			return conversion[j].val;
@@ -1309,16 +1307,14 @@ int user_command(char* buffer) {
 *			Public functions: used outside this source file
 */
 
-//todo: max commend length try strlen()
+/*todo: max commend length try strlen()*/
 int get_command_and_parse() {
 	
-	int ret_command;
 	char command[MAX_COMMAND_SIZE];
 	char* fgets_ret; /* for EOF checking */
 
 
 	/* Get Commands and Play*/
-	ret_command = 0;
 	
 	
 	do {
@@ -1338,7 +1334,7 @@ int get_command_and_parse() {
 			return EXIT_FAILURE;
 		}
 
-		ret_command = user_command(command);
+		user_command(command);
 
 		
 

@@ -39,9 +39,6 @@ int node_delete(Node *node) {
 
 node_vals* redo_list(int* num_of_values) {
 	Node* curr_node;
-	int  board_size;
-
-	board_size = sudoku.block_col_length * sudoku.block_row_length;
 
 	if (sudoku.game_mode == init) {/* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
@@ -64,10 +61,8 @@ node_vals* redo_list(int* num_of_values) {
 
 node_vals* undo_list(int* num_of_values, int reset_flag) {
 	Node* curr_node;
-	int board_size;
 
 	curr_node = move_list->current_Node_move;
-	board_size = sudoku.block_col_length * sudoku.block_row_length;
 
 	if (sudoku.game_mode == init) { /* only available in edit/solve mode */
 		printf("ERROR: invalid command\n");
