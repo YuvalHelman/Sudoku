@@ -86,10 +86,16 @@ void update_num_of_filled_cells(int prev_val, int updated_val) {
 }
 
 int str_to_num(const char* value) {
-	int str_as_int;
+	int str_as_int, length, i;
 	errno = 0;
 	if (value == NULL) {
 		return FAILURE;
+	}
+	length = strlen(value);
+	for (i = 0; i < length; i++) {
+		if (value[i]<'0' || value[i]>'9') {
+			return FAILURE;
+		}
 	}
 	str_as_int = (int)(strtol(value, NULL, 10));
 	if (errno == ERANGE) {
