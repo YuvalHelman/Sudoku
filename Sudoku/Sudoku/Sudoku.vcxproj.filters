@@ -42,9 +42,6 @@
     <ClCompile Include="solver.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ILP.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user_interface.h">
