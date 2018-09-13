@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "game_logic.h"
 
-
+/* todo: wirte modol description */
 
 /* Private functions decleration */
 

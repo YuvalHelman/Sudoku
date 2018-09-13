@@ -8,6 +8,8 @@
 #include "user_interface.h"
 #include "stack.h"
 
+/* todo: wirte modol description */
+
 
 struct node_stack *top_node = NULL;
 
@@ -73,7 +75,7 @@ int numberOfSolutions() {
 			printf("This is a good board!\n");
 		else printf("The puzzle has more than 1 solution, try to edit it further\n");
 	}
-	else printf("The puzzle has 0 solutions.");
+	else printf("The puzzle has 0 solutions.\n");
 
 	return count;
 }
@@ -170,7 +172,7 @@ int number_of_solutions() {
 	count = row_index = col_index = 0;
 	value = 1;
 	board_length = sudoku.block_col_length * sudoku.block_row_length;
-	if (last_input_index(&last_input_row, &last_input_col)) {
+	if (!last_input_index(&last_input_row, &last_input_col)) {
 		return count;
 	}
 	while (row_index < board_length) {

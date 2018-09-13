@@ -309,7 +309,7 @@ int get_command_and_parse() {
 
 	char command[MAX_COMMAND_SIZE];
 	char* fgets_ret; /* for EOF checking */
-
+	char c;
 
 					 /* Get Commands and Play*/
 
@@ -331,7 +331,15 @@ int get_command_and_parse() {
 			return EXIT_FAILURE;
 		}
 
-		user_command(command);
+		if (command[strlen(command) - 1] == '\n') {
+			user_command(command);
+		}
+		else
+		{
+			printf("ERROR: invalid command. max length 256.\n");
+			/* clear stdin */
+			while ((c = getchar()) != '\n' && c != EOF);
+		}
 
 
 
@@ -556,7 +564,7 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	}
 
 	/*Solve the matrice using ILP */
-		if (is_there_a_solution(NULL, fill_values_not_solution) == false) {
+		if (0){ // is_there_a_solution(NULL, fill_values_not_solution) == false) {
 		reset_sudoku_board_values();
 		free(optional_values);
 		return NO_SOLUTION;
@@ -943,7 +951,7 @@ int validate() {
 		return false;
 	}
 
-	if (is_there_a_solution(NULL, fill_values_not_solution) == true) {
+	if (0) { //(is_there_a_solution(NULL, fill_values_not_solution) == true) {
 		printf("Validation passed: board is solvable\n");
 
 		return true;
@@ -1087,7 +1095,7 @@ int Save(char* filepath) {
 			return false;
 		}
 
-		if (is_there_a_solution(NULL, false) == false) {
+		if (0) { //(is_there_a_solution(NULL, false) == false) {
 			printf("Error: board validation failed\n");
 			return false;
 		}
@@ -1139,7 +1147,7 @@ int hint(int col_index, int row_index) {
 		printf("Error: cell already contains a value\n");
 		return false;
 	}
-	if (is_there_a_solution(NULL, fill_values_not_solution) == true) {
+	if (0) { //(is_there_a_solution(NULL, fill_values_not_solution) == true) {
 		printf("Hint: set cell to %d\n", sudoku.board[row_index_board][col_index_board].solution);
 		return true;
 	}
