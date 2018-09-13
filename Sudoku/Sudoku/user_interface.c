@@ -304,7 +304,6 @@ sudokuCommands str2enum(const char *str);
 
 /* Public functions */
 
-/*todo: max commend length try strlen()*/
 int get_command_and_parse() {
 
 	char command[MAX_COMMAND_SIZE];
