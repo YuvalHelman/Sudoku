@@ -1,6 +1,10 @@
 
 #ifndef FILE_HEADER
 #define FILE_HEADER
+
+#include "aux_main.h"
+
+
 /*
 * This Module is responsible for anything related to files within the program.
 */
@@ -22,6 +26,8 @@
  *   @return: the FILE* struct for this file on Success, or NULL on Failure.
  */
 int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled);
+
+
 /*
  *	The functions initiates a loading of the file given by its argument, and interprets
  *	the values in the file to load a new gaming board. 

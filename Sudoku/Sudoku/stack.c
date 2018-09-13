@@ -11,82 +11,33 @@
 
 struct node_stack *top_node = NULL;
 
-int number_of_solutions();
+
+/* Private function decleration */
 /* to insert elements in stack*/
-void push(int row_index, int col_index, int value)
-{
-	struct node_stack *temp;
-	temp = (struct node_stack*)malloc(sizeof(struct node_stack));
-
-	temp->col_index = col_index;
-	temp->row_index = row_index;
-	temp->value = value;
-	temp->link = top_node;
-	top_node = temp;
-
-}
-
-/* to delete elements from stack */
-void pop(int *row_index, int *col_index, int *value)
-{
-	struct node_stack *temp;
-	if (top_node == NULL)
-		printf("**Stack is empty**\n");
-	else
-	{
-		*row_index = top_node->row_index;
-		*col_index = top_node->col_index;
-		*value = top_node->value;
-		temp = top_node;
-		top_node = top_node->link;
-		free(temp);
-	}
-}
-
+void push(int row_index, int col_index, int value);
+/* to delete access elements from stack */
+void pop(int *row_index, int *col_index, int *value);
 /* to check if stack is empty*/
-int empty()
-{
-	if (top_node == NULL)
-		return true;
-	else
-		return false;
-}
-
-
-
-
+int empty();
 /* to empty and destroy the stack*/
-void destroy()
-{
-	struct node_stack *temp;
-	int *row_index, *col_index, *value;
-	value = col_index = row_index = 0;
-	temp = top_node;
-	while (temp!= NULL)
-	{
-		pop(row_index, col_index, value);
-		temp = temp->link;
-	}
-	printf("stack destroyed\n");
-}
+void destroy();
+/*	checks which cell is the most 'advenced' one that is still empty and 
+*	saves the values in last_input_row, int, last_input_col.
+*
+*	last_input_col: the cell's column.
+*	last_input_row: the cell's row.
+*
+*   returns: ture if there was un empty cell, false otherwise.
+*/
+int last_input_index(int *last_input_row, int *last_input_col);
 
-int last_input_index(int *last_input_row, int *last_input_col) {
-	/* variables declarations */
-	int row_index, col_index, board_length;
-	board_length = sudoku.block_col_length * sudoku.block_row_length;
-	for (row_index = board_length - 1; row_index >= 0; row_index--) {
-		for (col_index = board_length - 1; col_index >= 0; col_index--) {
-			if (sudoku.board[row_index][col_index].value == 0) {
-				*last_input_row = row_index;
-				*last_input_col = col_index;
-				return 0;
-			}
-		}
-	}
-	return 1;
-}
+int set_reset_save_the_value(int value, int row_index, int col_index);
 
-int numberOfSolutions()  {
+int number_of_solutions();
+
+/* Public functions */
+
+int numberOfSolutions() {
 	/* variables declarations */
 	int row_index, col_index, count, board_length, **temp_matrice_values;
 	count = 0;
@@ -126,6 +77,83 @@ int numberOfSolutions()  {
 
 	return count;
 }
+/* Private functions */
+
+
+
+void push(int row_index, int col_index, int value)
+{
+	struct node_stack *temp;
+	temp = (struct node_stack*)malloc(sizeof(struct node_stack));
+
+	temp->col_index = col_index;
+	temp->row_index = row_index;
+	temp->value = value;
+	temp->link = top_node;
+	top_node = temp;
+
+}
+
+
+void pop(int *row_index, int *col_index, int *value)
+{
+	struct node_stack *temp;
+	if (top_node == NULL)
+		printf("**Stack is empty**\n");
+	else
+	{
+		*row_index = top_node->row_index;
+		*col_index = top_node->col_index;
+		*value = top_node->value;
+		temp = top_node;
+		top_node = top_node->link;
+		free(temp);
+	}
+}
+
+
+int empty()
+{
+	if (top_node == NULL)
+		return true;
+	else
+		return false;
+}
+
+
+
+
+void destroy()
+{
+	struct node_stack *temp;
+	int *row_index, *col_index, *value;
+	value = col_index = row_index = 0;
+	temp = top_node;
+	while (temp!= NULL)
+	{
+		pop(row_index, col_index, value);
+		temp = temp->link;
+	}
+	printf("stack destroyed\n");
+}
+
+int last_input_index(int *last_input_row, int *last_input_col) {
+	/* variables declarations */
+	int row_index, col_index, board_length;
+	board_length = sudoku.block_col_length * sudoku.block_row_length;
+	for (row_index = board_length - 1; row_index >= 0; row_index--) {
+		for (col_index = board_length - 1; col_index >= 0; col_index--) {
+			if (sudoku.board[row_index][col_index].value == 0) {
+				*last_input_row = row_index;
+				*last_input_col = col_index;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
 
 int set_reset_save_the_value(int value, int row_index, int col_index) {
 	if (valid_value(row_index, col_index, value)) {

@@ -1,17 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "minunit.h"
 #include "move_list.h"
-#include "aux_main.h"
 
 /* Global Variables: */
 List *move_list = NULL;
 
 
-/*
-*					Private (Static) functions - not available outside this source file.
-*/
+/* Private function decleration */
+
 
 /*
 *   This function is used for deleting a node while free'ing all its content.
@@ -20,21 +16,10 @@ List *move_list = NULL;
 *   returns: EXIT_SUCCESS(0) on adding a new node.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
-int node_delete(Node *node) {
-	if (!node) {
-		return EXIT_SUCCESS;
-	}
-
-	free(node->values);
-	free(node);
-
-	return EXIT_SUCCESS;
-}
+int node_delete(Node *node);
 
 
-/*
-*			Public functions: used outside this source file
-*/
+/* Public functions */
 
 
 node_vals* redo_list(int* num_of_values) {
@@ -235,4 +220,17 @@ void delete_list_on_exit() {
 	delete_list_full();
 	free(move_list->head);
 	free(move_list);
+}
+
+/* Private function */
+
+int node_delete(Node *node) {
+	if (!node) {
+		return EXIT_SUCCESS;
+	}
+
+	free(node->values);
+	free(node);
+
+	return EXIT_SUCCESS;
 }

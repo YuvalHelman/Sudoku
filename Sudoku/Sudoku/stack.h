@@ -3,7 +3,6 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <stdio.h>
 
 #define false 0
 #define true 1

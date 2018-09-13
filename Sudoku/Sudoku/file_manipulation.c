@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "file_manipulation.h"
-#include "aux_main.h"
+
 
 
 

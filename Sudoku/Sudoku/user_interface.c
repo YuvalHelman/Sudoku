@@ -14,9 +14,338 @@
 #include "solver.h"
 #include "stack.h"
 
+/* Private function decleration */
+
+
+/*
+*	The Function prints a message accordingly to its arguments regarding a recent redo change in the board.
+*	The row\column arguments are the board locations (not the ones we want to print)
+*
+*	@row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
+*	@column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
+*	@prev_val: the value that was previously in the cell that has been updated
+*	@updated_val: the value that is being updated to.
+*/
+
+void redo_print(int row, int column, int prev_val, int updated_val);
+
+/*
+*	The Function prints a message accordingly to its arguments regarding a recent undo change in the board.
+*	The row\column arguments are the board locations (not the ones we want to print)
+*
+*	@row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
+*	@column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
+*	@prev_val: the value that was previously in the cell that has been updated
+*	@updated_val: the value that is being updated to.
+*/
+void undo_print(int row, int column, int prev_val, int updated_val);
+
+/*
+*	This function is used by print_board.
+*	The Function prints a separator row accordingly to the current
+*	 sudoku.block_col_length, sudoku.block_row_length global arguments.
+*
+*/
+void separator_row();
+
+/*
+*	The Function checks if there is only one valid value for cell [row_index][col_index].
+*
+*	@row_index: the board's row of the cell
+*	@col_index: the board's column of the cell
+*
+*	@returns: the only one valid value (if exists) or 0 , if no value exists, or more then one value exists for this cell.
+*/
+int one_possible_value(int row_index, int col_index);
+
+/*
+*	The function checks if the board is empty (all 0's) or not
+*
+*   @returns: true(1) when the board is empty
+*			 false(0) otherwise.
+*/
+int is_board_empty();
+
+/*
+*	The Function uses the "move_list" module's functions 'add_new_node' and 'add_val_to_current_node' to add
+*	a new node to the move_list. Should be used in "generate", "autofill"
+*	If the functions receives a temporary matrice with the relavent changes, It updates the sudoku.board and prints
+*	relevant info for the "autofill" command.
+*	If the argument given is "NULL", the sudoku.board is already initialized and only a node is needed to be added to the list.
+*
+*	@temp_matrice_values: a pointer to the temporary matrice with the values that has been changed.
+*						 (every cell which has a value other then 0 has been changed).
+*
+*   @returns:@ EXIT_SUCCESS(0) on successfuly adding the node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int update_board_and_list(int **temp_matrice_values);
+
+/*
+*	An helper function for "generate". does the filling of num_of_cells_to_fill random cells with random values
+*	then uses ILP to solve the board, and then removes all but 'num_of_cells_to_keep' cells in the board.
+*	adds a new Node to the move_list when successful.
+*
+*	@num_of_cells_to_fill: number of cells to fill before solving with ILP
+*	@num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
+*
+*	@returns: a pointer to the new board on success.
+*	    	 on any error returns EXIT_FAILURE(1) and prints the error.
+*			 when ILP fails or a cell has no valid values, return NO_SOLUTION(2).
+*/
+int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep);
+
+/*
+*	The function checks if the game board is finished and correct, and if it is, the sudoku parameters initilaized
+*/
+void board_finished_check();
+
+/*
+*   Starts a puzzle in Solve mode, loaded from a file with the name "filepath".
+*   "filepath" can be a full or relative path to the file.
+*	We assume the file contains valid data and is correctly formatted.
+*	Available from Solve,Edit,Init.
+*
+*   filepath: a full or relative path to the file being opened.
+*
+*   returns: EXIT_SUCCESS(0) on successful load of the file and board.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int Solve(char* filepath);
+
+/*
+*   Starts a puzzle in Edit mode, loaded from a file with the name "filepath".
+*   "filepath" can be a full or relative path to the file.
+*	If no paramater is passed. the program initiates with an empty 9x9 board.
+*	We assume the file contains valid data and is correctly formatted.
+*	Available from Solve,Edit,Init.
+*
+*   filepath: a full or relative path to the file being opened.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int Edit(char* filepath);
+
+/*
+*	The Function receives an integer and if it's 0\1 changes the game's mark_errors field accordingly.
+*
+*	 value: the integer which decides if errors should be marked or not
+*
+*/
+void mark_errors(int value);
+
+/*
+*	The Function prints the board to the console accordingly to the standard.
+*
+*	where board has values of 0, it prints a blank space, as the cell is empty.
+*	when mark_errors is ON, print asterisk before the number.
+*	fixed cells are printed with a dot before the number.
+*
+*/
+void print_board();
+
+/*	Sets the value of cell <col_index,row_index> to value
+*	only available in Edit and Solve modes.
+*	This command prints the game board
+*	In solve Mode, checks if all board's cells are filled, validates and prints an according message
+*
+*	The function updates the linked list with the cells that were changed.
+*
+*	col_index: the cell's column where the change is made (as the user inputted them. 1 <--> board_len )
+*	row_index: the cell's row where the change is made (as the user inputted them. 1 <--> board_len )
+*	value: the value that that will be put in the cell.
+*
+*   returns: EXIT_SUCCESS(0) on succeeding in the right output.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int set(int col_index, int row_index, int value);
+
+/*
+*	Validates the current board using ILP, ensuring it is solvable.
+*	available in Edit and Solve modes.
+*
+*	the function uses the Gurobi ILP solver in the solver.c function in order to validate and get a solution.
+*
+*   returns: true(1) when there is a valid solution to the board
+*	        when board is erronous or there isn't a valid solution, returns false(0)
+*/
+int validate();
+
+/*
+*	Generates a puzzle by randomly filling X cells with random legal values,
+*	running ILP to solve the resulting board, and then clearing all but Y random
+*	cells.
+*
+*	 only available in Edit mode
+*
+*	num_of_cells_to_fill: number of cells to fill before solving with ILP
+*	num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int generate(int num_of_cells_to_fill, int num_of_cells_to_keep);
+
+/*
+*	Undo's a move done by the user (when possible) and updates the board accordingly.
+*	only available in Edit and Solve modes.
+*	Uses the undo_list function in order to traverse the moves_list.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int undo();
+
+/*
+*	Redo's a move done by the user (when possible) and updates the board accordingly.
+*	only available in Edit and Solve modes.
+*	Uses the redo_list function in order to traverse the moves_list.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int redo();
+
+/*
+*   Saves a current board to a file with the name "filepath".
+*   "filepath" can be a full or relative path to the file.
+*	Available from Solve,Edit modes.
+*
+*	In edit mode, the board is validated and saved only if valid.
+*	All cells are saved as 'fixed'.
+*
+*	In solve mode, the board can be saved with mistakes.
+*	Only cells that were fixed at loading the board are saved as fixed.
+*
+*   filepath: a full or relative path to the file being opened.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int Save(char* filepath);
+
+/*
+*	The Function prints the number of solutions for the current board.
+*	Available in Solve\Edit modes.
+*
+*	The function uses an exhaustive backtracking implemented in stack.h
+*	the cell in the solution given.
+*
+*   returns: EXIT_SUCCESS(0) on success.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int num_solutions();
+
+/*
+*	The Function prints a hint to the user regarding the cell <column,row>.
+*	Available in Solve Mode only.
+*
+*	The function uses the ILP (validate() ) to solve the board, and prints the value of
+*	the cell in the solution given.
+*
+*	col_index: the cell's column for the hint (as the user inputted them. 1 <--> board_len )
+*	row_index: the cell's row for the hint (as the user inputted them. 1 <--> board_len )
+*
+*   returns: EXIT_SUCCESS(0) on successfully finishing the function.
+EXIT_FAILURE(1) when something goes wrong. printing the error terminating.
+
+
+*/
+int hint(int col_index, int row_index);
+
+/*
+*	The Function fills the board's cells which has only a single legal value.
+*	Available in Solve mode only.
+*
+*	The function updates the linked list with the cells that were changed.
+*
+*   returns: EXIT_SUCCESS(0) on adding a new node.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int autofill();
+
+/*
+*	The Function reverts the board to its original loaded state.
+*	Available in Edit/Solve modes.
+*
+*	The function goes over the entire move_list - undo's all moves and deletes all nodes.
+*
+*   returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int reset();
+
+/*
+*	The Function free's all memory resources that are open and terminates the program.
+*
+*   returns: EXIT_SUCCESS(0) on exiting gracefully.
+*/
+int Exit();
+
+/*
+* The Function recives the command from the user and interprets it to a function that handles the command.
+*
+* @param buffer - the user's command. (its contents may be erased after calling this function)
+*
+*   returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
+*	         on any error returns EXIT_FAILURE(1) and prints the error.
+*/
+int user_command(char* buffer);
+
+/*
+*	The Function converts a string to one of the possbilties in the enum sudokuCommands.
+*
+*	 str: the given string which will be converted.
+*
+*	returns: the matching sudokuCommands(enum).
+*/
+sudokuCommands str2enum(const char *str);
+
+/* Public functions */
+
+/*todo: max commend length try strlen()*/
+int get_command_and_parse() {
+
+	char command[MAX_COMMAND_SIZE];
+	char* fgets_ret; /* for EOF checking */
+
+
+					 /* Get Commands and Play*/
+
+
+	do {
+		/* Get commands */
+
+
+		printf("Enter your command:\n");
+		fgets_ret = fgets(command, MAX_COMMAND_SIZE, stdin);
+
+		if (feof(stdin)) { /* EOF reached. exit. */
+			printf("Exiting...\n");
+			return EXIT_SUCCESS;
+		}
+
+		if (fgets_ret == NULL && ferror(stdin)) { /* fgets ancountered some error */
+			perror("Error: fgets has failed.");
+			return EXIT_FAILURE;
+		}
+
+		user_command(command);
+
+
+
+	} while (fgets_ret != NULL);
+
+	return EXIT_SUCCESS;
+
+}
+
+
+/* Private functions */
 
 struct abc_t conversion[] = {
-	{ 0, "solve" },
+{ 0, "solve" },
 { 1, "edit" },
 { 2, "mark_errors" },
 { 3, "print_board" },
@@ -34,26 +363,6 @@ struct abc_t conversion[] = {
 { 15, "error_command" }
 };
 
-/*
- *					Private (Static) functions - not available outside this source file.
- */
-
- /*
- *			Private Helper functions:
- */
-
-
-void print_board();
-
-/*
-*	The Function prints a message accordingly to its arguments regarding a recent redo change in the board.
-*	The row\column arguments are the board locations (not the ones we want to print)
-*
-*	@row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
-*	@column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
-*	@prev_val: the value that was previously in the cell that has been updated
-*	@updated_val: the value that is being updated to.
-*/
 
 void redo_print(int row, int column, int prev_val, int updated_val) {
 	if (updated_val == 0) {
@@ -78,15 +387,6 @@ void redo_print(int row, int column, int prev_val, int updated_val) {
 	}
 }
 
-/*
-*	The Function prints a message accordingly to its arguments regarding a recent undo change in the board.
-*	The row\column arguments are the board locations (not the ones we want to print)
-*
-*	@row: the cell's row where the change was made (in the board. 0 <--> board_len-1 )
-*	@column: the cell's column where the change was made (in the board. 0 <--> board_len-1 )
-*	@prev_val: the value that was previously in the cell that has been updated
-*	@updated_val: the value that is being updated to.
-*/
 void undo_print(int row, int column, int prev_val, int updated_val) {
 	if (updated_val == 0) {
 		if (prev_val == 0) {
@@ -110,12 +410,6 @@ void undo_print(int row, int column, int prev_val, int updated_val) {
 	}
 }
 
-/*
-*	This function is used by print_board.
-*	The Function prints a separator row accordingly to the current 
-*	 sudoku.block_col_length, sudoku.block_row_length global arguments.
-*
-*/
 void separator_row() {
 	int i;
 	for (i = 0; i <= 4 * sudoku.block_col_length*sudoku.block_row_length + sudoku.block_row_length; i++)
@@ -125,14 +419,6 @@ void separator_row() {
 
 
 
-/*
-*	The Function checks if there is only one valid value for cell [row_index][col_index].
-*
-*	@row_index: the board's row of the cell
-*	@col_index: the board's column of the cell
-*
-*	@returns: the only one valid value (if exists) or 0 , if no value exists, or more then one value exists for this cell.
-*/
 int one_possible_value(int row_index, int col_index) {
 	int i, count, board_length, value;
 	count = 0;
@@ -150,12 +436,6 @@ int one_possible_value(int row_index, int col_index) {
 	return value;
 }
 
-/*
-*	The function checks if the board is empty (all 0's) or not
-*
-*   @returns: true(1) when the board is empty
-*			 false(0) otherwise.
-*/
 int is_board_empty() {
 	int i, j, board_size;
 
@@ -172,19 +452,6 @@ int is_board_empty() {
 	return true;
 }
 
-/*
-*	The Function uses the "move_list" module's functions 'add_new_node' and 'add_val_to_current_node' to add 
-*	a new node to the move_list. Should be used in "generate", "autofill"
-*	If the functions receives a temporary matrice with the relavent changes, It updates the sudoku.board and prints
-*	relevant info for the "autofill" command.
-*	If the argument given is "NULL", the sudoku.board is already initialized and only a node is needed to be added to the list.
-*
-*	@temp_matrice_values: a pointer to the temporary matrice with the values that has been changed.
-*						 (every cell which has a value other then 0 has been changed).
-*
-*   @returns:@ EXIT_SUCCESS(0) on successfuly adding the node.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
 int update_board_and_list(int **temp_matrice_values) {
 	int add_node_flag, col_index, board_length, row_index, updated_val;
 
@@ -243,18 +510,6 @@ int update_board_and_list(int **temp_matrice_values) {
 	return EXIT_SUCCESS;
 }
 
-/*
-*	An helper function for "generate". does the filling of num_of_cells_to_fill random cells with random values
-*	then uses ILP to solve the board, and then removes all but 'num_of_cells_to_keep' cells in the board.
-*	adds a new Node to the move_list when successful.
-*
-*	@num_of_cells_to_fill: number of cells to fill before solving with ILP
-*	@num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
-*
-*	@returns: a pointer to the new board on success.
-*	    	 on any error returns EXIT_FAILURE(1) and prints the error.
-*			 when ILP fails or a cell has no valid values, return NO_SOLUTION(2).
-*/
 int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	int i, rand_row, rand_col, board_len, num_of_filled, rand_index;
 	int *optional_values, num_of_options, num_of_cells_in_board, fill_values_not_solution;
@@ -334,9 +589,6 @@ int generate_a_puzzle(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 }
 
 
-/*
-*	The function checks if the game board is finished and correct, and if it is, the sudoku parameters initilaized
-*/
 void board_finished_check() {
 	int num_of_cells_in_board, board_len;
 
@@ -364,7 +616,7 @@ void board_finished_check() {
 
 
 /*
-*			DEBUGGING functions. public for debugging usage.
+*			DEBUGGING functions. public for debugging usage. todo: delet this func.
 */
 
 void print_matrice(int **matrice)  {
@@ -469,17 +721,6 @@ void print_board_solution() {
 *			Private main functions: used for user commands
 */
 
-/*
-*   Starts a puzzle in Solve mode, loaded from a file with the name "filepath".
-*   "filepath" can be a full or relative path to the file.
-*	We assume the file contains valid data and is correctly formatted.
-*	Available from Solve,Edit,Init. 
-*
-*   filepath: a full or relative path to the file being opened.
-*
-*   returns: EXIT_SUCCESS(0) on successful load of the file and board.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
 int Solve(char* filepath) {
 	FILE* fd;
 	int num_of_filled_cells;
@@ -522,18 +763,6 @@ int Solve(char* filepath) {
 	return EXIT_SUCCESS;
 }
 
-/*
-*   Starts a puzzle in Edit mode, loaded from a file with the name "filepath".
-*   "filepath" can be a full or relative path to the file.
-*	If no paramater is passed. the program initiates with an empty 9x9 board.
-*	We assume the file contains valid data and is correctly formatted.
-*	Available from Solve,Edit,Init.
-*
-*   filepath: a full or relative path to the file being opened.
-*
-*   returns: EXIT_SUCCESS(0) on adding a new node.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/  
 int Edit(char* filepath) {
 	FILE* fd;
 	int block_rows, block_cols, num_of_filled_cells;
@@ -597,12 +826,7 @@ int Edit(char* filepath) {
 	return EXIT_SUCCESS;
 }
 
-/*
-*	The Function receives an integer and if it's 0\1 changes the game's mark_errors field accordingly.
-*
-*	 value: the integer which decides if errors should be marked or not
-*
-*/
+
 void mark_errors(int value) {
 	if (value != 0 && value != 1) {
 		printf("Error: the value should be 0 or 1\n");
@@ -612,14 +836,6 @@ void mark_errors(int value) {
 	}
 }
 
-/*
-*	The Function prints the board to the console accordingly to the standard.
-*
-*	where board has values of 0, it prints a blank space, as the cell is empty.
-*	when mark_errors is ON, print asterisk before the number.
-*	fixed cells are printed with a dot before the number.
-*
-*/
 void print_board(){
 	/* variables declarations */
 	int i, j, board_length;
@@ -667,20 +883,6 @@ void print_board(){
 	}
 }
 
-/*	Sets the value of cell <col_index,row_index> to value
-*	only available in Edit and Solve modes.
-*	This command prints the game board
-*	In solve Mode, checks if all board's cells are filled, validates and prints an according message
-*
-*	The function updates the linked list with the cells that were changed.
-*
-*	col_index: the cell's column where the change is made (as the user inputted them. 1 <--> board_len )
-*	row_index: the cell's row where the change is made (as the user inputted them. 1 <--> board_len )
-*	value: the value that that will be put in the cell.
-*
-*   returns: EXIT_SUCCESS(0) on succeeding in the right output.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
 int set(int col_index, int row_index, int value) { 
 
 	int prev_val, updated_val, board_len;
@@ -731,15 +933,6 @@ int set(int col_index, int row_index, int value) {
 }
 
 
-/*	
-*	Validates the current board using ILP, ensuring it is solvable.
-*	available in Edit and Solve modes.
-*	
-*	the function uses the Gurobi ILP solver in the solver.c function in order to validate and get a solution.
-*
-*   returns: true(1) when there is a valid solution to the board
-*	        when board is erronous or there isn't a valid solution, returns false(0)
-*/
 int validate() {
 	int fill_values_not_solution;
 
@@ -762,19 +955,7 @@ int validate() {
 
 }
 
-/*
-*	Generates a puzzle by randomly filling X cells with random legal values,
-*	running ILP to solve the resulting board, and then clearing all but Y random
-*	cells.
-*
-*	 only available in Edit mode
-*
-*	num_of_cells_to_fill: number of cells to fill before solving with ILP
-*	num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
-*
-*   returns: EXIT_SUCCESS(0) on adding a new node.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
+
 int generate(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	int DIM, num_of_tries, ret_val, generate_success_flag;
 
@@ -824,14 +1005,6 @@ int generate(int num_of_cells_to_fill, int num_of_cells_to_keep) {
 	
 }
 
-/*
-*	Undo's a move done by the user (when possible) and updates the board accordingly.
-*	only available in Edit and Solve modes. 
-*	Uses the undo_list function in order to traverse the moves_list.
-*
-*   returns: EXIT_SUCCESS(0) on adding a new node.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
 int undo() {
 
 	int num_of_values, i, row, col, prev, updated;
@@ -870,14 +1043,6 @@ int undo() {
 	return EXIT_SUCCESS;
 }
 
-/*
-*	Redo's a move done by the user (when possible) and updates the board accordingly.
-*	only available in Edit and Solve modes.
-*	Uses the redo_list function in order to traverse the moves_list.
-*
-*   returns: EXIT_SUCCESS(0) on adding a new node.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
 int redo() {
 	int num_of_values, i, row, col, prev, updated;
 	node_vals* values_array;
@@ -912,22 +1077,7 @@ int redo() {
 	return EXIT_SUCCESS;
 }
 
-/*
-*   Saves a current board to a file with the name "filepath".
-*   "filepath" can be a full or relative path to the file.
-*	Available from Solve,Edit modes.
-*
-*	In edit mode, the board is validated and saved only if valid.
-*	All cells are saved as 'fixed'.
-*
-*	In solve mode, the board can be saved with mistakes.
-*	Only cells that were fixed at loading the board are saved as fixed.
-*	
-*   filepath: a full or relative path to the file being opened.
-*
-*   returns: EXIT_SUCCESS(0) on adding a new node.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
+
 int Save(char* filepath) {
 	FILE* fd;
 
@@ -959,19 +1109,8 @@ int Save(char* filepath) {
 	return EXIT_SUCCESS;
 }
 
-/*
-*	The Function prints a hint to the user regarding the cell <column,row>.
-*	Available in Solve Mode only.
-*
-*	The function uses the ILP (validate() ) to solve the board, and prints the value of 
-*	the cell in the solution given.
-*
-*	col_index: the cell's column for the hint (as the user inputted them. 1 <--> board_len )
-*	row_index: the cell's row for the hint (as the user inputted them. 1 <--> board_len )
-*
-*   returns: EXIT_SUCCESS(0) on successfully finishing the function.
-			EXIT_FAILURE(1) when something goes wrong. printing the error terminating.
-*/
+
+/*todo: fix returnvalue*/
 int hint(int col_index, int row_index) {
 
 	int board_len, row_index_board, col_index_board, fill_values_not_solution;
@@ -1012,29 +1151,12 @@ int hint(int col_index, int row_index) {
 
 }
 
-/*
-*	The Function prints the number of solutions for the current board.
-*	Available in Solve\Edit modes.
-*
-*	The function uses an exhaustive backtracking implemented in stack.h
-*	the cell in the solution given.
-*
-*   returns: EXIT_SUCCESS(0) on success.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
+
 int num_solutions() {
 	return numberOfSolutions();
 }
 
-/*
-*	The Function fills the board's cells which has only a single legal value.
-*	Available in Solve mode only.
-*
-*	The function updates the linked list with the cells that were changed.
-*
-*   returns: EXIT_SUCCESS(0) on adding a new node.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
+
 int autofill() {
 	int row_index, col_index, board_length, value, **temp_matrice_values;
 	board_length = sudoku.block_col_length*sudoku.block_row_length;
@@ -1077,15 +1199,6 @@ int autofill() {
 	return EXIT_SUCCESS;
 }
 
-/*
-*	The Function reverts the board to its original loaded state.
-*	Available in Edit/Solve modes.
-*
-*	The function goes over the entire move_list - undo's all moves and deletes all nodes.
-*
-*   returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
 int reset() {
 
 	int num_of_values, i, j, row, col, prev, board_len;
@@ -1128,11 +1241,7 @@ int reset() {
 	return EXIT_SUCCESS;
 }
 
-/*
-*	The Function free's all memory resources that are open and terminates the program.
-*
-*   returns: EXIT_SUCCESS(0) on exiting gracefully.
-*/
+
 int Exit() {
 	free_board();
 	delete_list_on_exit();
@@ -1145,17 +1254,7 @@ int Exit() {
 }
 
 
-/*
-*			private Helper functions: Function used for parsing.
-*/
 
-/*
-*	The Function converts a string to one of the possbilties in the enum sudokuCommands.
-*
-*	 str: the given string which will be converted.
-*
-*	returns: the matching sudokuCommands(enum).
-*/
 sudokuCommands str2enum(const char *str)
 {
 	unsigned int j;
@@ -1165,16 +1264,7 @@ sudokuCommands str2enum(const char *str)
 	return error_command;
 }
 
-/*
-* The Function recives the command from the user and interprets it to a function that handles the command.
-*
-* @param buffer - the user's command. (its contents may be erased after calling this function)
-*
-*   returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
-*	         on any error returns EXIT_FAILURE(1) and prints the error.
-*/
 int user_command(char* buffer) {
-	/* */
 	sudokuCommands sudoku_command;
 	char *xchar, *ychar, *zchar, *command;
 	int xchar_asInt, ychar_asInt, zchar_asInt;
@@ -1303,46 +1393,7 @@ int user_command(char* buffer) {
 }
 
 
-/*
-*			Public functions: used outside this source file
-*/
 
-/*todo: max commend length try strlen()*/
-int get_command_and_parse() {
-	
-	char command[MAX_COMMAND_SIZE];
-	char* fgets_ret; /* for EOF checking */
-
-
-	/* Get Commands and Play*/
-	
-	
-	do {
-		/* Get commands */
-
-		
-		printf("Enter your command:\n");
-		fgets_ret = fgets(command, MAX_COMMAND_SIZE, stdin);
-		
-		if (feof(stdin)) { /* EOF reached. exit. */
-			printf("Exiting...\n");
-			return EXIT_SUCCESS;
-		}
-
-		if (fgets_ret == NULL && ferror(stdin)) { /* fgets ancountered some error */
-			perror("Error: fgets has failed.");
-			return EXIT_FAILURE;
-		}
-
-		user_command(command);
-
-		
-
-	} while (fgets_ret != NULL);
-
-	return EXIT_SUCCESS;
-	
-}
 
 
 

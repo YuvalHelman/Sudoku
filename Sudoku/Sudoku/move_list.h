@@ -15,7 +15,6 @@ so we can also change the game_board each time while using maximum efficiency.
 #define NOVE_LIST_HEADER
 
 #include "aux_main.h"
-#include <stdio.h>
 
 #define SIZE_OF_NODE (4*sizeof(int*))
 #define SIZE_OF_NODE_VALS (4*sizeof(int))

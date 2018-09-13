@@ -4,8 +4,6 @@
 #include <string.h>
 #include "gurobi_c.h"
 #include "solver.h"
-#include "aux_main.h"
-#include "game_logic.h"
 
 /*
 *	all Arrays are refferenced as 3-dimensions with [(i * DIM*DIM) + (j * DIM) + v] reffrences. 
@@ -13,14 +11,38 @@
 */
 
 
-
-/*
-*					Private (Static) functions - not available outside this source file.
-*/
+/* Private function decleration */
 
 /*
 *   This function initialize the sudoku.solution with the ILP solution.
 */
+void update_board_solution(double *sol, int DIM);
+
+/*
+*   This function initialize the sudoku.board with the ILP solution.
+*/
+void update_board_values(double *sol, int DIM);
+
+/*
+*   This function initialize the matrice argument that was given with the ILP solution.
+*/
+void update_arg_matrice(int **matrice, double *sol, int DIM);
+
+int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag);
+
+/* Public functions */
+
+
+int is_there_a_solution(int **matrice, int fill_values_and_not_solution_flag) {
+
+	if (gurobi_initializer(matrice, fill_values_and_not_solution_flag) == true) {
+		return true;
+	}
+
+	return false;
+}
+/* Private functions */
+
 void update_board_solution(double *sol, int DIM) {
 	int i, j, v;
 
@@ -36,9 +58,6 @@ void update_board_solution(double *sol, int DIM) {
 	}
 }
 
-/*
-*   This function initialize the sudoku.board with the ILP solution.
-*/
 void update_board_values(double *sol, int DIM) {
 	int i, j, v;
 
@@ -54,9 +73,7 @@ void update_board_values(double *sol, int DIM) {
 	}
 }
 
-/*
-*   This function initialize the matrice argument that was given with the ILP solution.
-*/
+
 void update_arg_matrice(int **matrice, double *sol, int DIM) {
 	int i, j, v;
 
@@ -306,15 +323,4 @@ int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 }
 
 
-/*
-*					Public functions: used outside this source file.
-*/
 
-int is_there_a_solution(int **matrice, int fill_values_and_not_solution_flag) {
-
-	if (gurobi_initializer(matrice, fill_values_and_not_solution_flag) == true) {
-		return true;
-	}
-
-	return false;
-}

@@ -139,3 +139,20 @@ int free_int_matrix(int** board, int block_col_len, int block_row_len) {
 
 	return EXIT_SUCCESS;
 }
+
+int is_board_erronous() {
+	int i, j, board_len;
+
+	board_len = sudoku.block_row_length *  sudoku.block_col_length;
+
+	for (i = 0; i < board_len; i++) {
+		for (j = 0; j < board_len; j++) {
+
+			if (sudoku.board[i][j].error) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+

@@ -102,5 +102,13 @@ int str_to_num(const char* value);
 */
 int free_int_matrix(int** board, int block_col_len, int block_row_len);
 
+/*
+*	The function checks if there are any errors on the current board.
+*
+*   @returns: true(1) when there are errors on the current board.
+*			 false(0) when there aren't errors.
+*/
+int is_board_erronous();
+
 
 #endif /* AUX_MAIN */
