@@ -15,12 +15,12 @@ int save_to_file(FILE* fd){
 	res = fprintf(fd, "%d ", sudoku.block_row_length);
 	if (res <= 0) {
 		printf("writing block row size to the file has failed. exiting\n");
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	res = fprintf(fd, "%d \n", sudoku.block_col_length);
 	if (res <= 0) {
 		printf("writing block column size to the file has failed. exiting\n");
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	read_counter = 1; 
@@ -33,16 +33,16 @@ int save_to_file(FILE* fd){
 				if (read_counter == board_len) { 
 					res = fprintf(fd, "%d.\n", sudoku.board[i][j].value);
 					if (res <= 0) {
-						printf("writing block column size to the file has failed. exiting\n");
-						return EXIT_FAILURE;
+						printf("writing to the file has failed. exiting\n");
+						exit(EXIT_FAILURE);
 					}
 					read_counter = 1;
 				}
 				else {
 					res = fprintf(fd, "%d. ", sudoku.board[i][j].value);
 					if (res <= 0) {
-						printf("writing block column size to the file has failed. exiting\n");
-						return EXIT_FAILURE;
+						printf("writing to the file has failed. exiting\n");
+						exit(EXIT_FAILURE);
 					}
 					read_counter++;
 				}
@@ -52,16 +52,16 @@ int save_to_file(FILE* fd){
 				if (read_counter == board_len) {
 					res = fprintf(fd, "%d\n", sudoku.board[i][j].value);
 					if (res <= 0) {
-						perror("writing block column size to the file has failed. exiting\n");
-						return EXIT_FAILURE;
+						printf("writing to the file has failed. exiting\n");
+						exit(EXIT_FAILURE);
 					}
 					read_counter = 1;
 				}
 				else {
 					res = fprintf(fd, "%d ", sudoku.board[i][j].value);
 					if (res <= 0) {
-						perror("writing block column size to the file has failed. exiting\n");
-						return EXIT_FAILURE;
+						printf("writing to the file has failed. exiting\n");
+						exit(EXIT_FAILURE);
 					}
 					read_counter++;
 				}
@@ -92,7 +92,8 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 	}
 
 	if (initialize_new_board(columns, rows) == EXIT_FAILURE) {
-		return EXIT_FAILURE;
+		printf("Initializing a new board has failed. exiting\n");
+		exit(EXIT_FAILURE);
 	}
 
 	board_len = rows * columns;
@@ -102,7 +103,7 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 	curr_col = 0;
 	curr_row = 0;
 	/* Fill the game board with the relevant info from the file */
-	while (ret_code >= 0) {
+	while (ret_code >= 0) { /* Read as long as there is more input in the file. */
 		ret_code = (int)fread(vals, sizeof(char), BUF_SIZE-1, fd);
 		vals[ret_code - 1] = '\0';
 
@@ -145,8 +146,9 @@ int read_from_file(FILE* fd, int* pRow, int* pCol, int *pNumOfCellsFilled) {
 			return EXIT_SUCCESS;
 		}
 		else if (ferror(fd)) {
-			perror("Error reading From the file");
-			return EXIT_FAILURE;
+			printf("Error reading From the file. Exiting\n");
+			exit(EXIT_FAILURE);
+			
 		}
 	}
 	(*pNumOfCellsFilled) = num_of_filled_cells;

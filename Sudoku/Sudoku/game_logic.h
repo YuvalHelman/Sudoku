@@ -22,7 +22,6 @@ int valid_value(int row_index, int col_index, int value);
 */
 void update_errors(int row_index, int col_index);
 
-
 /*
 * The Function update the mark_error for all the cells.
 */

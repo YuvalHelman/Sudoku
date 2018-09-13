@@ -6,17 +6,30 @@
 List *move_list = NULL;
 
 
-/* Private function decleration */
+/* Private functions decleration */
 
 
 /*
 *   This function is used for deleting a node while free'ing all its content.
 *   should be used in any function that deletes a part of the list.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*   returns: EXIT_SUCCESS(0) on deleting the node successfuly.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int node_delete(Node *node);
+
+/* Private functions */
+
+int node_delete(Node *node) {
+	if (!node) {
+		return EXIT_SUCCESS;
+	}
+
+	free(node->values);
+	free(node);
+
+	return EXIT_SUCCESS;
+}
 
 
 /* Public functions */
@@ -42,7 +55,6 @@ node_vals* redo_list(int* num_of_values) {
 	(*num_of_values) = curr_node->num_of_values;
 	return (node_vals*)curr_node->values;
 }
-
 
 node_vals* undo_list(int* num_of_values, int reset_flag) {
 	Node* curr_node;
@@ -72,7 +84,6 @@ node_vals* undo_list(int* num_of_values, int reset_flag) {
 	
 }
 
-
 int delete_list_full()
 {
 	Node *curr, *next;
@@ -94,7 +105,6 @@ int delete_list_full()
 
 	return EXIT_SUCCESS;
 }
-
 
 int delete_list_from_the_current_node() {
 	Node *curr, *next;
@@ -122,7 +132,6 @@ int delete_list_from_the_current_node() {
 	return EXIT_SUCCESS;
 }
 
-
 int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg) {
 	Node* node_ptr;
 	node_vals *vals_array;
@@ -130,15 +139,15 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 	/* Build a new node and attach to list */
 	node_ptr = (Node*)malloc(SIZE_OF_NODE);
 	if (!node_ptr) {
-		perror("malloc failed in add_new_node() function");
-		return EXIT_FAILURE;
+		printf("malloc failed in add_new_node() function. Exiting\n");
+		exit(EXIT_FAILURE);
 	}
 	
 
 	node_ptr->values = (node_vals*)calloc(1, SIZE_OF_NODE_VALS);
 	if (!node_ptr->values) {
-		perror("calloc failed in add_new_node() function");
-		return EXIT_FAILURE;
+		printf("malloc failed in add_new_node() function. Exiting\n");
+		exit(EXIT_FAILURE);
 	}
 	node_ptr->num_of_values = 1;
 
@@ -166,7 +175,6 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 
 }
 
-
 int add_val_to_current_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg) {
 	Node* node_ptr;
 	node_vals *vals_array;
@@ -177,8 +185,8 @@ int add_val_to_current_node(int row_arg, int column_arg, int prev_val_arg, int u
 
 	node_ptr->values = (node_vals*)realloc(node_ptr->values, (node_ptr->num_of_values + 1)*(SIZE_OF_NODE_VALS));
 	if (!node_ptr->values) {
-		perror("realloc failed in add_val_to_current_node function");
-		return EXIT_FAILURE;
+		printf("relloc failed in add_val_to_current_node function. Exiting\n");
+		exit(EXIT_FAILURE);
 	}
 
 	vals_array = node_ptr->values;
@@ -194,19 +202,18 @@ int add_val_to_current_node(int row_arg, int column_arg, int prev_val_arg, int u
 	return EXIT_SUCCESS;
 }
 
-
 int initialize_list_parameters() {
 	Node* head_ptr;
 
 	move_list = (List*)malloc(SIZE_OF_LIST);
 	if (move_list == NULL) {
-		perror("malloc failed in initialize_list_parameters() function");
-		return EXIT_FAILURE;
+		printf("malloc failed in initialize_list_parameters function. Exiting\n");
+		exit(EXIT_FAILURE);
 	}
 	head_ptr = (Node*)calloc(NODE_NUM_OF_PTRS, sizeof(int));
 	if (head_ptr == NULL) {
-		perror("calloc failed in initialize_list_parameters() function");
-		return EXIT_FAILURE;
+		printf("calloc failed in initialize_list_parameters function. Exiting\n");
+		exit(EXIT_FAILURE);
 	}
 	move_list->head = head_ptr;
 	move_list->current_Node_move = head_ptr;
@@ -215,22 +222,9 @@ int initialize_list_parameters() {
 	return EXIT_SUCCESS;
 }
 
-
 void delete_list_on_exit() {
 	delete_list_full();
 	free(move_list->head);
 	free(move_list);
 }
 
-/* Private function */
-
-int node_delete(Node *node) {
-	if (!node) {
-		return EXIT_SUCCESS;
-	}
-
-	free(node->values);
-	free(node);
-
-	return EXIT_SUCCESS;
-}

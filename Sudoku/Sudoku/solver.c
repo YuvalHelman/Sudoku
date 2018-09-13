@@ -28,10 +28,12 @@ void update_board_values(double *sol, int DIM);
 */
 void update_arg_matrice(int **matrice, double *sol, int DIM);
 
+/* TODO: document
+TODO: break to little functions
+*/
 int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag);
 
 /* Public functions */
-
 
 int is_there_a_solution(int **matrice, int fill_values_and_not_solution_flag) {
 
@@ -41,6 +43,7 @@ int is_there_a_solution(int **matrice, int fill_values_and_not_solution_flag) {
 
 	return false;
 }
+
 /* Private functions */
 
 void update_board_solution(double *sol, int DIM) {
@@ -73,7 +76,6 @@ void update_board_values(double *sol, int DIM) {
 	}
 }
 
-
 void update_arg_matrice(int **matrice, double *sol, int DIM) {
 	int i, j, v;
 
@@ -89,9 +91,7 @@ void update_arg_matrice(int **matrice, double *sol, int DIM) {
 	}
 }
 
-/* TODO: document 
-	TODO: break to little functions 
-*/
+
 int gurobi_initializer(int **matrice, int fill_values_and_not_solution_flag) {
 
 	GRBenv   *env;

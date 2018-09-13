@@ -9,7 +9,7 @@
 #include "stack.h"
 
 /* todo: wirte modol description */
-
+/* TODO: write documentation for everything here */
 
 struct node_stack *top_node = NULL;
 
@@ -23,6 +23,7 @@ void pop(int *row_index, int *col_index, int *value);
 int empty();
 /* to empty and destroy the stack*/
 void destroy();
+
 /*	checks which cell is the most 'advenced' one that is still empty and 
 *	saves the values in last_input_row, int, last_input_col.
 *
@@ -35,6 +36,7 @@ int last_input_index(int *last_input_row, int *last_input_col);
 
 int set_reset_save_the_value(int value, int row_index, int col_index);
 
+/* DOCUMENT */
 int number_of_solutions();
 
 /* Public functions */
@@ -79,9 +81,9 @@ int numberOfSolutions() {
 
 	return count;
 }
+
+
 /* Private functions */
-
-
 
 void push(int row_index, int col_index, int value)
 {
@@ -95,7 +97,6 @@ void push(int row_index, int col_index, int value)
 	top_node = temp;
 
 }
-
 
 void pop(int *row_index, int *col_index, int *value)
 {
@@ -113,7 +114,6 @@ void pop(int *row_index, int *col_index, int *value)
 	}
 }
 
-
 int empty()
 {
 	if (top_node == NULL)
@@ -121,9 +121,6 @@ int empty()
 	else
 		return false;
 }
-
-
-
 
 void destroy()
 {
@@ -154,8 +151,6 @@ int last_input_index(int *last_input_row, int *last_input_col) {
 	}
 	return false;
 }
-
-
 
 int set_reset_save_the_value(int value, int row_index, int col_index) {
 	if (valid_value(row_index, col_index, value)) {

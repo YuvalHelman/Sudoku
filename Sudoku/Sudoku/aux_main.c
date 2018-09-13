@@ -19,13 +19,13 @@ int initialize_new_board(int block_col_len, int block_row_len) {
 	sudoku.board = (cell **)malloc(board_size * sizeof(cell *));
 	if (!sudoku.board) {
 		printf("Error: Malloc has failed allocating the board\n");
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	for (i = 0; i < board_size; i++) {
 		(sudoku.board[i] = (cell *)calloc(board_size, sizeof(cell)));
 		if (!(sudoku.board[i])) {
 			printf("Error: Calloc has failed allocating the board\n");
-			return EXIT_FAILURE;
+			exit(EXIT_FAILURE);
 		}
 	}
 
@@ -41,13 +41,13 @@ int** initialize_integer_board() {
 	board = (int **)malloc(board_size * sizeof(int *));
 	if (!board) {
 		printf("Error: Malloc has failed allocating the board\n");
-		return NULL;
+		exit(EXIT_FAILURE);
 	}
 	for (i = 0; i < board_size; i++) {
 		board[i] = (int *)calloc(board_size, sizeof(int));
 		if (!(board[i])) {
 			printf("Error: Malloc has failed allocating the board\n");
-			return NULL;
+			exit(EXIT_FAILURE);
 		}
 	}
 
