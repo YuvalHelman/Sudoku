@@ -1,4 +1,3 @@
-
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,11 +6,9 @@
 #include <errno.h>
 #include <time.h>
 
-
-/* TODO: */
 /*
- *	parser: check that input's with tabs\spaces\(\n) are accepted like they should be.
- ***/
+		This source file implements the program's MAIN function
+*/
 
 
 int main() {

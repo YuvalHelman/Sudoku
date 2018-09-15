@@ -6,7 +6,13 @@
 #include "solver.h"
 
 /*
-*	all Arrays are refferenced as 3-dimensions with [(i * DIM*DIM) + (j * DIM) + v] reffrences. 
+		This module implements the external library -> Gurobi.
+		The module implements methods for solving (or finding out there isn't any solution) for any sudoku board in any size.
+		all Arrays are refferenced as 3-dimensions with [(i * DIM*DIM) + (j * DIM) + v] refferences.
+*/
+
+/*
+*	
 *
 */
 

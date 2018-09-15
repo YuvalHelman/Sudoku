@@ -1,10 +1,14 @@
-
 #ifndef AUX_MAIN
 #define AUX_MAIN
 
 #define FAILURE -1
 #define false 0
 #define true 1
+
+/*
+		This module defines the sudoku's main auxiliary functions.
+		Anything regarding obscure methods that needs to work with other parts of the program but don't belong in any other module conceptually.
+*/
 
 typedef enum game_mode_t {
 	init, solve, edit

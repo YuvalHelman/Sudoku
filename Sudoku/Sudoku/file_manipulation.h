@@ -6,7 +6,7 @@
 
 
 /*
-* This Module is responsible for anything related to files within the program.
+		This module defines the sudoku's game logic so the rules may be kept during every turn of the user.
 */
 
 

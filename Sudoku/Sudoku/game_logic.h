@@ -4,7 +4,9 @@
 
 #include "aux_main.h"
 
-
+/*
+		This module defines the sudoku's game logic so the rules may be kept during every turn of the user.
+*/
 
 /*
 * The Function checks if the value is a legal value for cell[x][y].

@@ -5,7 +5,10 @@
 #include <stdlib.h>
 #include "file_manipulation.h"
 
-
+/*
+		This module implements anything related to files.
+		I/O operations on files are implemented through here ( read / write )
+*/
 
 
 int save_to_file(FILE* fd){

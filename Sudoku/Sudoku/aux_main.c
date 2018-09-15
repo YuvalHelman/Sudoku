@@ -5,6 +5,11 @@
 #include <errno.h>
 #include <limits.h>
 
+/*
+		This module implements the sudoku's main auxiliary functions. 
+		Anything regarding obscure methods that needs to work with other parts of the program but don't belong in any other module conceptually.
+*/
+
 #define DEFAULT_BASE 10
 
 /* Global Variables: */
@@ -70,7 +75,6 @@ int free_board() {
 
 	return EXIT_SUCCESS;
 }
-
 
 void update_num_of_filled_cells(int prev_val, int updated_val) {
 

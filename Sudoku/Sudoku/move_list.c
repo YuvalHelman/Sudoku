@@ -2,6 +2,19 @@
 #include <stdlib.h>
 #include "move_list.h"
 
+/*
+		This module implements the sudoku's double-linked List and any functions regarding manipulating data on the list.
+		Adding new nodes, removing nodes, removing all of the list, traversing the list etc.
+*/
+/*						Implementation:
+		HEAD--> 1st move--> 2nd move--> ........
+	The head is meant to signal the "first view" of the sudoku before any moves were made.
+	"curr_node == HEAD" means no more UNDO's are possible
+
+	the nodes are implemented in a way that lets us traverse the list and change values accordingly
+	so we can also change the game_board each time while using maximum efficiency.
+*/
+
 /* Global Variables: */
 List *move_list = NULL;
 

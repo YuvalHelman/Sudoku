@@ -7,6 +7,10 @@
 #define false 0
 #define true 1
 
+/*
+		This module defines stack operations in order to use an exhaustive backtracking algorithm to solve the sudoku, and checks how many solutions are there.
+*/
+
 struct node_stack
 {
 	int row_index;
@@ -24,9 +28,11 @@ void destroy();
 
 
 /*
-* The function uses a exhaustive backtracking algorithm to solve the sudoku, and checks how many solutions there is.
-* @param board - matrice with the cells inforamtion
-* @return - the number of possible solutions.
+*	The function uses an exhaustive backtracking algorithm to solve the sudoku, and checks how many solutions are there.
+*
+*	@param board - matrice with the cells inforamtion
+*
+*	@returns - the number of possible solutions.
 */
 int numberOfSolutions();
 

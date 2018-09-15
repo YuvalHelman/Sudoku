@@ -5,6 +5,11 @@
 #include "aux_main.h"
 #include "move_list.h"
 
+/*
+		This module defines the sudoku's user interface methods.
+		Anything related to parsing of standart input commands, and calling the relavent operation by it.
+*/
+
 #define DEFAULT_BLOCK_LEN 3
 #define MAX_COMMAND_SIZE 258
 #define BASE10 10
@@ -16,7 +21,6 @@ typedef enum sudokucomm {solve_command, edit_command, mark_errors_command,
 	undo_command, redo_command, save_command, hint_command,
 	num_solutions_command, autofill_command, reset_command, exit_command, error_command
 } sudokuCommands;
-
 
 
 struct abc_t{

@@ -14,6 +14,14 @@
 #include "solver.h"
 #include "stack.h"
 
+/*
+		This module implements the sudoku's user interface methods.
+		Anything related to parsing of standart input commands, and calling the relavent operation by it.
+*/
+
+
+
+
 struct abc_t conversion[] = {
 	{ 0, "solve" },
 { 1, "edit" },
@@ -361,8 +369,7 @@ int get_command_and_parse() {
 }
 
 
-/* Private functions */
-
+/* Private functions implementations */
 
 
 void redo_print(int row, int column, int prev_val, int updated_val) {
@@ -1005,7 +1012,6 @@ int Save(char* filepath) {
 	fclose(fd);
 	return EXIT_SUCCESS;
 }
-
 
 int hint(int col_index, int row_index) {
 

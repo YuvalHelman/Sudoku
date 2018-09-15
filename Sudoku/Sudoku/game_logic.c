@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include "game_logic.h"
 
-/* This module implements, the game logic and keeping the rules of the game */
+/* 
+		This module implements the sudoku's game logic so the rules may be kept during every turn of the user. 
+*/
 
 /* Private functions decleration */
 

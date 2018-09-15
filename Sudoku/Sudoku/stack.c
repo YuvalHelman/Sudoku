@@ -6,10 +6,15 @@
 #include "user_interface.h"
 #include "stack.h"
 
+/*
+		This module implements stack operations in order to use an exhaustive backtracking algorithm to solve the sudoku, and checks how many solutions are there.
+*/
+
 struct node_stack *top_node = NULL;
 
 
-/* Private function decleration */
+/* Private function declerations */
+
 /* to insert elements in stack*/
 void push(int row_index, int col_index, int value);
 /* to delete access elements from stack */
@@ -40,6 +45,7 @@ int last_input_index(int *last_input_row, int *last_input_col);
 *   returns: ture if there was un empty cell, false otherwise.
 */
 int set_reset_save_the_value(int value, int row_index, int col_index);
+
 
 int number_of_solutions();
 

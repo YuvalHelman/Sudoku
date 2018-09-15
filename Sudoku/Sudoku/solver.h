@@ -2,8 +2,8 @@
 #define SOLVER_H
 
 /*
-* The module implements stack operations, and the backtracking algorithem,
-* that uses the stack instead of recursion.
+		This module defines the external library -> Gurobi.
+		The module implements methods for solving (or finding out there isn't any solution) for any sudoku board in any size.
 */
 
 

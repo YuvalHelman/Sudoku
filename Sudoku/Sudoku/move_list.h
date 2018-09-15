@@ -1,14 +1,7 @@
 /*
-This Module defines anything related to the list of moves used by the player.
-It implements a double-linked List which can be traversed and changed by the user's game commands.
 
-									Implementation:
-    HEAD --> 1st move --> 2nd move --> ........
-The head is meant to signal the "first view" of the sudoku before any moves were made.
-"curr_node == HEAD" means no more UNDO's are possible
-
-the nodes are implemented in a way that lets us traverse the list and change values accordingly
-so we can also change the game_board each time while using maximum efficiency.
+		This module implements the sudoku's double-linked List and any functions regarding manipulating data on the list.
+		Adding new nodes, removing nodes, removing all of the list, traversing the list etc.
 */
 
 #ifndef NOVE_LIST_HEADER
