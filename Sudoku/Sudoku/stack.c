@@ -15,16 +15,24 @@ struct node_stack *top_node = NULL;
 
 /* Private function declerations */
 
-/* to insert elements in stack*/
+/* The function inserts elements in stack
+*	@row_index - the row value of the cell.
+*	@col_index - the col of the cell.
+*	@value - the 'value' value of the cell
+*/
 void push(int row_index, int col_index, int value);
-/* to delete access elements from stack */
+/* The function deletes access elements from stack
+*	@row_index* - pointer to the row value of the cell.
+*	@col_index* - pointer to the col of the cell.
+*	@value* - pointer to the 'value' value of the cell
+*/
 void pop(int *row_index, int *col_index, int *value);
-/* to check if stack is empty*/
+/* The function checks if stack is empty*/
 int empty();
-/* to empty and destroy the stack*/
+/* The function emptys and destroy the stack*/
 void destroy();
 
-/*	checks which cell is the most 'advenced' one that is still empty and
+/*	The function checks which cell is the most 'advenced' one that is still empty and
 *	saves the values in last_input_row, int, last_input_col.
 *
 *	@last_input_col: the cell's column.
@@ -47,6 +55,10 @@ int last_input_index(int *last_input_row, int *last_input_col);
 int set_reset_save_the_value(int value, int row_index, int col_index);
 
 
+/*
+*	The function perform an exhaustive backtracking implemented in stack, in order to caculate the number of solutions
+*	of the current board.
+*/
 int number_of_solutions();
 
 /* Public functions */
@@ -54,6 +66,7 @@ int number_of_solutions();
 
 /*
 *	The Function returns the number of the possible solutions.
+*	the board is copied and then the number of solutions is caculated.
 */
 int numberOfSolutions() {
 	/* variables declarations */
