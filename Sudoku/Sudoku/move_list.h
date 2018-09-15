@@ -51,7 +51,7 @@ extern List *move_list;
  *	the objects that are needed to start working with the move_list module.
  *	It should be called only once before playing.
  *
- *   returns: EXIT_SUCCESS(0) on success.
+ *   @@returns: EXIT_SUCCESS(0) on success.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int initialize_list_parameters();
@@ -60,9 +60,9 @@ int initialize_list_parameters();
  *	 This function goes forward one move from the current move and changes the list position and board values accordingly.
  *   If there arent any futuristic moves, the function does nothing.
  *
- *	 num_of_values: a pointer to an integer which will be returned as the number of values in the board that changed due to the function.
+ *	@ @num_of_values: a pointer to an integer which will be returned as the number of values in the board that changed due to the function.
  *
- *   returns: a pointer to a node_vals array with all of the values that were changed.
+ *   @returns: a pointer to a node_vals array with all of the values that were changed.
  *			  on any error returns NULL and prints the error.
  */
 node_vals* redo_list(int* num_of_values);
@@ -72,10 +72,10 @@ node_vals* redo_list(int* num_of_values);
 *	If there arent any previous moves, the function does nothing.
 *	On the "reset" function, the function avoids printing "no more moves to undo" when we reach the head of the list.
 *
-*	num_of_values: a pointer to an integer which will be returned as the number of values in the board that changed due to the function.
-*	reset_flag: a flag that indicates if the function is done in the "reset" function.
+*	@num_of_values: a pointer to an integer which will be returned as the number of values in the board that changed due to the function.
+*	@reset_flag: a flag that indicates if the function is done in the "reset" function.
 *
-*   returns: a pointer to a node_vals array with all of the values that were changed.
+*   @returns: a pointer to a node_vals array with all of the values that were changed.
 *			  on any error returns NULL and prints the error.
 */
 node_vals* undo_list(int* num_of_values, int reset_flag);
@@ -93,7 +93,7 @@ void delete_list_on_exit();
  *   This function is used for deleting the entire list (back to the initialized phase).
  *   should be used for "edit" \ "solve" \ "generate" \ "reset" commands.
  *
- *   returns: EXIT_SUCCESS(0) on success.
+ *   @returns: EXIT_SUCCESS(0) on success.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int delete_list_full();
@@ -105,7 +105,7 @@ int delete_list_full();
  *
  *   This function sets the current Node to be the new tail.
  *
- *   returns: EXIT_SUCCESS(0) on success.
+ *   @returns: EXIT_SUCCESS(0) on success.
  *			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int delete_list_from_the_current_node();
@@ -117,12 +117,12 @@ int delete_list_from_the_current_node();
  *	 If the current_Node_move isn't the tail, all of the list from it's right is erased, and the new 
  *	 Node added is the new tail which is connected after the current_Node_move.
  *
- *   row_arg: the row in which the change was made
- *   column_arg: the column in which the change was made
- *   prev_val_arg: the value of the cell before the change. (0 if empty)
- *   updated_val_arg: the new value that is being put into that cell.
+ *   @row_arg: the row in which the change was made
+ *   @column_arg: the column in which the change was made
+ *   @prev_val_arg: the value of the cell before the change. (0 if empty)
+ *   @updated_val_arg: the new value that is being put into that cell.
  *
- *   returns: EXIT_SUCCESS(0) on adding a new node.
+ *   @returns: EXIT_SUCCESS(0) on adding a new node.
 			  on any error returns EXIT_FAILURE(1) and prints the error.
  */
 int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg);
@@ -131,12 +131,12 @@ int add_new_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_
 *   adds a new value to the move_list->current_node->values array.
 *	should be used in the "autofill"/"generate" command.
 *
-*   row_arg: the row in which the change was made
-*   column_arg: the column in which the change was made
-*   prev_val_arg: the value of the cell before the change. (0 if empty)
-*   updated_val_arg: the new value that is being put into that cell.
+*   @row_arg: the row in which the change was made
+*   @column_arg: the column in which the change was made
+*   @prev_val_arg: the value of the cell before the change. (0 if empty)
+*   @updated_val_arg: the new value that is being put into that cell.
 *
-*   returns: EXIT_SUCCESS(0) on success.
+*   @returns: EXIT_SUCCESS(0) on success.
 			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int add_val_to_current_node(int row_arg, int column_arg, int prev_val_arg, int updated_val_arg);

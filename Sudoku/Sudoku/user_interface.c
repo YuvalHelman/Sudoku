@@ -132,9 +132,9 @@ void board_finished_check();
 *	We assume the file contains valid data and is correctly formatted.
 *	Available from Solve,Edit,Init.
 *
-*   filepath: a full or relative path to the file being opened.
+*   @filepath: a full or relative path to the file being opened.
 *
-*   returns: EXIT_SUCCESS(0) on successful load of the file and board.
+*   @returns: EXIT_SUCCESS(0) on successful load of the file and board.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int Solve(char* filepath);
@@ -146,9 +146,9 @@ int Solve(char* filepath);
 *	We assume the file contains valid data and is correctly formatted.
 *	Available from Solve,Edit,Init.
 *
-*   filepath: a full or relative path to the file being opened.
+*   @filepath: a full or relative path to the file being opened.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*   @returns: EXIT_SUCCESS(0) on adding a new node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int Edit(char* filepath);
@@ -156,7 +156,7 @@ int Edit(char* filepath);
 /*
 *	The Function receives an integer and if it's 0\1 changes the game's mark_errors field accordingly.
 *
-*	 value: the integer which decides if errors should be marked or not
+*	 @value: the integer which decides if errors should be marked or not
 *
 */
 void mark_errors(int value);
@@ -178,11 +178,11 @@ void print_board();
 *
 *	The function updates the linked list with the cells that were changed.
 *
-*	col_index: the cell's column where the change is made (as the user inputted them. 1 <--> board_len )
-*	row_index: the cell's row where the change is made (as the user inputted them. 1 <--> board_len )
-*	value: the value that that will be put in the cell.
+*	@col_index: the cell's column where the change is made (as the user inputted them. 1 <--> board_len )
+*	@row_index: the cell's row where the change is made (as the user inputted them. 1 <--> board_len )
+*	@value: the value that that will be put in the cell.
 *
-*   returns: EXIT_SUCCESS(0) on succeeding in the right output.
+*   @returns: EXIT_SUCCESS(0) on succeeding in the right output.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int set(int col_index, int row_index, int value);
@@ -193,7 +193,7 @@ int set(int col_index, int row_index, int value);
 *
 *	the function uses the Gurobi ILP solver in the solver.c function in order to validate and get a solution.
 *
-*   returns: true(1) when there is a valid solution to the board
+*   @returns: true(1) when there is a valid solution to the board
 *	        when board is erronous or there isn't a valid solution, returns false(0)
 */
 int validate();
@@ -205,8 +205,8 @@ int validate();
 *
 *	 only available in Edit mode
 *
-*	num_of_cells_to_fill: number of cells to fill before solving with ILP
-*	num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
+*	@num_of_cells_to_fill: number of cells to fill before solving with ILP
+*	@num_of_cells_to_clear: number of cells to clear from the solvable board after ILP.
 *
 *   returns: EXIT_SUCCESS(0) on adding a new node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
@@ -218,7 +218,7 @@ int generate(int num_of_cells_to_fill, int num_of_cells_to_keep);
 *	only available in Edit and Solve modes.
 *	Uses the undo_list function in order to traverse the moves_list.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*   @returns: EXIT_SUCCESS(0) on adding a new node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int undo();
@@ -228,7 +228,7 @@ int undo();
 *	only available in Edit and Solve modes.
 *	Uses the redo_list function in order to traverse the moves_list.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*   @returns: EXIT_SUCCESS(0) on adding a new node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int redo();
@@ -244,9 +244,9 @@ int redo();
 *	In solve mode, the board can be saved with mistakes.
 *	Only cells that were fixed at loading the board are saved as fixed.
 *
-*   filepath: a full or relative path to the file being opened.
+*   @filepath: a full or relative path to the file being opened.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*   @returns: EXIT_SUCCESS(0) on adding a new node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int Save(char* filepath);
@@ -258,7 +258,7 @@ int Save(char* filepath);
 *	The function uses an exhaustive backtracking implemented in stack.h
 *	the cell in the solution given.
 *
-*   returns: EXIT_SUCCESS(0) on success.
+*   @returns: EXIT_SUCCESS(0) on success.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int num_solutions();
@@ -270,10 +270,10 @@ int num_solutions();
 *	The function uses the ILP (validate() ) to solve the board, and prints the value of
 *	the cell in the solution given.
 *
-*	col_index: the cell's column for the hint (as the user inputted them. 1 <--> board_len )
-*	row_index: the cell's row for the hint (as the user inputted them. 1 <--> board_len )
+*	@col_index: the cell's column for the hint (as the user inputted them. 1 <--> board_len )
+*	@row_index: the cell's row for the hint (as the user inputted them. 1 <--> board_len )
 *
-*   returns: EXIT_SUCCESS(0) on successfully finishing the function.
+*   @returns: EXIT_SUCCESS(0) on successfully finishing the function.
 			EXIT_FAILURE(1) when something goes wrong. printing the error and terminating.
 
 
@@ -286,7 +286,7 @@ int hint(int col_index, int row_index);
 *
 *	The function updates the linked list with the cells that were changed.
 *
-*   returns: EXIT_SUCCESS(0) on adding a new node.
+*  @returns: EXIT_SUCCESS(0) on adding a new node.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int autofill();
@@ -297,7 +297,7 @@ int autofill();
 *
 *	The function goes over the entire move_list - undo's all moves and deletes all nodes.
 *
-*   returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
+*   @returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int reset();
@@ -305,7 +305,7 @@ int reset();
 /*
 *	The Function free's all memory resources that are open and terminates the program.
 *
-*   returns: EXIT_SUCCESS(0) on exiting gracefully.
+*   @returns: EXIT_SUCCESS(0) on exiting gracefully.
 */
 int Exit();
 
@@ -314,7 +314,7 @@ int Exit();
 *
 * @param buffer - the user's command. (its contents may be erased after calling this function)
 *
-*   returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
+*   @returns: EXIT_SUCCESS(0) on SUCCESSFULLY restarting the game.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int user_command(char* buffer);
@@ -322,9 +322,9 @@ int user_command(char* buffer);
 /*
 *	The Function converts a string to one of the possbilties in the enum sudokuCommands.
 *
-*	 str: the given string which will be converted.
+*	 @str: the given string which will be converted.
 *
-*	returns: the matching sudokuCommands(enum).
+*	@returns: the matching sudokuCommands(enum).
 */
 sudokuCommands str2enum(const char *str);
 

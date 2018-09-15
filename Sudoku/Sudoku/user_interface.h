@@ -32,7 +32,7 @@ struct abc_t{
 *	The Function handles the user's input from stdin or files.
 *	This command is looped until the program terminates (using the exit command or ctrl+C).
 *
-*   returns: EXIT_SUCCESS(0) for no errors.
+*   @returns: EXIT_SUCCESS(0) for no errors.
 *	         on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int get_command_and_parse();

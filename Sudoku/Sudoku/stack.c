@@ -38,7 +38,7 @@ void destroy();
 *	@last_input_col: the cell's column.
 *	@last_input_row: the cell's row.
 *
-*   returns: ture if there was un empty cell, false otherwise.
+*   @returns: ture if there was un empty cell, false otherwise.
 */
 int last_input_index(int *last_input_row, int *last_input_col);
 
@@ -50,7 +50,7 @@ int last_input_index(int *last_input_row, int *last_input_col);
 *	@col_index: the cell's column.
 *	@row_index: the cell's row.
 *
-*   returns: ture if there was un empty cell, false otherwise.
+*   @returns: ture if there was un empty cell, false otherwise.
 */
 int set_reset_save_the_value(int value, int row_index, int col_index);
 

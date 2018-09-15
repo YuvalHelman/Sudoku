@@ -19,8 +19,8 @@
 *	If the "matrice" argument is NULL, the solution is put in the sudoku.board_solution.
 *	otherwise, the solution is put in the "matrice" argument.
 *
-*	matrice: an optional integer matrice to put in the solution.
-*	fill_values_not_solution: a boolean flag that indicates that the solution should be filled
+*	@matrice: an optional integer matrice to put in the solution.
+*	@fill_values_not_solution: a boolean flag that indicates that the solution should be filled
 							  in the sudoku.board values. (when matrice == NULL)
 *
 *   @returns: true(1) when there is a solution to the current board.

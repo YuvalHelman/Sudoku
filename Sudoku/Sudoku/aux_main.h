@@ -102,7 +102,7 @@ int str_to_num(const char* value);
 *	@block_col_len: the board's block column length
 *	@block_row_len: the board's block row length
 *
-*	returns: EXIT_SUCCESS(0) on success.
+*	@returns: EXIT_SUCCESS(0) on success.
 */
 int free_int_matrix(int** board, int block_col_len, int block_row_len);
 

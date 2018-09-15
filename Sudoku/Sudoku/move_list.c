@@ -26,7 +26,7 @@ List *move_list = NULL;
 *   This function is used for deleting a node while free'ing all its content.
 *   should be used in any function that deletes a part of the list.
 *
-*   returns: EXIT_SUCCESS(0) on deleting the node successfuly.
+*   @returns: EXIT_SUCCESS(0) on deleting the node successfuly.
 *			 on any error returns EXIT_FAILURE(1) and prints the error.
 */
 int node_delete(Node *node);
