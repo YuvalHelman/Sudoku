@@ -841,7 +841,7 @@ int validate() {
 		return false;
 	}
 
-	if (0) { //(is_there_a_solution(NULL, fill_values_not_solution) == true) {
+	if (is_there_a_solution(NULL, fill_values_not_solution) == true) {
 		printf("Validation passed: board is solvable\n");
 
 		return true;
