@@ -12,7 +12,7 @@ typedef enum game_mode_t {
 
 /* a Cell struct
 Fixed explanations:
-0 - Should be blank \\could be replaced for defult value 0=blank
+0 - Should be blank 
 1 - a fixed cell */
 typedef struct cell_t {
 	int value;
