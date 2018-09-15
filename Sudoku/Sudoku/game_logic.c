@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "game_logic.h"
 
-/* todo: wirte modol description */
+/* This module implements, the game logic and keeping the rules of the game */
 
 /* Private functions decleration */
 

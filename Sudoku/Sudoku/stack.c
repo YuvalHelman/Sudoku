@@ -1,15 +1,10 @@
-/*
-* The module implements stack operations.
-*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "aux_main.h"
 #include "game_logic.h"
 #include "user_interface.h"
 #include "stack.h"
-
-/* todo: wirte modol description */
-/* TODO: write documentation for everything here */
 
 struct node_stack *top_node = NULL;
 
@@ -24,23 +19,36 @@ int empty();
 /* to empty and destroy the stack*/
 void destroy();
 
-/*	checks which cell is the most 'advenced' one that is still empty and 
+/*	checks which cell is the most 'advenced' one that is still empty and
 *	saves the values in last_input_row, int, last_input_col.
 *
-*	last_input_col: the cell's column.
-*	last_input_row: the cell's row.
+*	@last_input_col: the cell's column.
+*	@last_input_row: the cell's row.
 *
 *   returns: ture if there was un empty cell, false otherwise.
 */
 int last_input_index(int *last_input_row, int *last_input_col);
 
+
+/*	The function checks if the value is valid, if it is the value of the cell changes.
+*	the variebles are saved in the stack.
+*
+*	@value: the value.
+*	@col_index: the cell's column.
+*	@row_index: the cell's row.
+*
+*   returns: ture if there was un empty cell, false otherwise.
+*/
 int set_reset_save_the_value(int value, int row_index, int col_index);
 
-/* DOCUMENT */
 int number_of_solutions();
 
 /* Public functions */
 
+
+/*
+*	The Function returns the number of the possible solutions.
+*/
 int numberOfSolutions() {
 	/* variables declarations */
 	int row_index, col_index, count, board_length, **temp_matrice_values;

@@ -1,6 +1,12 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+/*
+* The module implements stack operations, and the backtracking algorithem,
+* that uses the stack instead of recursion.
+*/
+
+
 #include "aux_main.h"
 
 #define positionGur(row, col, val, dim)((row*dim*dim) + (col*dim) + (val))
